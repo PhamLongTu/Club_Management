@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- ========== KẾT NỐI DATABASE ========== -->
+        <!-- URL kết nối MySQL -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">
+            jdbc:mysql://localhost:3306/club_management?useSSL=false&amp;serverTimezone=Asia/Ho_Chi_Minh&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowPublicKeyRetrieval=true
+        </property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">123456</property>
+
+        <!-- ========== CÀI ĐẶT HIBERNATE ========== -->
+        <!-- Dialect cho MySQL 8 -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!-- Hiển thị SQL ra console (bật khi debug) -->
+        <property name="hibernate.show_sql">false</property>
+        <!-- Format SQL đẹp hơn -->
+        <property name="hibernate.format_sql">true</property>
+        <!-- Validate schema khi khởi động (không tự động tạo/xóa bảng) -->
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+
+        <!-- ========== CONNECTION POOL ========== -->
+        <property name="hibernate.connection.pool_size">10</property>
+        <property name="hibernate.current_session_context_class">thread</property>
+
+        <!-- ========== ENTITY CLASSES ========== -->
+        <!-- Khai báo tất cả các Entity class -->
+        <mapping class="com.clubmanagement.entity.Role"/>
+        <mapping class="com.clubmanagement.entity.Member"/>
+        <mapping class="com.clubmanagement.entity.Team"/>
+        <mapping class="com.clubmanagement.entity.Event"/>
+        <mapping class="com.clubmanagement.entity.Participation"/>
+        <mapping class="com.clubmanagement.entity.Task"/>
+        <mapping class="com.clubmanagement.entity.Attendance"/>
+        <mapping class="com.clubmanagement.entity.Announcement"/>
+        <mapping class="com.clubmanagement.entity.Project"/>
+        <mapping class="com.clubmanagement.entity.Feedback"/>
+        <mapping class="com.clubmanagement.entity.Sponsor"/>
+        <mapping class="com.clubmanagement.entity.Document"/>
+    </session-factory>
+</hibernate-configuration>

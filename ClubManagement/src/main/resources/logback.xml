@@ -1,0 +1,55 @@
+<configuration>
+    <!-- ============================================================
+         Logback Configuration - Cấu hình logging cho ứng dụng
+         ============================================================ -->
+
+    <!-- Biến: thư mục lưu log file -->
+    <property name="LOG_DIR" value="logs"/>
+    <property name="APP_NAME" value="ClubManagement"/>
+
+    <!-- ============================================================
+         CONSOLE APPENDER - In log ra màn hình terminal
+         ============================================================ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{30}) - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ============================================================
+         FILE APPENDER - Ghi log ra file (rolling theo ngày)
+         ============================================================ -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Mỗi ngày tạo một file log mới, giữ tối đa 30 file -->
+            <fileNamePattern>${LOG_DIR}/${APP_NAME}-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{40} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ============================================================
+         LOGGER CONFIG
+         ============================================================ -->
+
+    <!-- Tắt Hibernate SQL log (bật khi cần debug query) -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="WARN"/>
+    <logger name="org.hibernate.type.descriptor.sql" level="WARN"/>
+
+    <!-- Log của ứng dụng ở mức INFO -->
+    <logger name="com.clubmanagement" level="INFO"/>
+
+    <!-- Root logger: mức tối thiểu là WARN -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>
