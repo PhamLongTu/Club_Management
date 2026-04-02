@@ -8,7 +8,9 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.clubmanagement.dto.AnnouncementDTO;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * AnnouncementService - Tầng nghiệp vụ cho Thông báo.
@@ -26,9 +28,9 @@ public class AnnouncementService {
      * @param isPinned       Ghim hay không
      * @param targetAudience Đối tượng: All / Leaders / Members
      * @param authorId       ID người đăng
-     * @return Announcement đã lưu
+     * @return AnnouncementDTO đã lưu
      */
-    public Announcement createAnnouncement(String title, String content,
+    public AnnouncementDTO createAnnouncement(String title, String content,
                                            Boolean isPinned, String targetAudience,
                                            Integer authorId) {
         if (title == null || title.isBlank())
@@ -38,28 +40,28 @@ public class AnnouncementService {
 
         Member author = findMemberById(authorId);
         Announcement ann = new Announcement(title.trim(), content, isPinned, targetAudience, author);
-        return announcementDAO.save(ann);
+        return toDTO(announcementDAO.save(ann));
     }
 
     /**
      * Lấy tất cả thông báo (ghim trước, mới nhất trước).
      * @return List<Announcement>
      */
-    public List<Announcement> getAllAnnouncements() {
-        return announcementDAO.findAll();
+    public List<AnnouncementDTO> getAllAnnouncements() {
+        return announcementDAO.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     /**
      * Lấy N thông báo mới nhất cho Dashboard.
      * @param limit Số lượng
-     * @return List<Announcement>
+     * @return List<AnnouncementDTO>
      */
-    public List<Announcement> getLatestAnnouncements(int limit) {
-        return announcementDAO.findLatest(limit);
+    public List<AnnouncementDTO> getLatestAnnouncements(int limit) {
+        return announcementDAO.findLatest(limit).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     /** Cập nhật thông báo. */
-    public Announcement updateAnnouncement(Integer id, String title, String content,
+    public AnnouncementDTO updateAnnouncement(Integer id, String title, String content,
                                            Boolean isPinned, String targetAudience) {
         Announcement ann = announcementDAO.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông báo!"));
@@ -71,13 +73,26 @@ public class AnnouncementService {
         ann.setContent(content);
         ann.setIsPinned(isPinned);
         ann.setTargetAudience(targetAudience);
-        return announcementDAO.update(ann);
+        return toDTO(announcementDAO.update(ann));
     }
 
     /** Xóa thông báo theo ID. */
     public void deleteAnnouncement(Integer id) {
         if (!announcementDAO.deleteById(id))
             throw new IllegalArgumentException("Không tìm thấy thông báo để xóa!");
+    }
+
+    private AnnouncementDTO toDTO(Announcement a) {
+        if (a == null) return null;
+        return new AnnouncementDTO(
+            a.getAnnouncementId(),
+            a.getTitle(),
+            a.getContent(),
+            a.getCreatedDate(),
+            a.getIsPinned(),
+            a.getTargetAudience(),
+            a.getAuthor() != null ? a.getAuthor().getFullName() : "Hệ thống"
+        );
     }
 
     /** Tìm Member theo ID. */

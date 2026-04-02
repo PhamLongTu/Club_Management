@@ -28,9 +28,16 @@ public class DashboardController {
     private final ProjectService projectService = new ProjectService();
 
     // Sub-controllers
-    private MemberController  memberController;
-    private EventController   eventController;
-    private ProjectController projectController;
+    private MemberController        memberController;
+    private EventController         eventController;
+    private ProjectController       projectController;
+    private AnnouncementController  announcementController;
+    private TeamController          teamController;
+    private TaskController          taskController;
+    private SponsorController       sponsorController;
+    private AttendanceController    attendanceController;
+    private FeedbackController      feedbackController;
+    private DocumentController      documentController;
 
     /**
      * @param view        DashboardView đã khởi tạo
@@ -49,9 +56,16 @@ public class DashboardController {
      * Khởi tạo các Controller con cho từng màn hình con.
      */
     private void initSubControllers() {
-        memberController  = new MemberController(view.getMemberView(),  currentUser);
-        eventController   = new EventController(view.getEventView(),    currentUser);
-        projectController = new ProjectController(view.getProjectView(), currentUser);
+        announcementController = new AnnouncementController(view.getAnnouncementView(), currentUser);
+        teamController         = new TeamController(view.getTeamView(), currentUser);
+        taskController         = new TaskController(view.getTaskView(), currentUser);
+        sponsorController      = new SponsorController(view.getSponsorView(), currentUser);
+        attendanceController   = new AttendanceController(view.getAttendanceView(), currentUser);
+        feedbackController     = new FeedbackController(view.getFeedbackView(), currentUser);
+        documentController     = new DocumentController(view.getDocumentView(), currentUser);
+        memberController       = new MemberController(view.getMemberView(),  currentUser);
+        eventController        = new EventController(view.getEventView(),    currentUser);
+        projectController      = new ProjectController(view.getProjectView(), currentUser);
     }
 
     /**
@@ -62,6 +76,48 @@ public class DashboardController {
         view.getBtnHome().addActionListener(e -> {
             view.showHome();
             loadDashboardStats(); // Reload stats mỗi lần quay về Home
+        });
+
+        // Nút Thông báo
+        view.getBtnAnnouncements().addActionListener(e -> {
+            view.showAnnouncements();
+            announcementController.loadAllAnnouncements();
+        });
+
+        // Nút Ban / Nhóm
+        view.getBtnTeams().addActionListener(e -> {
+            view.showTeams();
+            teamController.loadAllTeams();
+        });
+
+        // Nút Nhiệm vụ
+        view.getBtnTasks().addActionListener(e -> {
+            view.showTasks();
+            taskController.loadAllTasks();
+        });
+
+        // Nút Tài trợ
+        view.getBtnSponsors().addActionListener(e -> {
+            view.showSponsors();
+            sponsorController.loadAllSponsors();
+        });
+
+        // Nút Điểm danh
+        view.getBtnAttendances().addActionListener(e -> {
+            view.showAttendances();
+            attendanceController.loadAllAttendances();
+        });
+
+        // Nút Phản hồi
+        view.getBtnFeedbacks().addActionListener(e -> {
+            view.showFeedbacks();
+            feedbackController.loadAllFeedbacks();
+        });
+
+        // Nút Tài liệu
+        view.getBtnDocuments().addActionListener(e -> {
+            view.showDocuments();
+            documentController.loadAllDocuments();
         });
 
         // Nút Thành viên

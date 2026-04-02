@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import com.clubmanagement.entity.Member;
 
 /**
  * ProjectDAO - Lớp truy cập dữ liệu cho thực thể Project (Dự án).
@@ -176,6 +177,56 @@ public class ProjectDAO {
             if (tx != null) tx.rollback();
             logger.error("Lỗi khi xóa dự án: {}", e.getMessage(), e);
             throw new RuntimeException("Không thể xóa dự án: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Thêm một thành viên vào dự án.
+     */
+    public void addMember(Integer projectId, Integer memberId) {
+        Transaction tx = null;
+        try (Session session = HibernateUtil.openSession()) {
+            tx = session.beginTransaction();
+            Project project = session.get(Project.class, projectId);
+            Member member = session.get(Member.class, memberId);
+            if (project != null && member != null) {
+                org.hibernate.Hibernate.initialize(project.getMembers());
+                if (!project.getMembers().contains(member)) {
+                    project.getMembers().add(member);
+                    session.merge(project);
+                    logger.info("Đã thêm thành viên ID: {} vào dự án ID: {}", memberId, projectId);
+                }
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            logger.error("Lỗi khi thêm thành viên: {}", e.getMessage(), e);
+            throw new RuntimeException("Không thể thêm thành viên vào dự án", e);
+        }
+    }
+
+    /**
+     * Xóa một thành viên khỏi dự án.
+     */
+    public void removeMember(Integer projectId, Integer memberId) {
+        Transaction tx = null;
+        try (Session session = HibernateUtil.openSession()) {
+            tx = session.beginTransaction();
+            Project project = session.get(Project.class, projectId);
+            Member member = session.get(Member.class, memberId);
+            if (project != null && member != null) {
+                org.hibernate.Hibernate.initialize(project.getMembers());
+                if (project.getMembers().contains(member)) {
+                    project.getMembers().remove(member);
+                    session.merge(project);
+                    logger.info("Đã xóa thành viên ID: {} khỏi dự án ID: {}", memberId, projectId);
+                }
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            logger.error("Lỗi khi xóa thành viên: {}", e.getMessage(), e);
+            throw new RuntimeException("Không thể xóa thành viên khỏi dự án", e);
         }
     }
 }

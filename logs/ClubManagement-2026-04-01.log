@@ -1,0 +1,69 @@
+2026-04-01 13:32:56.191 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-01 13:32:56.197 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-01 13:32:56.205 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-01 13:32:57.025 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-01 13:32:57.473 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-01 13:32:59.693 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-01 13:32:59.693 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-01 13:32:59.701 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-01 13:33:00.431 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-01 13:33:00.433 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-01 13:33:17.314 [SwingWorker-pool-2-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
+2026-04-01 13:34:47.093 [SwingWorker-pool-2-thread-7] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:34:56.360 [SwingWorker-pool-2-thread-8] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:34:57.176 [SwingWorker-pool-2-thread-9] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:34:57.467 [SwingWorker-pool-2-thread-10] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:34:57.787 [SwingWorker-pool-2-thread-1] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:35:06.183 [SwingWorker-pool-2-thread-2] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:35:06.888 [SwingWorker-pool-2-thread-3] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:35:21.109 [SwingWorker-pool-2-thread-4] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:35:29.043 [SwingWorker-pool-2-thread-5] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn D [Member]
+2026-04-01 13:35:30.192 [SwingWorker-pool-2-thread-7] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn D [Member]
+2026-04-01 13:35:59.108 [SwingWorker-pool-2-thread-8] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn C [Leader]
+2026-04-01 13:36:00.218 [SwingWorker-pool-2-thread-10] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn C [Leader]
+2026-04-01 13:38:10.183 [SwingWorker-pool-2-thread-4] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:38:12.751 [SwingWorker-pool-2-thread-5] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:39:09.855 [SwingWorker-pool-2-thread-6] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn D [Member]
+2026-04-01 13:39:43.526 [SwingWorker-pool-2-thread-8] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:39:47.666 [SwingWorker-pool-2-thread-9] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:39:48.417 [SwingWorker-pool-2-thread-10] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:39:48.760 [SwingWorker-pool-2-thread-1] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:39:52.717 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-01 13:39:52.719 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
+2026-04-01 13:39:52.734 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
+2026-04-01 13:39:52.735 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-01 13:40:08.511 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-01 13:40:08.512 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-01 13:40:08.515 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-01 13:40:09.162 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-01 13:40:09.571 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-01 13:40:11.539 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-01 13:40:11.539 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-01 13:40:11.546 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-01 13:40:12.319 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-01 13:40:12.319 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-01 13:40:24.730 [SwingWorker-pool-1-thread-1] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:40:27.370 [SwingWorker-pool-1-thread-2] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:40:42.759 [SwingWorker-pool-1-thread-3] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:40:43.097 [SwingWorker-pool-1-thread-4] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:40:43.417 [SwingWorker-pool-1-thread-5] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:40:43.722 [SwingWorker-pool-1-thread-6] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:41:26.152 [SwingWorker-pool-1-thread-7] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:41:30.184 [SwingWorker-pool-1-thread-8] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:41:32.813 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-01 13:41:32.819 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
+2026-04-01 13:41:32.850 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
+2026-04-01 13:41:32.850 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-01 13:45:48.887 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-01 13:45:48.889 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-01 13:45:48.891 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-01 13:45:49.554 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-01 13:45:49.918 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-01 13:45:51.734 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-01 13:45:51.734 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-01 13:45:51.740 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-01 13:45:52.227 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-01 13:45:52.227 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-01 13:45:59.356 [SwingWorker-pool-1-thread-1] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
+2026-04-01 13:50:13.682 [SwingWorker-pool-1-thread-2] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
+2026-04-01 13:50:15.278 [SwingWorker-pool-1-thread-4] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]

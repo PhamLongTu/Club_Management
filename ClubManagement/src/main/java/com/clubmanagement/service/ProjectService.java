@@ -1,6 +1,7 @@
 package com.clubmanagement.service;
 
 import com.clubmanagement.dao.ProjectDAO;
+import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.ProjectDTO;
 import com.clubmanagement.entity.Member;
 import com.clubmanagement.entity.Project;
@@ -116,6 +117,48 @@ public class ProjectService {
 
     /** Đếm số dự án đang hoạt động (cho Dashboard). */
     public long getActiveCount() { return projectDAO.countActive(); }
+
+    /**
+     * Lấy danh sách thành viên tham gia dự án.
+     * @param projectId ID dự án
+     * @return Danh sách MemberDTO (đã được map trong session để tránh lazy-load)
+     */
+    public List<MemberDTO> getMembersOfProject(Integer projectId) {
+        return projectDAO.findById(projectId)
+            .map(project -> {
+                List<Member> members = project.getMembers();
+                if (members == null) return new java.util.ArrayList<MemberDTO>();
+                return members.stream().map(this::memberToDTO).collect(Collectors.toList());
+            })
+            .orElse(new java.util.ArrayList<>());
+    }
+
+    /** Thêm thành viên vào dự án. */
+    public void addMemberToProject(Integer projectId, Integer memberId) {
+        projectDAO.addMember(projectId, memberId);
+    }
+
+    /** Xóa thành viên khỏi dự án. */
+    public void removeMemberFromProject(Integer projectId, Integer memberId) {
+        projectDAO.removeMember(projectId, memberId);
+    }
+
+    /** Map Member entity → MemberDTO. */
+    private MemberDTO memberToDTO(Member m) {
+        return new MemberDTO(
+            m.getMemberId(),
+            m.getFullName(),
+            m.getStudentId(),
+            m.getEmail(),
+            m.getPhone(),
+            m.getGender(),
+            m.getBirthDate(),
+            m.getJoinDate(),
+            m.getStatus(),
+            m.getRole() != null ? m.getRole().getRoleName() : "N/A",
+            m.getRole() != null ? m.getRole().getPermissionLevel() : 1
+        );
+    }
 
     // ===================================================
     // PRIVATE HELPERS

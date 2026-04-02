@@ -249,13 +249,15 @@ ClubManagement/
 
 ---
 
+mvn exec:java "-Dexec.mainClass=com.clubmanagement.MainApp" 
+
 ## 5. Tài khoản mẫu
 
 | Email | Mật khẩu | Vai trò |
 |-------|----------|---------| 
 | em.hoang@email.com | admin123 | Admin |
 | cuong.le@email.com | admin123 | Leader |
-| binh.tran@email.com | admin123 | Leader |
+| binh.tran@email.com | admin123 | Member |
 | an.nguyen@email.com | admin123 | Member |
 
 > ⚠️ **Quan trọng**: Nếu bạn đã import database trước ngày **30/03/2025**, hãy chạy lại file SQL vì phiên bản cũ dùng **hash giả** (không hoạt động). Phiên bản mới dùng BCrypt hash thật của chuỗi `admin123`.

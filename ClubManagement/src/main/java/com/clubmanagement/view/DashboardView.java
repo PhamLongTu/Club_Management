@@ -25,9 +25,16 @@ import java.util.List;
 public class DashboardView extends JFrame {
 
     // ====== Sub-panels (content area) ======
-    private MemberView    memberView;
-    private EventView     eventView;
-    private ProjectView   projectView;
+    private MemberView        memberView;
+    private EventView         eventView;
+    private ProjectView       projectView;
+    private AnnouncementView  announcementView;
+    private TeamView          teamView;
+    private TaskView          taskView;
+    private SponsorView       sponsorView;
+    private AttendanceView    attendanceView;
+    private FeedbackView      feedbackView;
+    private DocumentView      documentView;
 
     // ====== Components ======
     private JLabel   userNameLabel;
@@ -47,6 +54,13 @@ public class DashboardView extends JFrame {
     private JButton btnMembers;
     private JButton btnEvents;
     private JButton btnProjects;
+    private JButton btnAnnouncements;
+    private JButton btnTeams;
+    private JButton btnTasks;
+    private JButton btnSponsors;
+    private JButton btnAttendances;
+    private JButton btnFeedbacks;
+    private JButton btnDocuments;
 
     // Quick action buttons (Dashboard home)
     private JButton btnQuickAddMember;
@@ -184,19 +198,32 @@ public class DashboardView extends JFrame {
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         sep.setForeground(new Color(51, 65, 85));
 
-        // --- Menu Items ---
-        btnHome     = makeSidebarBtn("🏠  Tổng quan",    true);
-        btnMembers  = makeSidebarBtn("👥  Thành viên",   false);
-        btnEvents   = makeSidebarBtn("📅  Sự kiện",      false);
-        btnProjects = makeSidebarBtn("📋  Dự án",        false);
+        btnHome          = makeSidebarBtn("🏠  Tổng quan",    true);
+        btnAnnouncements = makeSidebarBtn("📢  Thông báo",   false);
+        btnTasks         = makeSidebarBtn("🎯  Nhiệm vụ",     false);
+        btnTeams         = makeSidebarBtn("🏢  Ban / Nhóm",   false);
+        btnSponsors      = makeSidebarBtn("🤝  Tài trợ",      false);
+        btnAttendances   = makeSidebarBtn("✅  Điểm danh",    false);
+        btnMembers       = makeSidebarBtn("👥  Thành viên",   false);
+        btnEvents        = makeSidebarBtn("📅  Sự kiện",      false);
+        btnProjects      = makeSidebarBtn("📋  Dự án",        false);
+        btnFeedbacks     = makeSidebarBtn("📬  Phản hồi",     false);
+        btnDocuments     = makeSidebarBtn("📂  Tài liệu",     false);
 
         sidebar.add(userCard);
         sidebar.add(sep);
         sidebar.add(Box.createVerticalStrut(8));
         sidebar.add(btnHome);
+        sidebar.add(btnAnnouncements);
+        sidebar.add(btnTasks);
+        sidebar.add(btnTeams);
+        sidebar.add(btnSponsors);
+        sidebar.add(btnAttendances);
         sidebar.add(btnMembers);
         sidebar.add(btnEvents);
         sidebar.add(btnProjects);
+        sidebar.add(btnFeedbacks);
+        sidebar.add(btnDocuments);
         sidebar.add(Box.createVerticalGlue());
 
         // Phiên bản ở dưới cùng
@@ -250,15 +277,29 @@ public class DashboardView extends JFrame {
         contentArea.setBackground(CONTENT_BG);
 
         // Tạo các sub-views
-        homePanel    = buildHomePanel();
-        memberView   = new MemberView(currentUser);
-        eventView    = new EventView(currentUser);
-        projectView  = new ProjectView(currentUser);
+        homePanel        = buildHomePanel();
+        announcementView = new AnnouncementView(currentUser);
+        taskView         = new TaskView(currentUser);
+        teamView         = new TeamView(currentUser);
+        sponsorView      = new SponsorView(currentUser);
+        attendanceView   = new AttendanceView(currentUser);
+        feedbackView     = new FeedbackView(currentUser);
+        documentView     = new DocumentView(currentUser);
+        memberView       = new MemberView(currentUser);
+        eventView        = new EventView(currentUser);
+        projectView      = new ProjectView(currentUser);
 
-        contentArea.add(homePanel,            "HOME");
-        contentArea.add(memberView.getPanel(), "MEMBERS");
-        contentArea.add(eventView.getPanel(),  "EVENTS");
-        contentArea.add(projectView.getPanel(),"PROJECTS");
+        contentArea.add(homePanel,                 "HOME");
+        contentArea.add(announcementView.getPanel(),"ANNOUNCEMENTS");
+        contentArea.add(taskView.getPanel(),        "TASKS");
+        contentArea.add(teamView.getPanel(),        "TEAMS");
+        contentArea.add(sponsorView.getPanel(),     "SPONSORS");
+        contentArea.add(attendanceView.getPanel(),  "ATTENDANCES");
+        contentArea.add(feedbackView.getPanel(),    "FEEDBACKS");
+        contentArea.add(documentView.getPanel(),    "DOCUMENTS");
+        contentArea.add(memberView.getPanel(),      "MEMBERS");
+        contentArea.add(eventView.getPanel(),       "EVENTS");
+        contentArea.add(projectView.getPanel(),     "PROJECTS");
 
         return contentArea;
     }
@@ -388,20 +429,26 @@ public class DashboardView extends JFrame {
     // ===================================================
 
     /** Hiển thị panel Home. */
-    public void showHome()     { selectMenu(btnHome);     cardLayout.show(contentArea, "HOME"); }
-    /** Hiển thị panel Thành viên. */
-    public void showMembers()  { selectMenu(btnMembers);  cardLayout.show(contentArea, "MEMBERS"); }
-    /** Hiển thị panel Sự kiện. */
-    public void showEvents()   { selectMenu(btnEvents);   cardLayout.show(contentArea, "EVENTS"); }
-    /** Hiển thị panel Dự án. */
-    public void showProjects() { selectMenu(btnProjects); cardLayout.show(contentArea, "PROJECTS"); }
+    public void showHome()          { selectMenu(btnHome);          cardLayout.show(contentArea, "HOME"); }
+    public void showAnnouncements() { selectMenu(btnAnnouncements); cardLayout.show(contentArea, "ANNOUNCEMENTS"); }
+    public void showTasks()         { selectMenu(btnTasks);         cardLayout.show(contentArea, "TASKS"); }
+    public void showTeams()         { selectMenu(btnTeams);         cardLayout.show(contentArea, "TEAMS"); }
+    public void showSponsors()      { selectMenu(btnSponsors);      cardLayout.show(contentArea, "SPONSORS"); }
+    public void showAttendances()   { selectMenu(btnAttendances);   cardLayout.show(contentArea, "ATTENDANCES"); }
+    public void showMembers()       { selectMenu(btnMembers);       cardLayout.show(contentArea, "MEMBERS"); }
+    public void showEvents()        { selectMenu(btnEvents);        cardLayout.show(contentArea, "EVENTS"); }
+    public void showProjects()      { selectMenu(btnProjects);      cardLayout.show(contentArea, "PROJECTS"); }
+    public void showFeedbacks()     { selectMenu(btnFeedbacks);     cardLayout.show(contentArea, "FEEDBACKS"); }
+    public void showDocuments()     { selectMenu(btnDocuments);     cardLayout.show(contentArea, "DOCUMENTS"); }
 
     /**
      * Cập nhật trạng thái selected cho các nút sidebar.
      * Chỉ một nút được active tại một thời điểm.
      */
     private void selectMenu(JButton selected) {
-        for (JButton btn : new JButton[]{btnHome, btnMembers, btnEvents, btnProjects}) {
+        for (JButton btn : new JButton[]{btnHome, btnAnnouncements, btnTasks, btnTeams, 
+                                         btnSponsors, btnAttendances, btnMembers, 
+                                         btnEvents, btnProjects, btnFeedbacks, btnDocuments}) {
             boolean isSelected = btn == selected;
             btn.setBackground(isSelected ? SIDEBAR_SEL : SIDEBAR_BG);
             btn.setForeground(isSelected ? Color.WHITE : new Color(148, 163, 184));
@@ -416,20 +463,34 @@ public class DashboardView extends JFrame {
     }
 
     // Getters cho Controller đăng ký sự kiện
-    public JButton getBtnHome()     { return btnHome; }
-    public JButton getBtnMembers()  { return btnMembers; }
-    public JButton getBtnEvents()   { return btnEvents; }
-    public JButton getBtnProjects() { return btnProjects; }
-    public JButton getBtnLogout()   { return btnLogout; }
+    public JButton getBtnHome()           { return btnHome; }
+    public JButton getBtnAnnouncements()  { return btnAnnouncements; }
+    public JButton getBtnTasks()          { return btnTasks; }
+    public JButton getBtnTeams()          { return btnTeams; }
+    public JButton getBtnSponsors()       { return btnSponsors; }
+    public JButton getBtnAttendances()    { return btnAttendances; }
+    public JButton getBtnMembers()        { return btnMembers; }
+    public JButton getBtnEvents()         { return btnEvents; }
+    public JButton getBtnProjects()       { return btnProjects; }
+    public JButton getBtnFeedbacks()      { return btnFeedbacks; }
+    public JButton getBtnDocuments()      { return btnDocuments; }
+    public JButton getBtnLogout()         { return btnLogout; }
 
     // Quick action button getters
     public JButton getBtnQuickAddMember()  { return btnQuickAddMember; }
     public JButton getBtnQuickAddEvent()   { return btnQuickAddEvent; }
     public JButton getBtnQuickAddProject() { return btnQuickAddProject; }
 
-    public MemberView getMemberView()   { return memberView; }
-    public EventView getEventView()     { return eventView; }
-    public ProjectView getProjectView() { return projectView; }
+    public MemberView        getMemberView()       { return memberView; }
+    public EventView         getEventView()        { return eventView; }
+    public ProjectView       getProjectView()      { return projectView; }
+    public AnnouncementView  getAnnouncementView() { return announcementView; }
+    public TeamView          getTeamView()         { return teamView; }
+    public TaskView          getTaskView()         { return taskView; }
+    public SponsorView       getSponsorView()      { return sponsorView; }
+    public AttendanceView    getAttendanceView()   { return attendanceView; }
+    public FeedbackView      getFeedbackView()     { return feedbackView; }
+    public DocumentView      getDocumentView()     { return documentView; }
 
     /** Tạo nút quick action với style nhất quán. */
     private JButton makeQuickBtn(String text) {

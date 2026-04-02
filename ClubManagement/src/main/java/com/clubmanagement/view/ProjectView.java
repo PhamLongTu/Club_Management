@@ -22,7 +22,7 @@ public class ProjectView {
     private JPanel        mainPanel;
     private JTextField    searchField;
     private JComboBox<String> statusFilter;
-    private JButton       btnAdd, btnEdit, btnDelete, btnRefresh, btnSearch;
+    private JButton       btnAdd, btnEdit, btnDelete, btnRefresh, btnSearch, btnMembers;
     private JTable        projectTable;
     private DefaultTableModel tableModel;
     private JLabel        countLabel;
@@ -98,6 +98,7 @@ public class ProjectView {
         rightPanel.setOpaque(false);
 
         btnRefresh = makeBtn("🔄 Làm mới", new Color(100,116,139), Color.WHITE);
+        btnMembers = makeBtn("👥 Thành viên", new Color(99, 102, 241), Color.WHITE);
         btnAdd     = makeBtn("➕ Thêm",     SUCCESS_CLR,             Color.WHITE);
         btnEdit    = makeBtn("✏ Sửa",      WARNING_CLR,             Color.WHITE);
         btnDelete  = makeBtn("🗑 Xóa",     DANGER_CLR,              Color.WHITE);
@@ -114,6 +115,7 @@ public class ProjectView {
         rightPanel.add(countLabel);
         rightPanel.add(Box.createHorizontalStrut(8));
         rightPanel.add(btnRefresh);
+        rightPanel.add(btnMembers);
         rightPanel.add(btnAdd);
         rightPanel.add(btnEdit);
         rightPanel.add(btnDelete);
@@ -269,6 +271,7 @@ public class ProjectView {
     public JButton getBtnDelete()  { return btnDelete; }
     public JButton getBtnRefresh() { return btnRefresh; }
     public JButton getBtnSearch()  { return btnSearch; }
+    public JButton getBtnMembers() { return btnMembers; }
     public JTable  getTable()      { return projectTable; }
     public JTextField    getSearchField()    { return searchField; }
     public JComboBox<String> getStatusFilterBox() { return statusFilter; }
