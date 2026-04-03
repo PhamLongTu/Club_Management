@@ -2,12 +2,14 @@ package com.clubmanagement.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -27,6 +29,7 @@ import com.clubmanagement.service.MemberService;
 import com.clubmanagement.service.ProjectService;
 import com.clubmanagement.service.TaskService;
 import com.clubmanagement.service.TeamService;
+import com.clubmanagement.util.ImageUtil;
 import com.clubmanagement.view.MemberFormDialog;
 import com.clubmanagement.view.MemberView;
 
@@ -196,7 +199,8 @@ public class MemberController {
                     dialog.getBirthDate(),
                     dialog.getPassword(),
                     dialog.getSelectedRole().getRoleId(),
-                    dialog.getSelectedTeamIds()
+                    dialog.getSelectedTeamIds(),
+                    dialog.getAvatarUrl()
                 );
                 JOptionPane.showMessageDialog(null,
                     "Đã thêm thành viên: " + created.getFullName(),
@@ -250,7 +254,8 @@ public class MemberController {
                     dialog.getBirthDate(),
                     dialog.getStatus(),
                     dialog.getSelectedRole().getRoleId(),
-                    dialog.getSelectedTeamIds()
+                    dialog.getSelectedTeamIds(),
+                    dialog.getAvatarUrl()
                 );
                 JOptionPane.showMessageDialog(null, "Đã cập nhật thành công!",
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);
@@ -337,7 +342,22 @@ public class MemberController {
         headerText.add(Box.createVerticalStrut(4));
         headerText.add(meta);
 
-        header.add(headerText, BorderLayout.CENTER);
+        JLabel avatarLabel = new JLabel();
+        avatarLabel.setPreferredSize(new Dimension(96, 96));
+        avatarLabel.setMinimumSize(new Dimension(96, 96));
+        avatarLabel.setMaximumSize(new Dimension(96, 96));
+        avatarLabel.setBorder(BorderFactory.createLineBorder(new Color(226, 232, 240), 1));
+        String initials = ImageUtil.buildInitials(member.getFullName());
+        avatarLabel.setIcon(ImageUtil.loadSquareAvatar(
+            member.getAvatarUrl(), 96, initials, new Color(226, 232, 240), new Color(30, 41, 59)
+        ));
+
+        JPanel headerContent = new JPanel(new BorderLayout(12, 0));
+        headerContent.setOpaque(false);
+        headerContent.add(avatarLabel, BorderLayout.WEST);
+        headerContent.add(headerText, BorderLayout.CENTER);
+
+        header.add(headerContent, BorderLayout.CENTER);
 
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));

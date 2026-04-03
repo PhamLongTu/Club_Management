@@ -2,15 +2,20 @@ package com.clubmanagement.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -28,8 +33,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SpinnerDateModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+
+import com.toedter.calendar.JDateChooser;
 
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
@@ -151,12 +159,14 @@ public class TaskController {
     }
 
     private void showFormDialog(TaskDTO task) {
-        JDialog dialog = new JDialog((Frame) null, task == null ? "Tạo Nhiệm vụ" : "Sửa Nhiệm vụ", true);
-        dialog.setSize(650, 520);
+        String dialogTitle = task == null ? "Tạo Nhiệm vụ" : "Sửa Nhiệm vụ";
+        JDialog dialog = new JDialog((Frame) null, dialogTitle, true);
+        dialog.setSize(760, 560);
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
 
         JPanel panel = new JPanel(new GridLayout(9, 2, 8, 12));
+        panel.setBackground(Color.WHITE);
         panel.setBorder(new EmptyBorder(20, 20, 20, 20));
         Font f = new Font("Segoe UI", Font.PLAIN, 13);
 
@@ -170,9 +180,9 @@ public class TaskController {
         txtDesc.setWrapStyleWord(true);
         if (task != null) txtDesc.setText(task.getDescription());
 
-        JTextField txtDeadline = new JTextField(LocalDateTime.now().plusDays(2).format(DATE_FMT));
-        txtDeadline.setFont(f);
-        if (task != null && task.getDeadline() != null) txtDeadline.setText(task.getDeadline().format(DATE_FMT));
+        LocalDateTime defaultDeadline = task != null ? task.getDeadline() : LocalDateTime.now().plusDays(2);
+        JDateChooser dcDeadline = createDateChooser(defaultDeadline);
+        JSpinner spDeadlineTime = createTimeSpinner(defaultDeadline);
 
         JComboBox<String> cbPriority = new JComboBox<>(new String[]{"Low", "Medium", "High", "Critical"});
         cbPriority.setFont(f);
@@ -222,7 +232,8 @@ public class TaskController {
         if (task != null && !currentUser.isLeader()) {
             txtTitle.setEditable(false);
             txtDesc.setEditable(false);
-            txtDeadline.setEditable(false);
+            dcDeadline.setEnabled(false);
+            spDeadlineTime.setEnabled(false);
             cbPriority.setEnabled(false);
             cbVisibility.setEnabled(false);
             spMax.setEnabled(false);
@@ -230,14 +241,17 @@ public class TaskController {
             cbEvent.setEnabled(false);
         }
 
+        JScrollPane assigneeScroll = new JScrollPane(listAssignees);
+        assigneeScroll.setPreferredSize(new Dimension(320, 120));
+
         panel.add(new JLabel("Tiêu đề *:"));      panel.add(txtTitle);
         panel.add(new JLabel("Mô tả:"));          panel.add(new JScrollPane(txtDesc));
-        panel.add(new JLabel("Hạn (yyyy-MM-dd HH:mm):")); panel.add(txtDeadline);
+        panel.add(new JLabel("Hạn chót:"));       panel.add(buildDateTimePanel(dcDeadline, spDeadlineTime));
         panel.add(new JLabel("Độ ưu tiên:"));     panel.add(cbPriority);
         panel.add(new JLabel("Trạng thái:"));     panel.add(cbStatus);
         panel.add(new JLabel("Hiển thị:"));       panel.add(cbVisibility);
         panel.add(new JLabel("Số người tối đa:")); panel.add(spMax);
-        panel.add(new JLabel("Người thực hiện:")); panel.add(new JScrollPane(listAssignees));
+        panel.add(new JLabel("Người thực hiện:")); panel.add(assigneeScroll);
         
         JPanel comboPanel = new JPanel(new GridLayout(1, 2, 4, 0));
         comboPanel.add(cbEvent);
@@ -255,14 +269,9 @@ public class TaskController {
 
         btnSave.addActionListener(e -> {
             try {
-                String title = txtTitle.getText();
+                String taskTitle = txtTitle.getText();
                 String desc = txtDesc.getText();
-                LocalDateTime deadline = null;
-                try {
-                    deadline = LocalDateTime.parse(txtDeadline.getText().trim(), DATE_FMT);
-                } catch (DateTimeParseException ex) {
-                    // Ignore or show error
-                }
+                LocalDateTime deadline = toLocalDateTime(dcDeadline, spDeadlineTime);
                 String prio = (String) cbPriority.getSelectedItem();
                 String status = (String) cbStatus.getSelectedItem();
                 String visibility = (String) cbVisibility.getSelectedItem();
@@ -282,11 +291,11 @@ public class TaskController {
                 Integer evtId = evt != null ? evt.getEventId() : null;
 
                 if (task == null) {
-                    taskService.createTask(title, desc, deadline, prio, visibility, maxAssignees,
+                    taskService.createTask(taskTitle, desc, deadline, prio, visibility, maxAssignees,
                         currentUser.getMemberId(), evtId, assigneeIds);
                     JOptionPane.showMessageDialog(dialog, "Đã giao việc thành công!");
                 } else {
-                    taskService.updateTask(task.getTaskId(), title, desc, deadline, prio, status,
+                    taskService.updateTask(task.getTaskId(), taskTitle, desc, deadline, prio, status,
                         visibility, maxAssignees, evtId,
                         currentUser.isLeader() ? assigneeIds : null);
                     JOptionPane.showMessageDialog(dialog, "Đã cập nhật Nhiệm vụ!");
@@ -303,9 +312,61 @@ public class TaskController {
         bottom.add(btnSave);
 
         dialog.setLayout(new BorderLayout());
+        dialog.add(buildDialogHeader(dialogTitle), BorderLayout.NORTH);
         dialog.add(panel, BorderLayout.CENTER);
         dialog.add(bottom, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+
+    private JPanel buildDialogHeader(String title) {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(248, 250, 252));
+        header.setBorder(new EmptyBorder(12, 16, 12, 16));
+
+        JLabel label = new JLabel(title);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        label.setForeground(new Color(30, 41, 59));
+        header.add(label, BorderLayout.WEST);
+        return header;
+    }
+
+    private JDateChooser createDateChooser(LocalDateTime dateTime) {
+        JDateChooser chooser = new JDateChooser();
+        chooser.setDateFormatString("yyyy-MM-dd");
+        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        if (dateTime != null) {
+            chooser.setDate(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()));
+        }
+        return chooser;
+    }
+
+    private JSpinner createTimeSpinner(LocalDateTime dateTime) {
+        LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
+        Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
+        SpinnerDateModel model = new SpinnerDateModel(timeValue, null, null, Calendar.MINUTE);
+        JSpinner spinner = new JSpinner(model);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "HH:mm");
+        spinner.setEditor(editor);
+        spinner.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        return spinner;
+    }
+
+    private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
+        JPanel panel = new JPanel(new BorderLayout(8, 0));
+        panel.setOpaque(false);
+        timeSpinner.setPreferredSize(new java.awt.Dimension(90, 28));
+        panel.add(dateChooser, BorderLayout.CENTER);
+        panel.add(timeSpinner, BorderLayout.EAST);
+        return panel;
+    }
+
+    private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
+        Date date = dateChooser.getDate();
+        if (date == null) return null;
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Date time = (Date) timeSpinner.getValue();
+        LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime().withSecond(0).withNano(0);
+        return LocalDateTime.of(localDate, localTime);
     }
 
     private void handleDelete() {

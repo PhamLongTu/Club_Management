@@ -1,14 +1,16 @@
 package com.clubmanagement.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
+import java.io.File;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -18,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -27,10 +30,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.TeamDTO;
 import com.clubmanagement.entity.Role;
+import com.clubmanagement.util.ImageUtil;
+import com.toedter.calendar.JDateChooser;
 
 /**
  * MemberFormDialog - Dialog nhập liệu Thêm/Sửa thành viên.
@@ -45,11 +51,14 @@ public class MemberFormDialog extends JDialog {
 
     // ====== Form fields ======
     private JTextField  tfFullName, tfStudentId, tfEmail, tfPhone;
+    private JTextField  tfAvatarPath;
     private JPasswordField pfPassword;
     private JComboBox<String> cbGender, cbStatus;
     private JComboBox<Role>   cbRole;
-    private JTextField  tfBirthDate;   // Format: yyyy-MM-dd
+    private JDateChooser dcBirthDate;   // Format: yyyy-MM-dd
     private JList<TeamDTO> listTeams;
+    private JLabel avatarPreview;
+    private String avatarUrl;
 
     // ====== State ======
     private boolean confirmed = false; // true nếu nhấn nút Lưu
@@ -57,7 +66,6 @@ public class MemberFormDialog extends JDialog {
 
     private static final Color PRIMARY   = new Color(37, 99, 235);
     private static final Color TEXT_DARK = new Color(15, 23, 42);
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
      * Constructor cho chế độ THÊM MỚI.
@@ -88,7 +96,7 @@ public class MemberFormDialog extends JDialog {
      */
     private void buildUI(List<Role> roles, List<TeamDTO> teams,
                          MemberDTO member, List<Integer> selectedTeamIds) {
-        setSize(480, isEdit ? 540 : 600);
+        setSize(520, isEdit ? 620 : 690);
         setLocationRelativeTo(getParent());
         setResizable(false);
 
@@ -125,7 +133,10 @@ public class MemberFormDialog extends JDialog {
         tfPhone = addRow(mainPanel, "Số điện thoại", "0901234567");
 
         // Ngày sinh
-        tfBirthDate = addRow(mainPanel, "Ngày sinh (yyyy-MM-dd)", "2002-01-01");
+        dcBirthDate = addDateRow(mainPanel, "Ngày sinh");
+
+        // Ảnh đại diện
+        addAvatarRow(mainPanel);
 
         // Giới tính
         cbGender = new JComboBox<>(new String[]{"Male", "Female", "Other"});
@@ -149,7 +160,7 @@ public class MemberFormDialog extends JDialog {
         listTeams.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane teamScroll = new JScrollPane(listTeams);
         teamScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-        addLabeledRow(mainPanel, "Ban / Nhóm (Member)", teamScroll);
+        addLabeledRow(mainPanel, "Ban / Nhóm", teamScroll);
 
         // Trạng thái (chỉ hiện khi EDIT)
         if (isEdit) {
@@ -178,9 +189,13 @@ public class MemberFormDialog extends JDialog {
             tfFullName.setText(member.getFullName());
             tfEmail.setText(member.getEmail());
             if (member.getPhone() != null) tfPhone.setText(member.getPhone());
-            if (member.getBirthDate() != null) tfBirthDate.setText(member.getBirthDate().toString());
+            if (member.getBirthDate() != null) dcBirthDate.setDate(toDate(member.getBirthDate()));
             if (member.getGender() != null) cbGender.setSelectedItem(member.getGender());
             if (member.getStatus() != null && cbStatus != null) cbStatus.setSelectedItem(member.getStatus());
+            if (member.getAvatarUrl() != null) {
+                avatarUrl = member.getAvatarUrl();
+                tfAvatarPath.setText(member.getAvatarUrl());
+            }
 
             // Chọn Role tương ứng trong ComboBox
             for (int i = 0; i < cbRole.getItemCount(); i++) {
@@ -197,6 +212,8 @@ public class MemberFormDialog extends JDialog {
                 .toArray();
             listTeams.setSelectedIndices(indices);
         }
+
+        updateAvatarPreview();
 
         cbRole.addActionListener(e -> updateTeamSelectionState());
         updateTeamSelectionState();
@@ -302,14 +319,8 @@ public class MemberFormDialog extends JDialog {
             return;
         }
         // Validate ngày sinh
-        if (!tfBirthDate.getText().isBlank()) {
-            try {
-                LocalDate.parse(tfBirthDate.getText(), DATE_FMT);
-            } catch (DateTimeParseException ex) {
-                showError("Ngày sinh sai định dạng! Dùng: yyyy-MM-dd");
-                tfBirthDate.requestFocus();
-                return;
-            }
+        if (dcBirthDate.getDate() != null) {
+            // Valid date chosen from picker
         }
         // Validate mật khẩu (chỉ khi ADD)
         if (!isEdit && pfPassword != null && new String(pfPassword.getPassword()).length() < 6) {
@@ -338,6 +349,7 @@ public class MemberFormDialog extends JDialog {
     public String getStatus()       { return cbStatus != null ? (String) cbStatus.getSelectedItem() : "Active"; }
     public Role   getSelectedRole() { return (Role) cbRole.getSelectedItem(); }
     public String getPassword()     { return pfPassword != null ? new String(pfPassword.getPassword()) : ""; }
+    public String getAvatarUrl()    { return avatarUrl; }
 
     public List<Integer> getSelectedTeamIds() {
         return listTeams.getSelectedValuesList().stream()
@@ -346,17 +358,113 @@ public class MemberFormDialog extends JDialog {
     }
 
     public LocalDate getBirthDate() {
-        try {
-            String txt = tfBirthDate.getText().trim();
-            return txt.isBlank() ? null : LocalDate.parse(txt, DATE_FMT);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
+        return toLocalDate(dcBirthDate.getDate());
     }
 
     private void updateTeamSelectionState() {
-        Role role = (Role) cbRole.getSelectedItem();
-        boolean isMember = role != null && role.getPermissionLevel() != null && role.getPermissionLevel() < 2;
-        listTeams.setEnabled(isMember);
+        listTeams.setEnabled(true);
+    }
+
+    private void addAvatarRow(JPanel panel) {
+        avatarPreview = new JLabel();
+        avatarPreview.setPreferredSize(new Dimension(72, 72));
+        avatarPreview.setMinimumSize(new Dimension(72, 72));
+        avatarPreview.setMaximumSize(new Dimension(72, 72));
+        avatarPreview.setBorder(BorderFactory.createLineBorder(new Color(203, 213, 225), 1));
+        avatarPreview.setOpaque(true);
+        avatarPreview.setBackground(new Color(241, 245, 249));
+
+        tfAvatarPath = new JTextField();
+        tfAvatarPath.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        tfAvatarPath.setEditable(false);
+        tfAvatarPath.setPreferredSize(new Dimension(200, 36));
+        tfAvatarPath.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        tfAvatarPath.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(203, 213, 225), 1),
+            new EmptyBorder(4, 10, 4, 10)
+        ));
+
+        JButton btnChoose = new JButton("Chọn ảnh");
+        btnChoose.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        btnChoose.addActionListener(e -> chooseAvatar());
+
+        JButton btnClear = new JButton("Xóa");
+        btnClear.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        btnClear.addActionListener(e -> clearAvatar());
+
+        JPanel row = new JPanel(new BorderLayout(12, 0));
+        row.setOpaque(false);
+        row.setAlignmentX(Component.LEFT_ALIGNMENT);
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 76));
+        row.add(avatarPreview, BorderLayout.WEST);
+        row.add(tfAvatarPath, BorderLayout.CENTER);
+
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+        actions.setOpaque(false);
+        actions.add(btnChoose);
+        actions.add(btnClear);
+        row.add(actions, BorderLayout.EAST);
+
+        addLabeledRow(panel, "Ảnh đại diện", row);
+    }
+
+    private void chooseAvatar() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Chọn ảnh đại diện");
+        chooser.setFileFilter(new FileNameExtensionFilter(
+            "Image files", "png", "jpg", "jpeg", "gif", "webp"
+        ));
+        int result = chooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            if (file != null) {
+                avatarUrl = file.getAbsolutePath();
+                tfAvatarPath.setText(avatarUrl);
+                updateAvatarPreview();
+            }
+        }
+    }
+
+    private void clearAvatar() {
+        avatarUrl = null;
+        tfAvatarPath.setText("");
+        updateAvatarPreview();
+    }
+
+    private void updateAvatarPreview() {
+        if (avatarPreview == null) return;
+        String initials = ImageUtil.buildInitials(tfFullName != null ? tfFullName.getText() : null);
+        avatarPreview.setIcon(ImageUtil.loadSquareAvatar(
+            avatarUrl, 72, initials, new Color(226, 232, 240), TEXT_DARK
+        ));
+    }
+
+    private JDateChooser addDateRow(JPanel panel, String labelText) {
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        label.setForeground(TEXT_DARK);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JDateChooser chooser = new JDateChooser();
+        chooser.setDateFormatString("yyyy-MM-dd");
+        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        chooser.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+        chooser.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        panel.add(label);
+        panel.add(Box.createVerticalStrut(4));
+        panel.add(chooser);
+        panel.add(Box.createVerticalStrut(12));
+        return chooser;
+    }
+
+    private LocalDate toLocalDate(Date date) {
+        if (date == null) return null;
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private Date toDate(LocalDate localDate) {
+        if (localDate == null) return null;
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }

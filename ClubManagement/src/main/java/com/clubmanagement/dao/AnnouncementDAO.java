@@ -143,7 +143,7 @@ public class AnnouncementDAO {
                 "LEFT JOIN FETCH a.targetTeam " +
                 "WHERE (a.targetAudience = 'All' " +
                 "   OR (a.targetAudience = 'Leaders' AND :perm >= 2) " +
-                "   OR (a.targetAudience = 'Members' AND :perm >= 1)) " +
+                "   OR (a.targetAudience = 'Members' AND :perm = 1)) " +
                 "AND " + teamCondition + " " +
                 "ORDER BY a.isPinned DESC, a.createdDate DESC",
                 Announcement.class

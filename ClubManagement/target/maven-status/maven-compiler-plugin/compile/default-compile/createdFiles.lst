@@ -1,6 +1,4 @@
 com\clubmanagement\view\ProjectView$3.class
-com\clubmanagement\controller\ProjectController$5.class
-com\clubmanagement\controller\ProjectController$8.class
 com\clubmanagement\dto\ProjectDTO.class
 com\clubmanagement\controller\SponsorController$1.class
 com\clubmanagement\view\MemberFormDialog.class
@@ -54,7 +52,6 @@ com\clubmanagement\service\TeamService.class
 com\clubmanagement\view\TaskView$1.class
 com\clubmanagement\view\AnnouncementView$2.class
 com\clubmanagement\controller\LoginController$1.class
-com\clubmanagement\controller\ProjectController$6.class
 com\clubmanagement\view\FeedbackView$2.class
 com\clubmanagement\view\AttendanceView$2.class
 com\clubmanagement\controller\DashboardController$1.class
@@ -70,7 +67,6 @@ com\clubmanagement\controller\AnnouncementController.class
 com\clubmanagement\view\FeedbackView$1.class
 com\clubmanagement\entity\Sponsor.class
 com\clubmanagement\view\EventView$1.class
-com\clubmanagement\view\EventView$4.class
 com\clubmanagement\view\MemberView$4.class
 com\clubmanagement\view\LoginView$3.class
 com\clubmanagement\view\SponsorView.class
@@ -88,7 +84,6 @@ com\clubmanagement\controller\LoginController.class
 com\clubmanagement\service\ProjectService.class
 com\clubmanagement\entity\Team.class
 com\clubmanagement\view\TeamView$1.class
-com\clubmanagement\controller\ProjectController$4.class
 com\clubmanagement\controller\ProjectController$1.class
 com\clubmanagement\controller\AttendanceController.class
 com\clubmanagement\dto\TaskDTO.class
@@ -101,7 +96,6 @@ com\clubmanagement\view\AttendanceView$3.class
 com\clubmanagement\dto\TeamDTO.class
 com\clubmanagement\view\ProjectView$1.class
 com\clubmanagement\entity\Event.class
-com\clubmanagement\controller\ProjectController$7.class
 com\clubmanagement\service\FeedbackService.class
 com\clubmanagement\entity\Role.class
 com\clubmanagement\controller\EventController$2.class

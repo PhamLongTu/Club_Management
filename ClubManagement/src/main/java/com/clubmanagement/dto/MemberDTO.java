@@ -20,6 +20,7 @@ public class MemberDTO {
     private LocalDate birthDate;
     private LocalDate joinDate;
     private String  status;
+    private String  avatarUrl;
     private String  roleName;       // Lấy từ Role entity
     private Integer permissionLevel; // Cấp quyền để phân biệt Admin/Leader/Member
     private String  teamNames;      // Danh sách ban (dạng chuỗi)
@@ -33,7 +34,8 @@ public class MemberDTO {
     public MemberDTO(Integer memberId, String fullName, String studentId,
                      String email, String phone, String gender,
                      LocalDate birthDate, LocalDate joinDate,
-                     String status, String roleName, Integer permissionLevel,
+                     String status, String avatarUrl,
+                     String roleName, Integer permissionLevel,
                      String teamNames) {
         this.memberId        = memberId;
         this.fullName        = fullName;
@@ -44,6 +46,7 @@ public class MemberDTO {
         this.birthDate       = birthDate;
         this.joinDate        = joinDate;
         this.status          = status;
+        this.avatarUrl       = avatarUrl;
         this.roleName        = roleName;
         this.permissionLevel = permissionLevel;
         this.teamNames       = teamNames;
@@ -76,6 +79,9 @@ public class MemberDTO {
 
     public String getStatus()                 { return status; }
     public void setStatus(String v)           { this.status = v; }
+
+    public String getAvatarUrl()              { return avatarUrl; }
+    public void setAvatarUrl(String v)        { this.avatarUrl = v; }
 
     public String getRoleName()               { return roleName; }
     public void setRoleName(String v)         { this.roleName = v; }

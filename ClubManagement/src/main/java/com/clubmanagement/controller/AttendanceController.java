@@ -6,10 +6,14 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -18,9 +22,13 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.SpinnerDateModel;
 import javax.swing.border.EmptyBorder;
+
+import com.toedter.calendar.JDateChooser;
 
 import com.clubmanagement.dto.AttendanceDTO;
 import com.clubmanagement.dto.EventDTO;
@@ -37,8 +45,6 @@ public class AttendanceController {
     private final AttendanceService attendanceService = new AttendanceService();
     private final MemberService memberService = new MemberService();
     private final EventService eventService = new EventService();
-
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public AttendanceController(AttendanceView view, MemberDTO currentUser) {
         this.view = view;
@@ -109,12 +115,14 @@ public class AttendanceController {
     }
 
     private void showFormDialog(AttendanceDTO attendance) {
-        JDialog dialog = new JDialog((Frame) null, attendance == null ? "Cấp mã Điểm danh" : "Sửa Điểm danh", true);
+        String title = attendance == null ? "Cấp mã Điểm danh" : "Sửa Điểm danh";
+        JDialog dialog = new JDialog((Frame) null, title, true);
         dialog.setSize(500, 350);
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
 
         JPanel panel = new JPanel(new GridLayout(6, 2, 8, 12));
+        panel.setBackground(Color.WHITE);
         panel.setBorder(new EmptyBorder(20, 20, 20, 20));
         Font f = new Font("Segoe UI", Font.PLAIN, 13);
 
@@ -126,11 +134,13 @@ public class AttendanceController {
         JComboBox<EventDTO> cbEvent = new JComboBox<>(allEvents.toArray(EventDTO[]::new));
         cbEvent.setFont(f);
 
-        JTextField txtCheckIn = new JTextField(LocalDateTime.now().format(DATE_FMT));
-        txtCheckIn.setFont(f);
-        
-        JTextField txtCheckOut = new JTextField();
-        txtCheckOut.setFont(f);
+        LocalDateTime defaultCheckIn = attendance != null ? attendance.getCheckInTime() : LocalDateTime.now();
+        JDateChooser dcCheckIn = createDateChooser(defaultCheckIn);
+        JSpinner spCheckInTime = createTimeSpinner(defaultCheckIn);
+
+        LocalDateTime defaultCheckOut = attendance != null ? attendance.getCheckOutTime() : null;
+        JDateChooser dcCheckOut = createDateChooser(defaultCheckOut);
+        JSpinner spCheckOutTime = createTimeSpinner(defaultCheckOut != null ? defaultCheckOut : LocalDateTime.now());
 
         JComboBox<String> cbStatus = new JComboBox<>(new String[]{"Present", "Late", "Absent", "Excused"});
         cbStatus.setFont(f);
@@ -152,19 +162,21 @@ public class AttendanceController {
                     cbEvent.setSelectedIndex(i); break;
                 }
             }
-            if (attendance.getCheckInTime() != null) txtCheckIn.setText(attendance.getCheckInTime().format(DATE_FMT));
-            else txtCheckIn.setText("");
-            
-            if (attendance.getCheckOutTime() != null) txtCheckOut.setText(attendance.getCheckOutTime().format(DATE_FMT));
-            
+            if (attendance.getCheckInTime() == null) {
+                dcCheckIn.setDate(null);
+            }
+            if (attendance.getCheckOutTime() == null) {
+                dcCheckOut.setDate(null);
+            }
+
             cbStatus.setSelectedItem(attendance.getStatus());
             txtNote.setText(attendance.getNote());
         }
 
         panel.add(new JLabel("Thành viên *:"));     panel.add(cbMember);
         panel.add(new JLabel("Sự kiện *:"));        panel.add(cbEvent);
-        panel.add(new JLabel("Check-in (yyyy-MM-dd HH:mm):")); panel.add(txtCheckIn);
-        panel.add(new JLabel("Check-out:"));        panel.add(txtCheckOut);
+        panel.add(new JLabel("Check-in:"));        panel.add(buildDateTimePanel(dcCheckIn, spCheckInTime));
+        panel.add(new JLabel("Check-out:"));       panel.add(buildDateTimePanel(dcCheckOut, spCheckOutTime));
         panel.add(new JLabel("Trạng thái:"));       panel.add(cbStatus);
         panel.add(new JLabel("Ghi chú:"));          panel.add(txtNote);
 
@@ -182,14 +194,8 @@ public class AttendanceController {
                 MemberDTO mem = (MemberDTO) cbMember.getSelectedItem();
                 EventDTO ext = (EventDTO) cbEvent.getSelectedItem();
                 
-                LocalDateTime checkIn = null;
-                if (!txtCheckIn.getText().isBlank()) {
-                    checkIn = LocalDateTime.parse(txtCheckIn.getText().trim(), DATE_FMT);
-                }
-                LocalDateTime checkOut = null;
-                if (!txtCheckOut.getText().isBlank()) {
-                    checkOut = LocalDateTime.parse(txtCheckOut.getText().trim(), DATE_FMT);
-                }
+                LocalDateTime checkIn = toLocalDateTime(dcCheckIn, spCheckInTime);
+                LocalDateTime checkOut = toLocalDateTime(dcCheckOut, spCheckOutTime);
                 
                 String status = (String) cbStatus.getSelectedItem();
                 String note = txtNote.getText();
@@ -213,9 +219,61 @@ public class AttendanceController {
         bottom.add(btnSave);
 
         dialog.setLayout(new BorderLayout());
+        dialog.add(buildDialogHeader(title), BorderLayout.NORTH);
         dialog.add(panel, BorderLayout.CENTER);
         dialog.add(bottom, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+
+    private JPanel buildDialogHeader(String title) {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(248, 250, 252));
+        header.setBorder(new EmptyBorder(12, 16, 12, 16));
+
+        JLabel label = new JLabel(title);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        label.setForeground(new Color(30, 41, 59));
+        header.add(label, BorderLayout.WEST);
+        return header;
+    }
+
+    private JDateChooser createDateChooser(LocalDateTime dateTime) {
+        JDateChooser chooser = new JDateChooser();
+        chooser.setDateFormatString("yyyy-MM-dd");
+        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        if (dateTime != null) {
+            chooser.setDate(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()));
+        }
+        return chooser;
+    }
+
+    private JSpinner createTimeSpinner(LocalDateTime dateTime) {
+        LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
+        Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
+        SpinnerDateModel model = new SpinnerDateModel(timeValue, null, null, Calendar.MINUTE);
+        JSpinner spinner = new JSpinner(model);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "HH:mm");
+        spinner.setEditor(editor);
+        spinner.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        return spinner;
+    }
+
+    private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
+        JPanel panel = new JPanel(new BorderLayout(8, 0));
+        panel.setOpaque(false);
+        timeSpinner.setPreferredSize(new java.awt.Dimension(90, 28));
+        panel.add(dateChooser, BorderLayout.CENTER);
+        panel.add(timeSpinner, BorderLayout.EAST);
+        return panel;
+    }
+
+    private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
+        Date date = dateChooser.getDate();
+        if (date == null) return null;
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Date time = (Date) timeSpinner.getValue();
+        LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime().withSecond(0).withNano(0);
+        return LocalDateTime.of(localDate, localTime);
     }
 
     private void handleDelete() {

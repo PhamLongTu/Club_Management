@@ -2,17 +2,20 @@ package com.clubmanagement.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -26,8 +29,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+
+import com.toedter.calendar.JDateChooser;
 
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
@@ -131,25 +138,7 @@ public class EventController {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền tạo sự kiện!");
             return;
         }
-
-        JPanel form = buildEventForm(null);
-        int result = JOptionPane.showConfirmDialog(null, form,
-            "Thêm sự kiện mới", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                EventFormData data = extractFormData(form);
-                eventService.createEvent(
-                    data.name, data.description, data.startDate, data.endDate,
-                    data.registrationDeadline, data.location, data.budget,
-                    data.maxParticipants, currentUser.getMemberId()
-                );
-                JOptionPane.showMessageDialog(null, "Đã tạo sự kiện thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                loadAllEvents();
-            } catch (RuntimeException ex) {
-                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        showEventDialog(null, false);
     }
 
     /** Sửa sự kiện đang được chọn. */
@@ -159,24 +148,7 @@ public class EventController {
 
         Optional<EventDTO> opt = eventService.getEventById(id);
         if (opt.isEmpty()) { JOptionPane.showMessageDialog(null, "Không tìm thấy sự kiện!"); return; }
-
-        EventDTO event = opt.get();
-        JPanel form = buildEventForm(event);
-        int result = JOptionPane.showConfirmDialog(null, form,
-            "Sửa sự kiện", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-        if (result == JOptionPane.OK_OPTION) {
-            try {
-                EventFormData data = extractFormData(form);
-                eventService.updateEvent(id, data.name, data.description,
-                    data.startDate, data.endDate, data.registrationDeadline,
-                    data.location, data.budget, data.status);
-                JOptionPane.showMessageDialog(null, "Đã cập nhật sự kiện!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                loadAllEvents();
-            } catch (RuntimeException ex) {
-                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        showEventDialog(opt.get(), true);
     }
 
     /** Xóa sự kiện đang được chọn. */
@@ -199,73 +171,136 @@ public class EventController {
         }
     }
 
+    private void showEventDialog(EventDTO event, boolean isEdit) {
+        EventFormFields fields = buildEventForm(event);
+        String title = isEdit ? "Sửa sự kiện" : "Thêm sự kiện mới";
+
+        JDialog dialog = new JDialog((Frame) null, title, true);
+        dialog.setSize(760, 560);
+        dialog.setLocationRelativeTo(null);
+        dialog.setLayout(new BorderLayout());
+
+        dialog.add(buildDialogHeader(title), BorderLayout.NORTH);
+        dialog.add(fields.panel, BorderLayout.CENTER);
+        dialog.add(buildDialogFooter(dialog, fields, event, isEdit), BorderLayout.SOUTH);
+        dialog.setVisible(true);
+    }
+
+    private JPanel buildDialogHeader(String title) {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(248, 250, 252));
+        header.setBorder(new EmptyBorder(12, 16, 12, 16));
+
+        JLabel label = new JLabel(title);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        label.setForeground(new Color(30, 41, 59));
+        header.add(label, BorderLayout.WEST);
+        return header;
+    }
+
+    private JPanel buildDialogFooter(JDialog dialog, EventFormFields fields, EventDTO event, boolean isEdit) {
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        footer.setBorder(new EmptyBorder(8, 16, 12, 16));
+
+        JButton btnCancel = new JButton("Hủy");
+        btnCancel.addActionListener(e -> dialog.dispose());
+
+        JButton btnSave = new JButton(isEdit ? "Cập nhật" : "Tạo mới");
+        btnSave.setBackground(new Color(16, 185, 129));
+        btnSave.setForeground(Color.WHITE);
+        btnSave.setBorderPainted(false);
+        btnSave.setFocusPainted(false);
+        btnSave.addActionListener(e -> {
+            try {
+                EventFormData data = extractFormData(fields);
+                if (isEdit) {
+                    eventService.updateEvent(event.getEventId(), data.name, data.description,
+                        data.startDate, data.endDate, data.registrationDeadline,
+                        data.location, data.budget, data.status);
+                    JOptionPane.showMessageDialog(dialog, "Đã cập nhật sự kiện!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    eventService.createEvent(
+                        data.name, data.description, data.startDate, data.endDate,
+                        data.registrationDeadline, data.location, data.budget,
+                        data.maxParticipants, currentUser.getMemberId()
+                    );
+                    JOptionPane.showMessageDialog(dialog, "Đã tạo sự kiện thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                }
+                dialog.dispose();
+                loadAllEvents();
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        footer.add(btnCancel);
+        footer.add(btnSave);
+        return footer;
+    }
+
     /**
      * Xây dựng panel form nhập liệu sự kiện.
      * @param event null = form rỗng (ADD), non-null = form điền sẵn (EDIT)
      */
-    private JPanel buildEventForm(EventDTO event) {
+    private EventFormFields buildEventForm(EventDTO event) {
         JPanel form = new JPanel(new GridLayout(0, 2, 8, 8));
-        form.setBorder(new javax.swing.border.EmptyBorder(10, 10, 10, 10));
+        form.setBorder(new EmptyBorder(12, 16, 12, 16));
+        form.setBackground(Color.WHITE);
         Font f = new Font("Segoe UI", Font.PLAIN, 13);
 
-        JTextField tfName     = createField(event != null ? event.getEventName()    : "", f);
-        JTextField tfStart    = createField(event != null && event.getStartDate() != null ? event.getStartDate().format(DT_FMT) : "", f);
-        JTextField tfEnd      = createField(event != null && event.getEndDate()   != null ? event.getEndDate().format(DT_FMT)   : "", f);
-        JTextField tfLocation = createField(event != null ? event.getLocation()    : "", f);
-        JTextField tfBudget   = createField(event != null && event.getBudget() != null ? event.getBudget().toPlainString() : "0", f);
-        JTextField tfMaxP     = createField(event != null && event.getMaxParticipants() != null ? String.valueOf(event.getMaxParticipants()) : "100", f);
-        JTextField tfRegDeadline = createField(event != null && event.getRegistrationDeadline() != null ? event.getRegistrationDeadline().format(DT_FMT) : "", f);
-        JTextArea  taDesc     = new JTextArea(3, 20);
-        taDesc.setFont(f);
-        taDesc.setText(event != null ? event.getDescription() : "");
-        taDesc.setLineWrap(true);
+        EventFormFields fields = new EventFormFields();
+        fields.panel = form;
+
+        fields.tfName = createField(event != null ? event.getEventName() : "", f);
+        fields.tfLocation = createField(event != null ? event.getLocation() : "", f);
+        fields.tfBudget = createField(event != null && event.getBudget() != null ? event.getBudget().toPlainString() : "0", f);
+        fields.tfMaxP = createField(event != null && event.getMaxParticipants() != null ? String.valueOf(event.getMaxParticipants()) : "100", f);
+
+        fields.startDate = createDateChooser(event != null ? event.getStartDate() : null);
+        fields.startTime = createTimeSpinner(event != null ? event.getStartDate() : null);
+        fields.endDate = createDateChooser(event != null ? event.getEndDate() : null);
+        fields.endTime = createTimeSpinner(event != null ? event.getEndDate() : null);
+        fields.regDate = createDateChooser(event != null ? event.getRegistrationDeadline() : null);
+        fields.regTime = createTimeSpinner(event != null ? event.getRegistrationDeadline() : null);
+
+        fields.taDesc = new JTextArea(3, 20);
+        fields.taDesc.setFont(f);
+        fields.taDesc.setText(event != null ? event.getDescription() : "");
+        fields.taDesc.setLineWrap(true);
 
         String[] statuses = {"Upcoming", "Ongoing", "Completed", "Cancelled"};
-        JComboBox<String> cbStatus = new JComboBox<>(statuses);
-        cbStatus.setFont(f);
-        if (event != null) cbStatus.setSelectedItem(event.getStatus());
+        fields.cbStatus = new JComboBox<>(statuses);
+        fields.cbStatus.setFont(f);
+        if (event != null) fields.cbStatus.setSelectedItem(event.getStatus());
 
-        form.add(makeLabel("Tên sự kiện *:")); form.add(tfName);
-        form.add(makeLabel("Bắt đầu (yyyy-MM-dd HH:mm) *:")); form.add(tfStart);
-        form.add(makeLabel("Kết thúc (yyyy-MM-dd HH:mm) *:")); form.add(tfEnd);
-        form.add(makeLabel("Địa điểm:")); form.add(tfLocation);
-        form.add(makeLabel("Hạn đăng ký (yyyy-MM-dd HH:mm):")); form.add(tfRegDeadline);
-        form.add(makeLabel("Ngân sách (VNĐ):")); form.add(tfBudget);
-        form.add(makeLabel("Số lượng tối đa:")); form.add(tfMaxP);
-        form.add(makeLabel("Trạng thái:")); form.add(cbStatus);
-        form.add(makeLabel("Mô tả:")); form.add(new JScrollPane(taDesc));
+        form.add(makeLabel("Tên sự kiện *:")); form.add(fields.tfName);
+        form.add(makeLabel("Bắt đầu *:")); form.add(buildDateTimePanel(fields.startDate, fields.startTime));
+        form.add(makeLabel("Kết thúc *:")); form.add(buildDateTimePanel(fields.endDate, fields.endTime));
+        form.add(makeLabel("Địa điểm:")); form.add(fields.tfLocation);
+        form.add(makeLabel("Hạn đăng ký:")); form.add(buildDateTimePanel(fields.regDate, fields.regTime));
+        form.add(makeLabel("Ngân sách (VNĐ):")); form.add(fields.tfBudget);
+        form.add(makeLabel("Số lượng tối đa:")); form.add(fields.tfMaxP);
+        form.add(makeLabel("Trạng thái:")); form.add(fields.cbStatus);
+        form.add(makeLabel("Mô tả:")); form.add(new JScrollPane(fields.taDesc));
 
-        // Tag components để extract sau
-        tfName.setName("name");   tfStart.setName("start");
-        tfEnd.setName("end");     tfLocation.setName("location");
-        tfBudget.setName("budget"); tfMaxP.setName("maxP"); tfRegDeadline.setName("regDeadline");
-        cbStatus.setName("status"); taDesc.setName("desc");
-
-        return form;
+        return fields;
     }
 
     /**
      * Đọc dữ liệu từ form panel và validate.
      */
-    private EventFormData extractFormData(JPanel form) {
+    private EventFormData extractFormData(EventFormFields fields) {
         EventFormData data = new EventFormData();
-        for (Component c : form.getComponents()) {
-            if (c instanceof JTextField tf) {
-                switch (tf.getName()) {
-                    case "name"     -> data.name     = tf.getText().trim();
-                    case "start"    -> data.startDate = parseDateTime(tf.getText());
-                    case "end"      -> data.endDate   = parseDateTime(tf.getText());
-                    case "location" -> data.location  = tf.getText().trim();
-                    case "budget"   -> { try { data.budget = new BigDecimal(tf.getText().trim()); } catch (NumberFormatException e) { data.budget = BigDecimal.ZERO; } }
-                    case "maxP"     -> data.maxParticipants = parseIntOrDefault(tf.getText(), 100);
-                    case "regDeadline" -> data.registrationDeadline = parseDateTime(tf.getText());
-                }
-            } else if (c instanceof JComboBox<?> cb && "status".equals(cb.getName())) {
-                data.status = (String) cb.getSelectedItem();
-            } else if (c instanceof JScrollPane sp && sp.getViewport().getView() instanceof JTextArea ta) {
-                data.description = ta.getText().trim();
-            }
-        }
+        data.name = fields.tfName.getText().trim();
+        data.startDate = toLocalDateTime(fields.startDate, fields.startTime);
+        data.endDate = toLocalDateTime(fields.endDate, fields.endTime);
+        data.registrationDeadline = toLocalDateTime(fields.regDate, fields.regTime);
+        data.location = fields.tfLocation.getText().trim();
+        data.status = (String) fields.cbStatus.getSelectedItem();
+        data.description = fields.taDesc.getText().trim();
+        try { data.budget = new BigDecimal(fields.tfBudget.getText().trim()); } catch (NumberFormatException e) { data.budget = BigDecimal.ZERO; }
+        data.maxParticipants = parseIntOrDefault(fields.tfMaxP.getText(), 100);
+
         if (data.name == null || data.name.isBlank())
             throw new IllegalArgumentException("Tên sự kiện không được để trống!");
         if (data.startDate == null || data.endDate == null)
@@ -275,18 +310,47 @@ public class EventController {
         return data;
     }
 
-    private LocalDateTime parseDateTime(String text) {
-        String t = text.trim();
-        if (t.isEmpty()) return null;
-        try {
-            return LocalDateTime.parse(t, DateTimeFormatter.ofPattern("yyyy-M-d H:m"));
-        } catch (DateTimeParseException e) {
-            try {
-                return java.time.LocalDate.parse(t, DateTimeFormatter.ofPattern("yyyy-M-d")).atStartOfDay();
-            } catch (Exception ex) {
-                throw new IllegalArgumentException("Sai định dạng ngày: '" + t + "'. Vui lòng dùng: yyyy-MM-dd HH:mm hoặc yyyy-MM-dd");
-            }
+    private JDateChooser createDateChooser(LocalDateTime dateTime) {
+        JDateChooser chooser = new JDateChooser();
+        chooser.setDateFormatString("yyyy-MM-dd");
+        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        if (dateTime != null) {
+            chooser.setDate(toDate(dateTime));
         }
+        return chooser;
+    }
+
+    private JSpinner createTimeSpinner(LocalDateTime dateTime) {
+        LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
+        Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
+        SpinnerDateModel model = new SpinnerDateModel(timeValue, null, null, Calendar.MINUTE);
+        JSpinner spinner = new JSpinner(model);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "HH:mm");
+        spinner.setEditor(editor);
+        spinner.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        return spinner;
+    }
+
+    private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
+        JPanel panel = new JPanel(new BorderLayout(8, 0));
+        panel.setOpaque(false);
+        timeSpinner.setPreferredSize(new java.awt.Dimension(90, 28));
+        panel.add(dateChooser, BorderLayout.CENTER);
+        panel.add(timeSpinner, BorderLayout.EAST);
+        return panel;
+    }
+
+    private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
+        Date date = dateChooser.getDate();
+        if (date == null) return null;
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Date time = (Date) timeSpinner.getValue();
+        LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime().withSecond(0).withNano(0);
+        return LocalDateTime.of(localDate, localTime);
+    }
+
+    private Date toDate(LocalDateTime dateTime) {
+        return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     private JTextField createField(String value, Font f) {
@@ -308,6 +372,22 @@ public class EventController {
         LocalDateTime registrationDeadline;
         BigDecimal budget = BigDecimal.ZERO;
         Integer maxParticipants = 100;
+    }
+
+    private static class EventFormFields {
+        JPanel panel;
+        JTextField tfName;
+        JTextField tfLocation;
+        JTextField tfBudget;
+        JTextField tfMaxP;
+        JDateChooser startDate;
+        JSpinner startTime;
+        JDateChooser endDate;
+        JSpinner endTime;
+        JDateChooser regDate;
+        JSpinner regTime;
+        JTextArea taDesc;
+        JComboBox<String> cbStatus;
     }
 
     private void handleViewDetail() {

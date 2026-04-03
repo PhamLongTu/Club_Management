@@ -188,13 +188,15 @@ public class ProjectService {
     private MemberDTO memberToDTO(Member m) {
         String teamNames = "";
         if (m.getRole() != null && m.getRole().getPermissionLevel() != null
-            && m.getRole().getPermissionLevel() < 2) {
+            && m.getRole().getPermissionLevel() <= 2) {
             if (m.getTeams() != null && !m.getTeams().isEmpty()) {
                 teamNames = m.getTeams().stream()
                     .map(t -> t.getTeamName())
                     .collect(Collectors.joining(", "));
             }
         }
+        Integer permValue = m.getRole() != null ? m.getRole().getPermissionLevel() : null;
+        int permissionLevel = permValue != null ? permValue : 1;
         return new MemberDTO(
             m.getMemberId(),
             m.getFullName(),
@@ -205,8 +207,9 @@ public class ProjectService {
             m.getBirthDate(),
             m.getJoinDate(),
             m.getStatus(),
+            m.getAvatarUrl(),
             m.getRole() != null ? m.getRole().getRoleName() : "N/A",
-            m.getRole() != null ? m.getRole().getPermissionLevel() : 1,
+            permissionLevel,
             teamNames
         );
     }

@@ -115,7 +115,8 @@ public class MemberService {
      */
     public MemberDTO createMember(String fullName, String studentId, String email,
                                   String phone, String gender, LocalDate birthDate,
-                                  String password, Integer roleId, List<Integer> teamIds) {
+                                  String password, Integer roleId, List<Integer> teamIds,
+                                  String avatarUrl) {
         // --- Validate ---
         if (fullName == null || fullName.isBlank())
             throw new IllegalArgumentException("Họ tên không được để trống!");
@@ -143,10 +144,11 @@ public class MemberService {
             phone, gender, PasswordUtil.hashPassword(password), role
         );
         member.setBirthDate(birthDate);
+        member.setAvatarUrl(normalizeAvatarUrl(avatarUrl));
 
         // --- Lưu vào DB ---
         Member saved = memberDAO.save(member);
-        if (role.getPermissionLevel() != null && role.getPermissionLevel() < 2) {
+        if (role.getPermissionLevel() != null && role.getPermissionLevel() <= 2) {
             memberDAO.replaceTeams(saved.getMemberId(), teamIds);
             saved = memberDAO.findById(saved.getMemberId()).orElse(saved);
         } else {
@@ -200,7 +202,8 @@ public class MemberService {
      */
     public MemberDTO updateMember(Integer memberId, String fullName, String phone,
                                   String gender, LocalDate birthDate,
-                                  String status, Integer roleId, List<Integer> teamIds) {
+                                  String status, Integer roleId, List<Integer> teamIds,
+                                  String avatarUrl) {
         Member member = memberDAO.findById(memberId)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thành viên ID: " + memberId));
 
@@ -217,9 +220,10 @@ public class MemberService {
         member.setBirthDate(birthDate);
         member.setStatus(status);
         member.setRole(role);
+        member.setAvatarUrl(normalizeAvatarUrl(avatarUrl));
 
         Member updated = memberDAO.update(member);
-        if (role.getPermissionLevel() != null && role.getPermissionLevel() < 2) {
+        if (role.getPermissionLevel() != null && role.getPermissionLevel() <= 2) {
             memberDAO.replaceTeams(memberId, teamIds);
             updated = memberDAO.findById(memberId).orElse(updated);
         } else {
@@ -264,13 +268,15 @@ public class MemberService {
     private MemberDTO toDTO(Member member) {
         String teamNames = "";
         if (member.getRole() != null && member.getRole().getPermissionLevel() != null
-            && member.getRole().getPermissionLevel() < 2) {
+            && member.getRole().getPermissionLevel() <= 2) {
             if (member.getTeams() != null && !member.getTeams().isEmpty()) {
                 teamNames = member.getTeams().stream()
                     .map(t -> t.getTeamName())
                     .collect(Collectors.joining(", "));
             }
         }
+        Integer permValue = member.getRole() != null ? member.getRole().getPermissionLevel() : null;
+        int permissionLevel = permValue != null ? permValue : 1;
         return new MemberDTO(
             member.getMemberId(),
             member.getFullName(),
@@ -281,10 +287,17 @@ public class MemberService {
             member.getBirthDate(),
             member.getJoinDate(),
             member.getStatus(),
+            member.getAvatarUrl(),
             member.getRole() != null ? member.getRole().getRoleName() : "N/A",
-            member.getRole() != null ? member.getRole().getPermissionLevel() : 1,
+            permissionLevel,
             teamNames
         );
+    }
+
+    private String normalizeAvatarUrl(String avatarUrl) {
+        if (avatarUrl == null) return null;
+        String trimmed = avatarUrl.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     /**

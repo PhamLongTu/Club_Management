@@ -2,16 +2,16 @@ package com.clubmanagement.controller;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -32,6 +32,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
+
+import com.toedter.calendar.JDateChooser;
 
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.ProjectDTO;
@@ -155,22 +157,7 @@ public class ProjectController {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền tạo dự án!");
             return;
         }
-        JPanel form = buildProjectForm(null);
-        int res = JOptionPane.showConfirmDialog(null, form,
-            "Tạo dự án mới", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-        if (res == JOptionPane.OK_OPTION) {
-            try {
-                ProjectFormData d = extractData(form);
-                projectService.createProject(d.name, d.description, d.objective,
-                    d.startDate, d.endDate, d.budget, d.visibility, d.maxMembers,
-                    currentUser.getMemberId(), d.memberIds);
-                JOptionPane.showMessageDialog(null, "Đã tạo dự án!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                loadAllProjects();
-            } catch (RuntimeException ex) {
-                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        showProjectDialog(null, false);
     }
 
     private void handleEdit() {
@@ -189,24 +176,72 @@ public class ProjectController {
             JOptionPane.showMessageDialog(null, "Không tìm thấy dự án!");
             return;
         }
+        showProjectDialog(opt.get(), true);
+    }
 
-        ProjectDTO project = opt.get();
-        JPanel form = buildProjectForm(project);
-        int res = JOptionPane.showConfirmDialog(null, form,
-            "Sửa dự án", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    private void showProjectDialog(ProjectDTO project, boolean isEdit) {
+        ProjectFormFields fields = buildProjectForm(project);
+        String title = isEdit ? "Sửa dự án" : "Tạo dự án mới";
 
-        if (res == JOptionPane.OK_OPTION) {
+        JDialog dialog = new JDialog((Frame) null, title, true);
+        dialog.setSize(780, 620);
+        dialog.setLocationRelativeTo(null);
+        dialog.setLayout(new BorderLayout());
+
+        dialog.add(buildDialogHeader(title), BorderLayout.NORTH);
+        dialog.add(fields.panel, BorderLayout.CENTER);
+        dialog.add(buildDialogFooter(dialog, fields, project, isEdit), BorderLayout.SOUTH);
+        dialog.setVisible(true);
+    }
+
+    private JPanel buildDialogHeader(String title) {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(248, 250, 252));
+        header.setBorder(new EmptyBorder(12, 16, 12, 16));
+
+        JLabel label = new JLabel(title);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        label.setForeground(new Color(30, 41, 59));
+        header.add(label, BorderLayout.WEST);
+        return header;
+    }
+
+    private JPanel buildDialogFooter(JDialog dialog, ProjectFormFields fields, ProjectDTO project, boolean isEdit) {
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        footer.setBorder(new EmptyBorder(8, 16, 12, 16));
+
+        JButton btnCancel = new JButton("Hủy");
+        btnCancel.addActionListener(e -> dialog.dispose());
+
+        JButton btnSave = new JButton(isEdit ? "Cập nhật" : "Tạo mới");
+        btnSave.setBackground(new Color(16, 185, 129));
+        btnSave.setForeground(Color.WHITE);
+        btnSave.setBorderPainted(false);
+        btnSave.setFocusPainted(false);
+        btnSave.addActionListener(e -> {
             try {
-                ProjectFormData d = extractData(form);
-                projectService.updateProject(id, d.name, d.description, d.objective,
-                    d.startDate, d.endDate, d.budget, d.status, d.visibility,
-                    d.maxMembers, currentUser.getMemberId(), d.memberIds);
-                JOptionPane.showMessageDialog(null, "Đã cập nhật!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                ProjectFormData d = extractData(fields);
+                if (isEdit) {
+                    projectService.updateProject(project.getProjectId(), d.name, d.description, d.objective,
+                        d.startDate, d.endDate, d.budget, d.status, d.visibility,
+                        d.maxMembers, currentUser.getMemberId(), d.memberIds);
+                    JOptionPane.showMessageDialog(dialog, "Đã cập nhật!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    projectService.createProject(d.name, d.description, d.objective,
+                        d.startDate, d.endDate, d.budget, d.visibility, d.maxMembers,
+                        currentUser.getMemberId(), d.memberIds);
+                    JOptionPane.showMessageDialog(dialog, "Đã tạo dự án!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                }
+                dialog.dispose();
                 loadAllProjects();
             } catch (RuntimeException ex) {
-                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
-        }
+        });
+
+        footer.add(btnCancel);
+        footer.add(btnSave);
+        return footer;
     }
 
     private void handleDelete() {
@@ -235,94 +270,88 @@ public class ProjectController {
     }
 
     /** Tạo panel form nhập liệu dự án. */
-    private JPanel buildProjectForm(ProjectDTO project) {
+    private ProjectFormFields buildProjectForm(ProjectDTO project) {
         JPanel form = new JPanel(new GridLayout(0, 2, 8, 8));
-        form.setBorder(new EmptyBorder(10, 10, 10, 10));
+        form.setBorder(new EmptyBorder(12, 16, 12, 16));
+        form.setBackground(Color.WHITE);
         Font f = new Font("Segoe UI", Font.PLAIN, 13);
 
-        JTextField tfName = createField(project != null ? project.getProjectName() : "", f); tfName.setName("name");
-        JTextField tfStart = createField(project != null && project.getStartDate() != null ? project.getStartDate().toString() : "", f); tfStart.setName("start");
-        JTextField tfEnd = createField(project != null && project.getEndDate() != null ? project.getEndDate().toString() : "", f); tfEnd.setName("end");
-        JTextField tfBudget = createField(project != null && project.getBudget() != null ? project.getBudget().toPlainString() : "0", f); tfBudget.setName("budget");
+        ProjectFormFields fields = new ProjectFormFields();
+        fields.panel = form;
 
-        JTextArea taDesc = new JTextArea(3, 20); taDesc.setName("desc"); taDesc.setFont(f); taDesc.setText(project != null ? project.getDescription() : ""); taDesc.setLineWrap(true);
-        JTextArea taObj = new JTextArea(3, 20); taObj.setName("obj"); taObj.setFont(f); taObj.setText(project != null ? project.getObjective() : ""); taObj.setLineWrap(true);
+        fields.tfName = createField(project != null ? project.getProjectName() : "", f);
+        fields.tfBudget = createField(project != null && project.getBudget() != null ? project.getBudget().toPlainString() : "0", f);
+
+        fields.startDate = createDateChooser(project != null ? project.getStartDate() : null);
+        fields.endDate = createDateChooser(project != null ? project.getEndDate() : null);
+
+        fields.taDesc = new JTextArea(3, 20);
+        fields.taDesc.setFont(f);
+        fields.taDesc.setText(project != null ? project.getDescription() : "");
+        fields.taDesc.setLineWrap(true);
+
+        fields.taObj = new JTextArea(3, 20);
+        fields.taObj.setFont(f);
+        fields.taObj.setText(project != null ? project.getObjective() : "");
+        fields.taObj.setLineWrap(true);
 
         String[] statuses = {"Planning", "Active", "OnHold", "Completed", "Cancelled"};
-        JComboBox<String> cbStatus = new JComboBox<>(statuses); cbStatus.setName("status"); cbStatus.setFont(f);
-        if (project != null) cbStatus.setSelectedItem(project.getStatus());
+        fields.cbStatus = new JComboBox<>(statuses);
+        fields.cbStatus.setFont(f);
+        if (project != null) fields.cbStatus.setSelectedItem(project.getStatus());
 
-        JComboBox<String> cbVisibility = new JComboBox<>(new String[]{"Public", "Private"});
-        cbVisibility.setFont(f);
-        cbVisibility.setName("visibility");
-        if (project != null && project.getVisibility() != null) cbVisibility.setSelectedItem(project.getVisibility());
+        fields.cbVisibility = new JComboBox<>(new String[]{"Public", "Private"});
+        fields.cbVisibility.setFont(f);
+        if (project != null && project.getVisibility() != null) fields.cbVisibility.setSelectedItem(project.getVisibility());
 
-        JSpinner spMaxMembers = new JSpinner(new SpinnerNumberModel(0, 0, 200, 1));
-        spMaxMembers.setFont(f);
-        spMaxMembers.setName("maxMembers");
-        if (project != null && project.getMaxMembers() != null) spMaxMembers.setValue(project.getMaxMembers());
+        fields.spMaxMembers = new JSpinner(new SpinnerNumberModel(0, 0, 200, 1));
+        fields.spMaxMembers.setFont(f);
+        if (project != null && project.getMaxMembers() != null) fields.spMaxMembers.setValue(project.getMaxMembers());
 
         List<MemberDTO> allMembers = memberService.getAllMembers();
-        JList<MemberDTO> listMembers = new JList<>(allMembers.toArray(MemberDTO[]::new));
-        listMembers.setFont(f);
-        listMembers.setVisibleRowCount(4);
-        listMembers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        listMembers.setName("members");
+        fields.listMembers = new JList<>(allMembers.toArray(MemberDTO[]::new));
+        fields.listMembers.setFont(f);
+        fields.listMembers.setVisibleRowCount(4);
+        fields.listMembers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         if (project != null) {
             List<MemberDTO> currentMembers = projectService.getMembersOfProject(project.getProjectId());
             java.util.Set<Integer> memberIds = currentMembers.stream()
                 .map(MemberDTO::getMemberId)
                 .collect(java.util.stream.Collectors.toSet());
-            int[] indices = java.util.stream.IntStream.range(0, listMembers.getModel().getSize())
-                .filter(i -> memberIds.contains(listMembers.getModel().getElementAt(i).getMemberId()))
+            int[] indices = java.util.stream.IntStream.range(0, fields.listMembers.getModel().getSize())
+                .filter(i -> memberIds.contains(fields.listMembers.getModel().getElementAt(i).getMemberId()))
                 .toArray();
-            listMembers.setSelectedIndices(indices);
+            fields.listMembers.setSelectedIndices(indices);
         }
 
-        form.add(makeLabel("Tên dự án *:")); form.add(tfName);
-        form.add(makeLabel("Ngày bắt đầu (yyyy-MM-dd):")); form.add(tfStart);
-        form.add(makeLabel("Ngày kết thúc (yyyy-MM-dd):")); form.add(tfEnd);
-        form.add(makeLabel("Ngân sách (VNĐ):")); form.add(tfBudget);
-        form.add(makeLabel("Trạng thái:")); form.add(cbStatus);
-        form.add(makeLabel("Hiển thị:")); form.add(cbVisibility);
-        form.add(makeLabel("Số thành viên tối đa:")); form.add(spMaxMembers);
-        form.add(makeLabel("Thành viên:")); form.add(new JScrollPane(listMembers));
-        form.add(makeLabel("Mô tả:")); form.add(new JScrollPane(taDesc));
-        form.add(makeLabel("Mục tiêu:")); form.add(new JScrollPane(taObj));
-        return form;
+        form.add(makeLabel("Tên dự án *:")); form.add(fields.tfName);
+        form.add(makeLabel("Ngày bắt đầu:")); form.add(fields.startDate);
+        form.add(makeLabel("Ngày kết thúc:")); form.add(fields.endDate);
+        form.add(makeLabel("Ngân sách (VNĐ):")); form.add(fields.tfBudget);
+        form.add(makeLabel("Trạng thái:")); form.add(fields.cbStatus);
+        form.add(makeLabel("Hiển thị:")); form.add(fields.cbVisibility);
+        form.add(makeLabel("Số thành viên tối đa:")); form.add(fields.spMaxMembers);
+        form.add(makeLabel("Thành viên:")); form.add(new JScrollPane(fields.listMembers));
+        form.add(makeLabel("Mô tả:")); form.add(new JScrollPane(fields.taDesc));
+        form.add(makeLabel("Mục tiêu:")); form.add(new JScrollPane(fields.taObj));
+        return fields;
     }
 
-    private ProjectFormData extractData(JPanel form) {
+    private ProjectFormData extractData(ProjectFormFields fields) {
         ProjectFormData d = new ProjectFormData();
-        for (Component c : form.getComponents()) {
-            if (c instanceof JTextField tf) {
-                switch (tf.getName()) {
-                    case "name" -> d.name = tf.getText().trim();
-                    case "start" -> d.startDate = parseDate(tf.getText());
-                    case "end" -> d.endDate = parseDate(tf.getText());
-                    case "budget" -> {
-                        try { d.budget = new BigDecimal(tf.getText().trim()); }
-                        catch (NumberFormatException e) { d.budget = BigDecimal.ZERO; }
-                    }
-                }
-            } else if (c instanceof JComboBox<?> cb && "status".equals(cb.getName())) {
-                d.status = (String) cb.getSelectedItem();
-            } else if (c instanceof JComboBox<?> cb && "visibility".equals(cb.getName())) {
-                d.visibility = (String) cb.getSelectedItem();
-            } else if (c instanceof JScrollPane sp && sp.getViewport().getView() instanceof JTextArea ta) {
-                if ("desc".equals(ta.getName())) d.description = ta.getText().trim();
-                else if ("obj".equals(ta.getName())) d.objective = ta.getText().trim();
-            } else if (c instanceof JSpinner spn && "maxMembers".equals(spn.getName())) {
-                d.maxMembers = (Integer) spn.getValue();
-            } else if (c instanceof JScrollPane sp && sp.getViewport().getView() instanceof JList<?> list
-                    && "members".equals(list.getName())) {
-                @SuppressWarnings("unchecked")
-                JList<MemberDTO> l = (JList<MemberDTO>) list;
-                d.memberIds = l.getSelectedValuesList().stream()
-                    .map(MemberDTO::getMemberId)
-                    .toList();
-            }
-        }
+        d.name = fields.tfName.getText().trim();
+        d.startDate = toLocalDate(fields.startDate.getDate());
+        d.endDate = toLocalDate(fields.endDate.getDate());
+        d.description = fields.taDesc.getText().trim();
+        d.objective = fields.taObj.getText().trim();
+        d.status = (String) fields.cbStatus.getSelectedItem();
+        d.visibility = (String) fields.cbVisibility.getSelectedItem();
+        d.maxMembers = (Integer) fields.spMaxMembers.getValue();
+        d.memberIds = fields.listMembers.getSelectedValuesList().stream()
+            .map(MemberDTO::getMemberId)
+            .toList();
+        try { d.budget = new BigDecimal(fields.tfBudget.getText().trim()); }
+        catch (NumberFormatException e) { d.budget = BigDecimal.ZERO; }
 
         if (d.name == null || d.name.isBlank()) {
             throw new IllegalArgumentException("Tên dự án không được để trống!");
@@ -330,14 +359,14 @@ public class ProjectController {
         return d;
     }
 
-    private LocalDate parseDate(String text) {
-        String t = text.trim();
-        if (t.isEmpty()) return null;
-        try {
-            return LocalDate.parse(t, java.time.format.DateTimeFormatter.ofPattern("yyyy-M-d"));
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Ngày sai định dạng: '" + t + "'. Vui lòng dùng (yyyy-MM-dd)");
+    private JDateChooser createDateChooser(LocalDate date) {
+        JDateChooser chooser = new JDateChooser();
+        chooser.setDateFormatString("yyyy-MM-dd");
+        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        if (date != null) {
+            chooser.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         }
+        return chooser;
     }
 
     private JTextField createField(String v, Font f) {
@@ -359,6 +388,25 @@ public class ProjectController {
         BigDecimal budget = BigDecimal.ZERO;
         Integer maxMembers = 0;
         List<Integer> memberIds = java.util.Collections.emptyList();
+    }
+
+    private static class ProjectFormFields {
+        JPanel panel;
+        JTextField tfName;
+        JTextField tfBudget;
+        JDateChooser startDate;
+        JDateChooser endDate;
+        JTextArea taDesc;
+        JTextArea taObj;
+        JComboBox<String> cbStatus;
+        JComboBox<String> cbVisibility;
+        JSpinner spMaxMembers;
+        JList<MemberDTO> listMembers;
+    }
+
+    private LocalDate toLocalDate(Date date) {
+        if (date == null) return null;
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private void handleViewDetail() {

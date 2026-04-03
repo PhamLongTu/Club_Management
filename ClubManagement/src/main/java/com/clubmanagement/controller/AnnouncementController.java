@@ -180,7 +180,8 @@ public class AnnouncementController {
         JComboBox<TeamDTO> cbTeam = new JComboBox<>();
         cbTeam.setFont(f);
         cbTeam.setName("team");
-        cbTeam.addItem(null);
+        TeamDTO allTeamsOption = new TeamDTO(-1, "Tất cả ban", null, null, null, null);
+        cbTeam.addItem(allTeamsOption);
         List<TeamDTO> teams = currentUser.isAdmin()
             ? teamService.getAllTeams()
             : teamService.getTeamsByLeader(currentUser.getMemberId());
@@ -193,6 +194,8 @@ public class AnnouncementController {
                     break;
                 }
             }
+        } else {
+            cbTeam.setSelectedItem(allTeamsOption);
         }
 
         JCheckBox chkPinned = new JCheckBox("Ghim thông báo lên đầu");
@@ -231,7 +234,9 @@ public class AnnouncementController {
             else if (c instanceof JComboBox<?> cb && "target".equals(cb.getName())) d.targetAudience = (String) cb.getSelectedItem();
             else if (c instanceof JComboBox<?> cb && "team".equals(cb.getName())) {
                 TeamDTO team = (TeamDTO) cb.getSelectedItem();
-                d.targetTeamId = team != null ? team.getTeamId() : null;
+                d.targetTeamId = (team == null || Integer.valueOf(-1).equals(team.getTeamId()))
+                    ? null
+                    : team.getTeamId();
             }
             else if (c instanceof JCheckBox chk && "pinned".equals(chk.getName())) d.isPinned = chk.isSelected();
         }

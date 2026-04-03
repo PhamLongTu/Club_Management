@@ -23,6 +23,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.util.ImageUtil;
 
 /**
  * DashboardView - Màn hình chính sau khi đăng nhập.
@@ -180,9 +181,15 @@ public class DashboardView extends JFrame {
         userCard.setBorder(new EmptyBorder(8, 20, 20, 20));
         userCard.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel avatar = new JLabel(" ");
-        avatar.setFont(new Font("Segoe UI", Font.PLAIN, 36));
+        String initials = ImageUtil.buildInitials(currentUser.getFullName());
+        JLabel avatar = new JLabel();
+        avatar.setPreferredSize(new Dimension(64, 64));
+        avatar.setMinimumSize(new Dimension(64, 64));
+        avatar.setMaximumSize(new Dimension(64, 64));
         avatar.setAlignmentX(Component.LEFT_ALIGNMENT);
+        avatar.setIcon(ImageUtil.loadCircleAvatar(
+            currentUser.getAvatarUrl(), 64, initials, new Color(30, 41, 59), new Color(226, 232, 240)
+        ));
 
         JLabel nameL = new JLabel(currentUser.getFullName());
         nameL.setFont(new Font("Segoe UI", Font.BOLD, 13));
