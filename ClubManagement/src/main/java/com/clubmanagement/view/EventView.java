@@ -1,13 +1,33 @@
 package com.clubmanagement.view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-import java.awt.*;
-import java.util.List;
 
 /**
  * EventView - Màn hình quản lý Sự kiện.
@@ -22,7 +42,7 @@ public class EventView {
 
     private static final String[] COLUMNS = {
         "ID", "Tên sự kiện", "Ngày bắt đầu", "Ngày kết thúc",
-        "Địa điểm", "Trạng thái", "Ngân sách", "Đăng ký", "Người tạo"
+        "Trạng thái", "Đăng ký"
     };
 
     private JPanel        mainPanel;
@@ -63,7 +83,7 @@ public class EventView {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("📅 Quản lý Sự kiện");
+        JLabel title = new JLabel("Quản lý Sự kiện");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -90,7 +110,7 @@ public class EventView {
         ));
         searchField.setToolTipText("Tìm theo tên hoặc địa điểm...");
 
-        btnSearch = makeBtn("🔍 Tìm", PRIMARY, Color.WHITE);
+        btnSearch = makeBtn("Tìm", PRIMARY, Color.WHITE);
 
         statusFilter = new JComboBox<>(new String[]{"Tất cả", "Upcoming", "Ongoing", "Completed", "Cancelled"});
         statusFilter.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -107,12 +127,13 @@ public class EventView {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
 
-        btnRefresh = makeBtn("🔄 Làm mới", new Color(100,116,139), Color.WHITE);
-        btnAdd     = makeBtn("➕ Thêm",     SUCCESS_CLR,             Color.WHITE);
-        btnEdit    = makeBtn("✏ Sửa",      WARNING_CLR,             Color.WHITE);
-        btnDelete  = makeBtn("🗑 Xóa",     DANGER_CLR,              Color.WHITE);
+        btnRefresh = makeBtn("Làm mới", new Color(100,116,139), Color.WHITE);
+        btnAdd     = makeBtn("Thêm",     SUCCESS_CLR,             Color.WHITE);
+        btnEdit    = makeBtn("Sửa",      WARNING_CLR,             Color.WHITE);
+        btnDelete  = makeBtn("Xóa",     DANGER_CLR,              Color.WHITE);
 
         if (!currentUser.isLeader()) {
+            btnAdd.setVisible(false);
             btnEdit.setVisible(false);
             btnDelete.setVisible(false);
         }
@@ -145,8 +166,8 @@ public class EventView {
         eventTable = new JTable(tableModel);
         styleTable(eventTable);
 
-        // Renderer màu cho cột Trạng thái (index 5)
-        eventTable.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
+        // Renderer màu cho cột Trạng thái (index 4)
+        eventTable.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean sel, boolean focused, int row, int col) {
@@ -167,23 +188,12 @@ public class EventView {
             }
         });
 
-        // Renderer căn phải cho cột Ngân sách (index 6)
-        eventTable.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean sel, boolean focused, int row, int col) {
-                super.getTableCellRendererComponent(table, value, sel, focused, row, col);
-                setHorizontalAlignment(SwingConstants.RIGHT);
-                return this;
-            }
-        });
-
         // Ẩn cột ID
         eventTable.getColumnModel().getColumn(0).setMinWidth(0);
         eventTable.getColumnModel().getColumn(0).setMaxWidth(0);
         eventTable.getColumnModel().getColumn(0).setWidth(0);
 
-        int[] colWidths = {0, 220, 130, 130, 140, 90, 110, 70, 120};
+        int[] colWidths = {0, 260, 130, 130, 100, 90};
         for (int i = 0; i < colWidths.length; i++) {
             if (colWidths[i] > 0)
                 eventTable.getColumnModel().getColumn(i).setPreferredWidth(colWidths[i]);
@@ -260,20 +270,12 @@ public class EventView {
                 e.getEventName(),
                 e.getStartDate() != null ? e.getStartDate().toLocalDate().toString() : "",
                 e.getEndDate()   != null ? e.getEndDate().toLocalDate().toString()   : "",
-                e.getLocation(),
                 e.getStatus(),
-                formatCurrency(e.getBudget()),
-                e.getRegisteredCount() + "/" + e.getMaxParticipants(),
-                e.getCreatedByName()
+                e.getRegisteredCount() + "/" + e.getMaxParticipants()
             });
         }
         countLabel.setText("Tổng: " + events.size() + " sự kiện");
         statusBar.setText("Đã tải " + events.size() + " sự kiện.");
-    }
-
-    private String formatCurrency(java.math.BigDecimal amount) {
-        if (amount == null) return "0 ₫";
-        return String.format("%,.0f ₫", amount);
     }
 
     public Integer getSelectedEventId() {

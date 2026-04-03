@@ -1,16 +1,32 @@
 package com.clubmanagement.view;
 
-import com.clubmanagement.dto.MemberDTO;
-import com.clubmanagement.dto.TaskDTO;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+
+import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.dto.TaskDTO;
 
 public class TaskView {
 
@@ -20,6 +36,7 @@ public class TaskView {
 
     private JPanel mainPanel;
     private JButton btnAdd, btnEdit, btnDelete, btnRefresh;
+    private JComboBox<String> filterBox;
     private JTable taskTable;
     private DefaultTableModel tableModel;
     private JLabel countLabel;
@@ -55,7 +72,7 @@ public class TaskView {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("🎯 Phân công Nhiệm vụ");
+        JLabel title = new JLabel("Phân công Nhiệm vụ");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -67,13 +84,28 @@ public class TaskView {
         ));
         toolbar.setBackground(Color.WHITE);
 
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        leftPanel.setOpaque(false);
+
+        filterBox = new JComboBox<>(new String[]{
+            "Tất cả",
+            "Chưa chỉ định (Public)",
+            "Đã chỉ định (Public/Private)",
+            "Nhiệm vụ của tôi"
+        });
+        filterBox.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        filterBox.setPreferredSize(new Dimension(220, 34));
+
+        leftPanel.add(new JLabel("Bộ lọc:"));
+        leftPanel.add(filterBox);
+
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
 
-        btnRefresh = makeBtn("🔄 Làm mới",  new Color(100,116,139), Color.WHITE);
-        btnAdd     = makeBtn("➕ Giao việc", SUCCESS_CLR, Color.WHITE);
-        btnEdit    = makeBtn("✏ Sửa",       WARNING_CLR, Color.WHITE);
-        btnDelete  = makeBtn("🗑 Xóa",      DANGER_CLR, Color.WHITE);
+        btnRefresh = makeBtn("Làm mới",  new Color(100,116,139), Color.WHITE);
+        btnAdd     = makeBtn("Giao việc", SUCCESS_CLR, Color.WHITE);
+        btnEdit    = makeBtn("Sửa",       WARNING_CLR, Color.WHITE);
+        btnDelete  = makeBtn("Xóa",      DANGER_CLR, Color.WHITE);
 
         if (!currentUser.isLeader()) {
             btnAdd.setVisible(false);
@@ -91,6 +123,7 @@ public class TaskView {
         rightPanel.add(btnEdit);
         rightPanel.add(btnDelete);
 
+        toolbar.add(leftPanel, BorderLayout.WEST);
         toolbar.add(rightPanel, BorderLayout.EAST);
 
         panel.add(title, BorderLayout.NORTH);
@@ -176,17 +209,19 @@ public class TaskView {
                     setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
                     setForeground(TEXT_DARK);
                 }
-                if (col == 1) {
-                    setFont(new Font("Segoe UI", Font.BOLD, 13));
-                    setForeground(PRIMARY);
-                } else if (col == 5) {
-                    // Priority rendering text style
-                    setFont(new Font("Segoe UI", Font.BOLD, 12));
-                    if ("High".equals(v) || "Critical".equals(v)) setForeground(DANGER_CLR);
-                    else if ("Medium".equals(v)) setForeground(WARNING_CLR);
-                    else setForeground(INFO_CLR);
-                } else {
-                    setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                switch (col) {
+                    case 1 -> {
+                        setFont(new Font("Segoe UI", Font.BOLD, 13));
+                        setForeground(PRIMARY);
+                    }
+                    case 5 -> {
+                        // Priority rendering text style
+                        setFont(new Font("Segoe UI", Font.BOLD, 12));
+                        if ("High".equals(v) || "Critical".equals(v)) setForeground(DANGER_CLR);
+                        else if ("Medium".equals(v)) setForeground(WARNING_CLR);
+                        else setForeground(INFO_CLR);
+                    }
+                    default -> setFont(new Font("Segoe UI", Font.PLAIN, 13));
                 }
                 setBorder(new EmptyBorder(0, 8, 0, 8));
                 return this;
@@ -240,4 +275,5 @@ public class TaskView {
     public JButton getBtnDelete()      { return btnDelete; }
     public JButton getBtnRefresh()     { return btnRefresh; }
     public JTable  getTable()          { return taskTable; }
+    public JComboBox<String> getFilterBox() { return filterBox; }
 }

@@ -1,16 +1,17 @@
 package com.clubmanagement.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.clubmanagement.dao.TeamDAO;
 import com.clubmanagement.dto.TeamDTO;
 import com.clubmanagement.entity.Member;
 import com.clubmanagement.entity.Team;
 import com.clubmanagement.util.HibernateUtil;
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TeamService {
 
@@ -29,6 +30,14 @@ public class TeamService {
 
     public List<TeamDTO> getAllTeams() {
         return teamDAO.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    public List<TeamDTO> getTeamsByLeader(Integer leaderId) {
+        if (leaderId == null) return java.util.Collections.emptyList();
+        return teamDAO.findAll().stream()
+            .filter(t -> t.getLeader() != null && leaderId.equals(t.getLeader().getMemberId()))
+            .map(this::toDTO)
+            .collect(Collectors.toList());
     }
 
     public TeamDTO updateTeam(Integer teamId, String teamName, String description, Integer leaderId) {

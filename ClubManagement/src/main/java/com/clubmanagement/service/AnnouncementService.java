@@ -1,16 +1,19 @@
 package com.clubmanagement.service;
 
-import com.clubmanagement.dao.AnnouncementDAO;
-import com.clubmanagement.entity.Announcement;
-import com.clubmanagement.entity.Member;
-import com.clubmanagement.util.HibernateUtil;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.clubmanagement.dao.AnnouncementDAO;
 import com.clubmanagement.dto.AnnouncementDTO;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.entity.Announcement;
+import com.clubmanagement.entity.Member;
+import com.clubmanagement.entity.Team;
+import com.clubmanagement.util.HibernateUtil;
 
 /**
  * AnnouncementService - Tầng nghiệp vụ cho Thông báo.
@@ -32,14 +35,15 @@ public class AnnouncementService {
      */
     public AnnouncementDTO createAnnouncement(String title, String content,
                                            Boolean isPinned, String targetAudience,
-                                           Integer authorId) {
+                                           Integer targetTeamId, Integer authorId) {
         if (title == null || title.isBlank())
             throw new IllegalArgumentException("Tiêu đề thông báo không được để trống!");
         if (content == null || content.isBlank())
             throw new IllegalArgumentException("Nội dung thông báo không được để trống!");
 
         Member author = findMemberById(authorId);
-        Announcement ann = new Announcement(title.trim(), content, isPinned, targetAudience, author);
+        Team targetTeam = findTeamById(targetTeamId);
+        Announcement ann = new Announcement(title.trim(), content, isPinned, targetAudience, author, targetTeam);
         return toDTO(announcementDAO.save(ann));
     }
 
@@ -49,6 +53,10 @@ public class AnnouncementService {
      */
     public List<AnnouncementDTO> getAllAnnouncements() {
         return announcementDAO.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    public List<AnnouncementDTO> getAnnouncementsForUser(MemberDTO user) {
+        return announcementDAO.findForUser(user).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     /**
@@ -62,7 +70,8 @@ public class AnnouncementService {
 
     /** Cập nhật thông báo. */
     public AnnouncementDTO updateAnnouncement(Integer id, String title, String content,
-                                           Boolean isPinned, String targetAudience) {
+                                           Boolean isPinned, String targetAudience,
+                                           Integer targetTeamId) {
         Announcement ann = announcementDAO.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông báo!"));
 
@@ -73,6 +82,7 @@ public class AnnouncementService {
         ann.setContent(content);
         ann.setIsPinned(isPinned);
         ann.setTargetAudience(targetAudience);
+        ann.setTargetTeam(findTeamById(targetTeamId));
         return toDTO(announcementDAO.update(ann));
     }
 
@@ -91,7 +101,9 @@ public class AnnouncementService {
             a.getCreatedDate(),
             a.getIsPinned(),
             a.getTargetAudience(),
-            a.getAuthor() != null ? a.getAuthor().getFullName() : "Hệ thống"
+            a.getAuthor() != null ? a.getAuthor().getFullName() : "Hệ thống",
+            a.getTargetTeam() != null ? a.getTargetTeam().getTeamId() : null,
+            a.getTargetTeam() != null ? a.getTargetTeam().getTeamName() : null
         );
     }
 
@@ -102,6 +114,16 @@ public class AnnouncementService {
             return session.get(Member.class, memberId);
         } catch (Exception e) {
             logger.error("Lỗi khi tìm Member: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private Team findTeamById(Integer teamId) {
+        if (teamId == null) return null;
+        try (Session session = HibernateUtil.openSession()) {
+            return session.get(Team.class, teamId);
+        } catch (Exception e) {
+            logger.error("Lỗi khi tìm Team: {}", e.getMessage());
             return null;
         }
     }

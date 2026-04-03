@@ -1,13 +1,32 @@
 package com.clubmanagement.view;
 
-import com.clubmanagement.dto.MemberDTO;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
+import com.clubmanagement.dto.MemberDTO;
 
 /**
  * MemberView - Màn hình quản lý Thành viên.
@@ -23,7 +42,7 @@ public class MemberView {
 
     // ====== Table columns ======
     private static final String[] COLUMNS = {
-        "ID", "Họ và tên", "Mã SV", "Email", "SĐT", "Giới tính", "Ngày vào", "Trạng thái", "Vai trò"
+        "ID", "Họ và tên", "Mã SV", "Giới tính", "Ngày vào", "Trạng thái", "Vai trò", "Ban/Nhóm"
     };
 
     // ====== Components ======
@@ -74,7 +93,7 @@ public class MemberView {
         panel.setOpaque(false);
 
         // Tiêu đề
-        JLabel title = new JLabel("👥 Quản lý Thành viên");
+        JLabel title = new JLabel("Quản lý Thành viên");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -106,7 +125,7 @@ public class MemberView {
         ));
         searchField.setToolTipText("Tìm theo tên, email, mã SV...");
 
-        btnSearch = makeBtn("🔍 Tìm", PRIMARY, Color.WHITE);
+        btnSearch = makeBtn("Tìm", PRIMARY, Color.WHITE);
 
         statusFilter = new JComboBox<>(new String[]{"Tất cả", "Active", "Inactive", "Suspended"});
         statusFilter.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -123,13 +142,14 @@ public class MemberView {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btnPanel.setOpaque(false);
 
-        btnRefresh = makeBtn("🔄 Làm mới",      new Color(100,116,139), Color.WHITE);
-        btnAdd     = makeBtn("➕ Thêm",          SUCCESS_CLR,             Color.WHITE);
-        btnEdit    = makeBtn("✏ Sửa",           WARNING_CLR,             Color.WHITE);
-        btnDelete  = makeBtn("🗑 Xóa",          DANGER_CLR,              Color.WHITE);
+        btnRefresh = makeBtn("Làm mới",      new Color(100,116,139), Color.WHITE);
+        btnAdd     = makeBtn("Thêm",          SUCCESS_CLR,             Color.WHITE);
+        btnEdit    = makeBtn("Sửa",           WARNING_CLR,             Color.WHITE);
+        btnDelete  = makeBtn("Xóa",          DANGER_CLR,              Color.WHITE);
 
         // Nút sửa/xóa chỉ hiện với Admin/Leader
         if (!currentUser.isLeader()) {
+            btnAdd.setVisible(false);
             btnEdit.setVisible(false);
             btnDelete.setVisible(false);
         }
@@ -166,7 +186,7 @@ public class MemberView {
         styleTable(memberTable);
 
         // Custom renderer để tô màu cột "Trạng thái"
-        memberTable.getColumnModel().getColumn(7).setCellRenderer(new DefaultTableCellRenderer() {
+        memberTable.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean selected, boolean focused, int row, int col) {
@@ -187,7 +207,7 @@ public class MemberView {
         });
 
         // Custom renderer cho cột Vai trò
-        memberTable.getColumnModel().getColumn(8).setCellRenderer(new DefaultTableCellRenderer() {
+        memberTable.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean selected, boolean focused, int row, int col) {
@@ -212,7 +232,7 @@ public class MemberView {
         memberTable.getColumnModel().getColumn(0).setWidth(0);
 
         // Chiều rộng cột
-        int[] colWidths = {0, 160, 90, 190, 110, 80, 100, 90, 80};
+        int[] colWidths = {0, 180, 90, 90, 110, 90, 90, 180};
         for (int i = 0; i < colWidths.length; i++) {
             if (colWidths[i] > 0)
                 memberTable.getColumnModel().getColumn(i).setPreferredWidth(colWidths[i]);
@@ -297,12 +317,11 @@ public class MemberView {
                 m.getMemberId(),
                 m.getFullName(),
                 m.getStudentId(),
-                m.getEmail(),
-                m.getPhone(),
                 m.getGender(),
                 m.getJoinDate(),
                 m.getStatus(),
-                m.getRoleName()
+                m.getRoleName(),
+                m.getTeamNames()
             });
         }
         countLabel.setText("Tổng: " + members.size() + " thành viên");

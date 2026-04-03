@@ -14,12 +14,15 @@ public class AnnouncementDTO {
     private Boolean isPinned;
     private String targetAudience;
     private String authorName; // Tên người đăng
+    private Integer targetTeamId;
+    private String targetTeamName;
 
     public AnnouncementDTO() {}
 
     public AnnouncementDTO(Integer announcementId, String title, String content,
                            LocalDateTime createdDate, Boolean isPinned,
-                           String targetAudience, String authorName) {
+                           String targetAudience, String authorName,
+                           Integer targetTeamId, String targetTeamName) {
         this.announcementId = announcementId;
         this.title = title;
         this.content = content;
@@ -27,6 +30,8 @@ public class AnnouncementDTO {
         this.isPinned = isPinned;
         this.targetAudience = targetAudience;
         this.authorName = authorName;
+        this.targetTeamId = targetTeamId;
+        this.targetTeamName = targetTeamName;
     }
 
     public Integer getAnnouncementId()       { return announcementId; }
@@ -49,6 +54,12 @@ public class AnnouncementDTO {
 
     public String getAuthorName()          { return authorName; }
     public void setAuthorName(String v)    { this.authorName = v; }
+
+    public Integer getTargetTeamId()       { return targetTeamId; }
+    public void setTargetTeamId(Integer v) { this.targetTeamId = v; }
+
+    public String getTargetTeamName()      { return targetTeamName; }
+    public void setTargetTeamName(String v){ this.targetTeamName = v; }
 
     @Override
     public String toString() { return title; }

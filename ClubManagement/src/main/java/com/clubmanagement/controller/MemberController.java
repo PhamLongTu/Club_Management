@@ -1,15 +1,34 @@
 package com.clubmanagement.controller;
 
-import com.clubmanagement.dto.MemberDTO;
-import com.clubmanagement.entity.Role;
-import com.clubmanagement.service.MemberService;
-import com.clubmanagement.view.MemberView;
-import com.clubmanagement.view.MemberFormDialog;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
 import java.util.List;
 import java.util.Optional;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingWorker;
+
+import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.entity.Role;
+import com.clubmanagement.service.EventService;
+import com.clubmanagement.service.MemberService;
+import com.clubmanagement.service.ProjectService;
+import com.clubmanagement.service.TaskService;
+import com.clubmanagement.service.TeamService;
+import com.clubmanagement.view.MemberFormDialog;
+import com.clubmanagement.view.MemberView;
 
 /**
  * MemberController - Bộ điều khiển màn hình Thành viên.
@@ -25,6 +44,10 @@ public class MemberController {
     private final MemberView    view;
     private final MemberDTO     currentUser;
     private final MemberService memberService = new MemberService();
+    private final TeamService teamService = new TeamService();
+    private final TaskService taskService = new TaskService();
+    private final ProjectService projectService = new ProjectService();
+    private final EventService eventService = new EventService();
 
     /**
      * @param view        MemberView
@@ -61,12 +84,12 @@ public class MemberController {
         // Nút Xóa
         view.getBtnDelete().addActionListener(e -> handleDelete());
 
-        // Double-click vào dòng → mở form sửa
+        // Click vào dòng → mở dialog chi tiết (chỉ Leader/Admin)
         view.getTable().addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                if (e.getClickCount() == 2 && currentUser.isLeader()) {
-                    handleEdit();
+                if (e.getClickCount() == 1 && currentUser.isLeader()) {
+                    handleViewDetail();
                 }
             }
         });
@@ -155,10 +178,11 @@ public class MemberController {
 
         try {
             List<Role> roles = memberService.getAllRoles();
+            List<com.clubmanagement.dto.TeamDTO> teams = teamService.getAllTeams();
 
             // Tìm frame cha (cần để dialog hiển thị đúng vị trí)
             Frame parent = JOptionPane.getFrameForComponent(view.getPanel());
-            MemberFormDialog dialog = new MemberFormDialog(parent, roles);
+            MemberFormDialog dialog = new MemberFormDialog(parent, roles, teams);
             dialog.setVisible(true); // Chặn lại đây đến khi đóng dialog (modal)
 
             if (dialog.isConfirmed()) {
@@ -171,7 +195,8 @@ public class MemberController {
                     dialog.getGender(),
                     dialog.getBirthDate(),
                     dialog.getPassword(),
-                    dialog.getSelectedRole().getRoleId()
+                    dialog.getSelectedRole().getRoleId(),
+                    dialog.getSelectedTeamIds()
                 );
                 JOptionPane.showMessageDialog(null,
                     "Đã thêm thành viên: " + created.getFullName(),
@@ -210,8 +235,10 @@ public class MemberController {
             }
 
             List<Role> roles  = memberService.getAllRoles();
+            List<com.clubmanagement.dto.TeamDTO> teams = teamService.getAllTeams();
+            List<Integer> teamIds = memberService.getTeamIdsForMember(selectedId);
             Frame parent      = JOptionPane.getFrameForComponent(view.getPanel());
-            MemberFormDialog dialog = new MemberFormDialog(parent, roles, memberOpt.get());
+            MemberFormDialog dialog = new MemberFormDialog(parent, roles, teams, memberOpt.get(), teamIds);
             dialog.setVisible(true);
 
             if (dialog.isConfirmed()) {
@@ -222,7 +249,8 @@ public class MemberController {
                     dialog.getGender(),
                     dialog.getBirthDate(),
                     dialog.getStatus(),
-                    dialog.getSelectedRole().getRoleId()
+                    dialog.getSelectedRole().getRoleId(),
+                    dialog.getSelectedTeamIds()
                 );
                 JOptionPane.showMessageDialog(null, "Đã cập nhật thành công!",
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);
@@ -273,5 +301,95 @@ public class MemberController {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void handleViewDetail() {
+        Integer selectedId = view.getSelectedMemberId();
+        if (selectedId == null) return;
+
+        Optional<MemberDTO> memberOpt = memberService.getMemberById(selectedId);
+        if (memberOpt.isEmpty()) return;
+        MemberDTO member = memberOpt.get();
+
+        List<com.clubmanagement.dto.TaskDTO> tasks = taskService.getTasksForUser(selectedId);
+        List<com.clubmanagement.dto.ProjectDTO> projects = projectService.getProjectsForUser(selectedId);
+        List<com.clubmanagement.dto.EventDTO> events = eventService.getEventsForMember(selectedId);
+
+        JDialog dialog = new JDialog((Frame) null, "Chi tiết thành viên", true);
+        dialog.setSize(760, 560);
+        dialog.setLocationRelativeTo(null);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBorder(new javax.swing.border.EmptyBorder(16, 20, 16, 20));
+        JLabel title = new JLabel(member.getFullName());
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        String metaText = member.getRoleName() + " | " + member.getStatus();
+        JLabel meta = new JLabel(metaText);
+        meta.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        meta.setForeground(new Color(100, 116, 139));
+
+        JPanel headerText = new JPanel();
+        headerText.setLayout(new BoxLayout(headerText, BoxLayout.Y_AXIS));
+        headerText.setOpaque(false);
+        headerText.add(title);
+        headerText.add(Box.createVerticalStrut(4));
+        headerText.add(meta);
+
+        header.add(headerText, BorderLayout.CENTER);
+
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBorder(new javax.swing.border.EmptyBorder(8, 20, 16, 20));
+
+        content.add(makeInfoLabel("Email: " + member.getEmail()));
+        content.add(makeInfoLabel("SĐT: " + (member.getPhone() != null ? member.getPhone() : "")));
+        content.add(makeInfoLabel("Ban/Nhóm: " + (member.getTeamNames() != null ? member.getTeamNames() : "")));
+        content.add(makeInfoLabel("Ngày vào: " + (member.getJoinDate() != null ? member.getJoinDate() : "")));
+        content.add(Box.createVerticalStrut(8));
+
+        DefaultListModel<String> taskList = new DefaultListModel<>();
+        for (var t : tasks) taskList.addElement(t.getTitle());
+        JList<String> taskJList = new JList<>(taskList);
+        taskJList.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        taskJList.setVisibleRowCount(4);
+        content.add(new JLabel("Nhiệm vụ đã tham gia:"));
+        content.add(new JScrollPane(taskJList));
+        content.add(Box.createVerticalStrut(8));
+
+        DefaultListModel<String> projectList = new DefaultListModel<>();
+        for (var p : projects) projectList.addElement(p.getProjectName());
+        JList<String> projectJList = new JList<>(projectList);
+        projectJList.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        projectJList.setVisibleRowCount(4);
+        content.add(new JLabel("Dự án đã tham gia:"));
+        content.add(new JScrollPane(projectJList));
+        content.add(Box.createVerticalStrut(8));
+
+        DefaultListModel<String> eventList = new DefaultListModel<>();
+        for (var e : events) eventList.addElement(e.getEventName());
+        JList<String> eventJList = new JList<>(eventList);
+        eventJList.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        eventJList.setVisibleRowCount(4);
+        content.add(new JLabel("Sự kiện đã tham gia:"));
+        content.add(new JScrollPane(eventJList));
+
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnClose = new JButton("Đóng");
+        btnClose.addActionListener(e -> dialog.dispose());
+        footer.add(btnClose);
+
+        dialog.add(header, BorderLayout.NORTH);
+        dialog.add(new JScrollPane(content), BorderLayout.CENTER);
+        dialog.add(footer, BorderLayout.SOUTH);
+        dialog.setVisible(true);
+    }
+
+    private JLabel makeInfoLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setBorder(new javax.swing.border.EmptyBorder(2, 0, 2, 0));
+        return label;
     }
 }

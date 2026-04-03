@@ -1,13 +1,28 @@
 package com.clubmanagement.view;
 
-import com.clubmanagement.dto.MemberDTO;
-import com.clubmanagement.entity.Announcement;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridLayout;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import com.clubmanagement.dto.MemberDTO;
 
 /**
  * DashboardView - Màn hình chính sau khi đăng nhập.
@@ -29,11 +44,7 @@ public class DashboardView extends JFrame {
     private EventView         eventView;
     private ProjectView       projectView;
     private AnnouncementView  announcementView;
-    private TeamView          teamView;
     private TaskView          taskView;
-    private SponsorView       sponsorView;
-    private AttendanceView    attendanceView;
-    private FeedbackView      feedbackView;
     private DocumentView      documentView;
 
     // ====== Components ======
@@ -55,11 +66,7 @@ public class DashboardView extends JFrame {
     private JButton btnEvents;
     private JButton btnProjects;
     private JButton btnAnnouncements;
-    private JButton btnTeams;
     private JButton btnTasks;
-    private JButton btnSponsors;
-    private JButton btnAttendances;
-    private JButton btnFeedbacks;
     private JButton btnDocuments;
 
     // Quick action buttons (Dashboard home)
@@ -71,13 +78,12 @@ public class DashboardView extends JFrame {
     private static final Color SIDEBAR_BG  = new Color(15, 23, 42);
     private static final Color SIDEBAR_HOV = new Color(30, 41, 59);
     private static final Color SIDEBAR_SEL = new Color(37, 99, 235);
-    private static final Color TOP_BG      = new Color(248, 250, 252);
     private static final Color CONTENT_BG  = new Color(241, 245, 249);
     private static final Color PRIMARY      = new Color(37, 99, 235);
     private static final Color TEXT_DARK   = new Color(15, 23, 42);
     private static final Color TEXT_GRAY   = new Color(100, 116, 139);
 
-    private MemberDTO currentUser;
+    private final MemberDTO currentUser;
 
     public DashboardView(MemberDTO currentUser) {
         this.currentUser = currentUser;
@@ -115,7 +121,7 @@ public class DashboardView extends JFrame {
         bar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(226, 232, 240)));
 
         // Trái: logo
-        JLabel logo = new JLabel("  🏫  CLB Manager");
+        JLabel logo = new JLabel("CLB Manager");
         logo.setFont(new Font("Segoe UI", Font.BOLD, 18));
         logo.setForeground(PRIMARY);
 
@@ -174,8 +180,8 @@ public class DashboardView extends JFrame {
         userCard.setBorder(new EmptyBorder(8, 20, 20, 20));
         userCard.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel avatar = new JLabel("👤");
-        avatar.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 36));
+        JLabel avatar = new JLabel(" ");
+        avatar.setFont(new Font("Segoe UI", Font.PLAIN, 36));
         avatar.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel nameL = new JLabel(currentUser.getFullName());
@@ -198,17 +204,13 @@ public class DashboardView extends JFrame {
         sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
         sep.setForeground(new Color(51, 65, 85));
 
-        btnHome          = makeSidebarBtn("🏠  Tổng quan",    true);
-        btnAnnouncements = makeSidebarBtn("📢  Thông báo",   false);
-        btnTasks         = makeSidebarBtn("🎯  Nhiệm vụ",     false);
-        btnTeams         = makeSidebarBtn("🏢  Ban / Nhóm",   false);
-        btnSponsors      = makeSidebarBtn("🤝  Tài trợ",      false);
-        btnAttendances   = makeSidebarBtn("✅  Điểm danh",    false);
-        btnMembers       = makeSidebarBtn("👥  Thành viên",   false);
-        btnEvents        = makeSidebarBtn("📅  Sự kiện",      false);
-        btnProjects      = makeSidebarBtn("📋  Dự án",        false);
-        btnFeedbacks     = makeSidebarBtn("📬  Phản hồi",     false);
-        btnDocuments     = makeSidebarBtn("📂  Tài liệu",     false);
+        btnHome          = makeSidebarBtn("Tổng quan",    true);
+        btnAnnouncements = makeSidebarBtn("Thông báo",   false);
+        btnTasks         = makeSidebarBtn("Nhiệm vụ",     false);
+        btnMembers       = makeSidebarBtn("Thành viên",   false);
+        btnEvents        = makeSidebarBtn("Sự kiện",      false);
+        btnProjects      = makeSidebarBtn("Dự án",        false);
+        btnDocuments     = makeSidebarBtn("Tài liệu",     false);
 
         sidebar.add(userCard);
         sidebar.add(sep);
@@ -216,13 +218,9 @@ public class DashboardView extends JFrame {
         sidebar.add(btnHome);
         sidebar.add(btnAnnouncements);
         sidebar.add(btnTasks);
-        sidebar.add(btnTeams);
-        sidebar.add(btnSponsors);
-        sidebar.add(btnAttendances);
         sidebar.add(btnMembers);
         sidebar.add(btnEvents);
         sidebar.add(btnProjects);
-        sidebar.add(btnFeedbacks);
         sidebar.add(btnDocuments);
         sidebar.add(Box.createVerticalGlue());
 
@@ -280,10 +278,6 @@ public class DashboardView extends JFrame {
         homePanel        = buildHomePanel();
         announcementView = new AnnouncementView(currentUser);
         taskView         = new TaskView(currentUser);
-        teamView         = new TeamView(currentUser);
-        sponsorView      = new SponsorView(currentUser);
-        attendanceView   = new AttendanceView(currentUser);
-        feedbackView     = new FeedbackView(currentUser);
         documentView     = new DocumentView(currentUser);
         memberView       = new MemberView(currentUser);
         eventView        = new EventView(currentUser);
@@ -292,10 +286,6 @@ public class DashboardView extends JFrame {
         contentArea.add(homePanel,                 "HOME");
         contentArea.add(announcementView.getPanel(),"ANNOUNCEMENTS");
         contentArea.add(taskView.getPanel(),        "TASKS");
-        contentArea.add(teamView.getPanel(),        "TEAMS");
-        contentArea.add(sponsorView.getPanel(),     "SPONSORS");
-        contentArea.add(attendanceView.getPanel(),  "ATTENDANCES");
-        contentArea.add(feedbackView.getPanel(),    "FEEDBACKS");
         contentArea.add(documentView.getPanel(),    "DOCUMENTS");
         contentArea.add(memberView.getPanel(),      "MEMBERS");
         contentArea.add(eventView.getPanel(),       "EVENTS");
@@ -339,11 +329,11 @@ public class DashboardView extends JFrame {
         eventCountLabel   = new JLabel("...");
         projectCountLabel = new JLabel("...");
 
-        statsPanel.add(buildStatCard("👥 Thành viên", memberCountLabel,
+        statsPanel.add(buildStatCard("Thành viên", memberCountLabel,
             "Tổng thành viên đang hoạt động", new Color(37, 99, 235)));
-        statsPanel.add(buildStatCard("📅 Sự kiện", eventCountLabel,
+        statsPanel.add(buildStatCard("Sự kiện", eventCountLabel,
             "Sự kiện sắp / đang diễn ra", new Color(16, 185, 129)));
-        statsPanel.add(buildStatCard("📋 Dự án", projectCountLabel,
+        statsPanel.add(buildStatCard("Dự án", projectCountLabel,
             "Dự án đang triển khai", new Color(245, 158, 11)));
 
         // ---- Quick Actions ----
@@ -354,9 +344,9 @@ public class DashboardView extends JFrame {
         JPanel qaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 8));
         qaPanel.setOpaque(false);
 
-        btnQuickAddMember  = makeQuickBtn("➕ Thêm thành viên");
-        btnQuickAddEvent   = makeQuickBtn("📅 Tạo sự kiện");
-        btnQuickAddProject = makeQuickBtn("📋 Tạo dự án");
+        btnQuickAddMember  = makeQuickBtn("Thêm thành viên");
+        btnQuickAddEvent   = makeQuickBtn("Tạo sự kiện");
+        btnQuickAddProject = makeQuickBtn("Tạo dự án");
 
         qaPanel.add(btnQuickAddMember);
         qaPanel.add(btnQuickAddEvent);
@@ -432,13 +422,9 @@ public class DashboardView extends JFrame {
     public void showHome()          { selectMenu(btnHome);          cardLayout.show(contentArea, "HOME"); }
     public void showAnnouncements() { selectMenu(btnAnnouncements); cardLayout.show(contentArea, "ANNOUNCEMENTS"); }
     public void showTasks()         { selectMenu(btnTasks);         cardLayout.show(contentArea, "TASKS"); }
-    public void showTeams()         { selectMenu(btnTeams);         cardLayout.show(contentArea, "TEAMS"); }
-    public void showSponsors()      { selectMenu(btnSponsors);      cardLayout.show(contentArea, "SPONSORS"); }
-    public void showAttendances()   { selectMenu(btnAttendances);   cardLayout.show(contentArea, "ATTENDANCES"); }
     public void showMembers()       { selectMenu(btnMembers);       cardLayout.show(contentArea, "MEMBERS"); }
     public void showEvents()        { selectMenu(btnEvents);        cardLayout.show(contentArea, "EVENTS"); }
     public void showProjects()      { selectMenu(btnProjects);      cardLayout.show(contentArea, "PROJECTS"); }
-    public void showFeedbacks()     { selectMenu(btnFeedbacks);     cardLayout.show(contentArea, "FEEDBACKS"); }
     public void showDocuments()     { selectMenu(btnDocuments);     cardLayout.show(contentArea, "DOCUMENTS"); }
 
     /**
@@ -446,9 +432,8 @@ public class DashboardView extends JFrame {
      * Chỉ một nút được active tại một thời điểm.
      */
     private void selectMenu(JButton selected) {
-        for (JButton btn : new JButton[]{btnHome, btnAnnouncements, btnTasks, btnTeams, 
-                                         btnSponsors, btnAttendances, btnMembers, 
-                                         btnEvents, btnProjects, btnFeedbacks, btnDocuments}) {
+        for (JButton btn : new JButton[]{btnHome, btnAnnouncements, btnTasks,
+                                         btnMembers, btnEvents, btnProjects, btnDocuments}) {
             boolean isSelected = btn == selected;
             btn.setBackground(isSelected ? SIDEBAR_SEL : SIDEBAR_BG);
             btn.setForeground(isSelected ? Color.WHITE : new Color(148, 163, 184));
@@ -466,13 +451,9 @@ public class DashboardView extends JFrame {
     public JButton getBtnHome()           { return btnHome; }
     public JButton getBtnAnnouncements()  { return btnAnnouncements; }
     public JButton getBtnTasks()          { return btnTasks; }
-    public JButton getBtnTeams()          { return btnTeams; }
-    public JButton getBtnSponsors()       { return btnSponsors; }
-    public JButton getBtnAttendances()    { return btnAttendances; }
     public JButton getBtnMembers()        { return btnMembers; }
     public JButton getBtnEvents()         { return btnEvents; }
     public JButton getBtnProjects()       { return btnProjects; }
-    public JButton getBtnFeedbacks()      { return btnFeedbacks; }
     public JButton getBtnDocuments()      { return btnDocuments; }
     public JButton getBtnLogout()         { return btnLogout; }
 
@@ -485,11 +466,7 @@ public class DashboardView extends JFrame {
     public EventView         getEventView()        { return eventView; }
     public ProjectView       getProjectView()      { return projectView; }
     public AnnouncementView  getAnnouncementView() { return announcementView; }
-    public TeamView          getTeamView()         { return teamView; }
     public TaskView          getTaskView()         { return taskView; }
-    public SponsorView       getSponsorView()      { return sponsorView; }
-    public AttendanceView    getAttendanceView()   { return attendanceView; }
-    public FeedbackView      getFeedbackView()     { return feedbackView; }
     public DocumentView      getDocumentView()     { return documentView; }
 
     /** Tạo nút quick action với style nhất quán. */

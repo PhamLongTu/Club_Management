@@ -1,5 +1,29 @@
 package com.clubmanagement.controller;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
+
 import com.clubmanagement.dto.DocumentDTO;
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
@@ -8,13 +32,6 @@ import com.clubmanagement.service.DocumentService;
 import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.ProjectService;
 import com.clubmanagement.view.DocumentView;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
 
 public class DocumentController {
 
@@ -28,7 +45,7 @@ public class DocumentController {
         this.view = view;
         this.currentUser = currentUser;
         attachListeners();
-        loadAllDocuments();
+        loadAllDocumentsInternal();
     }
 
     private void attachListeners() {
@@ -56,7 +73,7 @@ public class DocumentController {
         }
     }
 
-    public void loadAllDocuments() {
+    private void loadAllDocumentsInternal() {
         view.setStatusMessage("Đang tải danh sách Tài liệu...");
         SwingWorker<List<DocumentDTO>, Void> worker = new SwingWorker<>() {
             @Override
@@ -67,12 +84,19 @@ public class DocumentController {
             protected void done() {
                 try {
                     view.loadData(get());
-                } catch (Exception e) {
-                    view.setStatusMessage("Lỗi: " + e.getMessage());
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
+                } catch (ExecutionException ex) {
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
                 }
             }
         };
         worker.execute();
+    }
+
+    public final void loadAllDocuments() {
+        loadAllDocumentsInternal();
     }
 
     private void handleOpenFile() {
@@ -100,7 +124,7 @@ public class DocumentController {
             } else {
                 JOptionPane.showMessageDialog(null, "Không tìm thấy file ở đường dẫn: " + opt.get().getFilePath());
             }
-        } catch (Exception ex) {
+        } catch (IOException | SecurityException | UnsupportedOperationException ex) {
             JOptionPane.showMessageDialog(null, "Lỗi khi mở file: " + ex.getMessage());
         }
     }
@@ -124,7 +148,7 @@ public class DocumentController {
     }
 
     private void showFormDialog(DocumentDTO document) {
-        JDialog dialog = new JDialog((Frame) null, document == null ? "📂 Upload Tài liệu" : "✏ Sửa Thông tin Tài liệu", true);
+        JDialog dialog = new JDialog((Frame) null, document == null ? "Upload Tài liệu" : "Sửa Thông tin Tài liệu", true);
         dialog.setSize(550, 450);
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
@@ -161,10 +185,10 @@ public class DocumentController {
         cbAccess.setFont(f);
         if(document != null && Boolean.FALSE.equals(document.getIsPublic())) cbAccess.setSelectedIndex(1);
 
-        JComboBox<EventDTO> cbEvent = new JComboBox<>(eventService.getAllEvents().toArray(new EventDTO[0]));
+        JComboBox<EventDTO> cbEvent = new JComboBox<>(eventService.getAllEvents().toArray(EventDTO[]::new));
         cbEvent.insertItemAt(null, 0); cbEvent.setFont(f);
         
-        JComboBox<ProjectDTO> cbProject = new JComboBox<>(projectService.getAllProjects().toArray(new ProjectDTO[0]));
+        JComboBox<ProjectDTO> cbProject = new JComboBox<>(projectService.getAllProjects().toArray(ProjectDTO[]::new));
         cbProject.insertItemAt(null, 0); cbProject.setFont(f);
 
         if (document != null) {
@@ -224,7 +248,7 @@ public class DocumentController {
                 }
                 dialog.dispose();
                 loadAllDocuments();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -255,7 +279,7 @@ public class DocumentController {
                 documentService.deleteDocument(id);
                 JOptionPane.showMessageDialog(null, "Đã xóa!");
                 loadAllDocuments();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }

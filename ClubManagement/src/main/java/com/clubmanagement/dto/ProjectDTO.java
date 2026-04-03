@@ -16,6 +16,8 @@ public class ProjectDTO {
     private LocalDate  endDate;
     private BigDecimal budget;
     private String     status;
+    private String     visibility;
+    private Integer    maxMembers;
     private String     managerName;   // Tên quản lý dự án
     private Integer    memberCount;   // Số thành viên tham gia (computed)
 
@@ -24,7 +26,8 @@ public class ProjectDTO {
 
     public ProjectDTO(Integer projectId, String projectName, String description,
                       String objective, LocalDate startDate, LocalDate endDate,
-                      BigDecimal budget, String status, String managerName, Integer memberCount) {
+                      BigDecimal budget, String status, String visibility,
+                      Integer maxMembers, String managerName, Integer memberCount) {
         this.projectId   = projectId;
         this.projectName = projectName;
         this.description = description;
@@ -33,6 +36,8 @@ public class ProjectDTO {
         this.endDate     = endDate;
         this.budget      = budget;
         this.status      = status;
+        this.visibility  = visibility;
+        this.maxMembers  = maxMembers;
         this.managerName = managerName;
         this.memberCount = memberCount;
     }
@@ -61,6 +66,12 @@ public class ProjectDTO {
 
     public String getStatus()              { return status; }
     public void setStatus(String v)        { this.status = v; }
+
+    public String getVisibility()          { return visibility; }
+    public void setVisibility(String v)    { this.visibility = v; }
+
+    public Integer getMaxMembers()         { return maxMembers; }
+    public void setMaxMembers(Integer v)   { this.maxMembers = v; }
 
     public String getManagerName()         { return managerName; }
     public void setManagerName(String v)   { this.managerName = v; }

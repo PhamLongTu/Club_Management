@@ -1,15 +1,19 @@
 package com.clubmanagement.dao;
 
-import com.clubmanagement.entity.Announcement;
-import com.clubmanagement.util.HibernateUtil;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
+import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.entity.Announcement;
+import com.clubmanagement.entity.Team;
+import com.clubmanagement.util.HibernateUtil;
 
 /**
  * AnnouncementDAO - Lớp truy cập dữ liệu cho thực thể Announcement (Thông báo).
@@ -42,7 +46,7 @@ public class AnnouncementDAO {
     public List<Announcement> findAll() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Announcement> query = session.createQuery(
-                "FROM Announcement a LEFT JOIN FETCH a.author " +
+                "FROM Announcement a LEFT JOIN FETCH a.author LEFT JOIN FETCH a.targetTeam " +
                 "ORDER BY a.isPinned DESC, a.createdDate DESC",
                 Announcement.class
             );
@@ -71,7 +75,7 @@ public class AnnouncementDAO {
     public List<Announcement> findLatest(int limit) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Announcement> query = session.createQuery(
-                "FROM Announcement a LEFT JOIN FETCH a.author " +
+                "FROM Announcement a LEFT JOIN FETCH a.author LEFT JOIN FETCH a.targetTeam " +
                 "ORDER BY a.isPinned DESC, a.createdDate DESC",
                 Announcement.class
             );
@@ -117,6 +121,41 @@ public class AnnouncementDAO {
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw new RuntimeException("Không thể xóa thông báo: " + e.getMessage(), e);
+        }
+    }
+
+    public List<Announcement> findForUser(MemberDTO user) {
+        try (Session session = HibernateUtil.openSession()) {
+            List<Team> teamList = user.getMemberId() != null
+                ? session.createQuery(
+                    "SELECT t FROM Member m JOIN m.teams t WHERE m.memberId = :mid",
+                    Team.class
+                ).setParameter("mid", user.getMemberId()).getResultList()
+                : Collections.emptyList();
+
+            String teamCondition = teamList.isEmpty()
+                ? "a.targetTeam IS NULL"
+                : "(a.targetTeam IS NULL OR a.targetTeam IN :teams)";
+
+            Query<Announcement> query = session.createQuery(
+                "SELECT DISTINCT a FROM Announcement a " +
+                "LEFT JOIN FETCH a.author " +
+                "LEFT JOIN FETCH a.targetTeam " +
+                "WHERE (a.targetAudience = 'All' " +
+                "   OR (a.targetAudience = 'Leaders' AND :perm >= 2) " +
+                "   OR (a.targetAudience = 'Members' AND :perm >= 1)) " +
+                "AND " + teamCondition + " " +
+                "ORDER BY a.isPinned DESC, a.createdDate DESC",
+                Announcement.class
+            );
+            query.setParameter("perm", user.getPermissionLevel());
+            if (!teamList.isEmpty()) {
+                query.setParameter("teams", teamList);
+            }
+            return query.getResultList();
+        } catch (Exception e) {
+            logger.error("Lỗi khi lọc thông báo theo người dùng: {}", e.getMessage());
+            throw new RuntimeException("Không thể lọc thông báo", e);
         }
     }
 }

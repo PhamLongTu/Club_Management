@@ -1,16 +1,30 @@
 package com.clubmanagement.controller;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
+
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.SponsorDTO;
 import com.clubmanagement.service.SponsorService;
 import com.clubmanagement.view.SponsorView;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 
 public class SponsorController {
 
@@ -22,7 +36,7 @@ public class SponsorController {
         this.view = view;
         this.currentUser = currentUser;
         attachListeners();
-        loadAllSponsors();
+        loadAllSponsorsInternal();
     }
 
     private void attachListeners() {
@@ -42,7 +56,7 @@ public class SponsorController {
         }
     }
 
-    public void loadAllSponsors() {
+    private void loadAllSponsorsInternal() {
         view.setStatusMessage("Đang tải danh sách Nhà tài trợ...");
         SwingWorker<List<SponsorDTO>, Void> worker = new SwingWorker<>() {
             @Override
@@ -53,12 +67,19 @@ public class SponsorController {
             protected void done() {
                 try {
                     view.loadData(get());
-                } catch (Exception e) {
-                    view.setStatusMessage("Lỗi: " + e.getMessage());
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
+                } catch (ExecutionException ex) {
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
                 }
             }
         };
         worker.execute();
+    }
+
+    public final void loadAllSponsors() {
+        loadAllSponsorsInternal();
     }
 
     private void handleAdd() {
@@ -80,7 +101,7 @@ public class SponsorController {
     }
 
     private void showFormDialog(SponsorDTO sponsor) {
-        JDialog dialog = new JDialog((Frame) null, sponsor == null ? "🤝 Thêm Nhà Tài Trợ" : "✏ Sửa Thông Tin", true);
+        JDialog dialog = new JDialog((Frame) null, sponsor == null ? "Thêm Nhà Tài Trợ" : "Sửa Thông Tin", true);
         dialog.setSize(450, 450);
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
@@ -138,10 +159,12 @@ public class SponsorController {
                 String addr = txtAddr.getText();
                 String type = (String) cbType.getSelectedItem();
                 
-                BigDecimal amount = BigDecimal.ZERO;
+                BigDecimal amount;
                 try {
                     amount = new BigDecimal(txtAmount.getText().trim());
-                } catch(Exception ex) {}
+                } catch (NumberFormatException ex) {
+                    amount = BigDecimal.ZERO;
+                }
 
                 if (sponsor == null) {
                     sponsorService.createSponsor(name, contact, email, phone, type, amount, addr);
@@ -152,7 +175,7 @@ public class SponsorController {
                 }
                 dialog.dispose();
                 loadAllSponsors();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -183,7 +206,7 @@ public class SponsorController {
                 sponsorService.deleteSponsor(id);
                 JOptionPane.showMessageDialog(null, "Đã xóa!");
                 loadAllSponsors();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi Ràng Buộc", JOptionPane.ERROR_MESSAGE);
             }
         }

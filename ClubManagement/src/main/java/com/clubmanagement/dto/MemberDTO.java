@@ -22,6 +22,7 @@ public class MemberDTO {
     private String  status;
     private String  roleName;       // Lấy từ Role entity
     private Integer permissionLevel; // Cấp quyền để phân biệt Admin/Leader/Member
+    private String  teamNames;      // Danh sách ban (dạng chuỗi)
 
     // ============ CONSTRUCTORS ============
     public MemberDTO() {}
@@ -32,7 +33,8 @@ public class MemberDTO {
     public MemberDTO(Integer memberId, String fullName, String studentId,
                      String email, String phone, String gender,
                      LocalDate birthDate, LocalDate joinDate,
-                     String status, String roleName, Integer permissionLevel) {
+                     String status, String roleName, Integer permissionLevel,
+                     String teamNames) {
         this.memberId        = memberId;
         this.fullName        = fullName;
         this.studentId       = studentId;
@@ -44,6 +46,7 @@ public class MemberDTO {
         this.status          = status;
         this.roleName        = roleName;
         this.permissionLevel = permissionLevel;
+        this.teamNames       = teamNames;
     }
 
     // ============ GETTERS & SETTERS ============
@@ -79,6 +82,9 @@ public class MemberDTO {
 
     public Integer getPermissionLevel()       { return permissionLevel; }
     public void setPermissionLevel(Integer v) { this.permissionLevel = v; }
+
+    public String getTeamNames()              { return teamNames; }
+    public void setTeamNames(String v)        { this.teamNames = v; }
 
     /** Kiểm tra có phải Admin không */
     public boolean isAdmin()  { return permissionLevel != null && permissionLevel >= 3; }

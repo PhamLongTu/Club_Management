@@ -1,17 +1,31 @@
 package com.clubmanagement.view;
 
-import com.clubmanagement.dto.MemberDTO;
-import com.clubmanagement.dto.SponsorDTO;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Locale;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.Locale;
+
+import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.dto.SponsorDTO;
 
 public class SponsorView {
 
@@ -55,7 +69,7 @@ public class SponsorView {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("🤝 Quản lý Nhà Tài Trợ");
+        JLabel title = new JLabel("Quản lý Nhà Tài Trợ");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -70,10 +84,10 @@ public class SponsorView {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
 
-        btnRefresh = makeBtn("🔄 Làm mới",  new Color(100,116,139), Color.WHITE);
-        btnAdd     = makeBtn("➕ Thêm NTT", SUCCESS_CLR, Color.WHITE);
-        btnEdit    = makeBtn("✏ Sửa",       WARNING_CLR, Color.WHITE);
-        btnDelete  = makeBtn("🗑 Xóa",      DANGER_CLR, Color.WHITE);
+        btnRefresh = makeBtn("Làm mới",  new Color(100,116,139), Color.WHITE);
+        btnAdd     = makeBtn("Thêm NTT", SUCCESS_CLR, Color.WHITE);
+        btnEdit    = makeBtn("Sửa",       WARNING_CLR, Color.WHITE);
+        btnDelete  = makeBtn("Xóa",      DANGER_CLR, Color.WHITE);
 
         if (!currentUser.isLeader()) {
             btnAdd.setVisible(false);

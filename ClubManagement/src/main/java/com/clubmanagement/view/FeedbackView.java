@@ -1,16 +1,31 @@
 package com.clubmanagement.view;
 
-import com.clubmanagement.dto.FeedbackDTO;
-import com.clubmanagement.dto.MemberDTO;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+
+import com.clubmanagement.dto.FeedbackDTO;
+import com.clubmanagement.dto.MemberDTO;
 
 public class FeedbackView {
 
@@ -54,7 +69,7 @@ public class FeedbackView {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("📬 Trung tâm Phản hồi");
+        JLabel title = new JLabel("Trung tâm Phản hồi");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -69,9 +84,9 @@ public class FeedbackView {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
 
-        btnRefresh = makeBtn("🔄 Làm mới",  new Color(100,116,139), Color.WHITE);
-        btnAdd     = makeBtn("➕ Gửi gắm",   SUCCESS_CLR, Color.WHITE);
-        btnDelete  = makeBtn("🗑 Xóa",      DANGER_CLR, Color.WHITE);
+        btnRefresh = makeBtn("Làm mới",  new Color(100,116,139), Color.WHITE);
+        btnAdd     = makeBtn("Gửi gắm",   SUCCESS_CLR, Color.WHITE);
+        btnDelete  = makeBtn("Xóa",      DANGER_CLR, Color.WHITE);
 
         if (!currentUser.isLeader()) {
             btnDelete.setVisible(false); // Thành viên chỉ được gửi
@@ -198,7 +213,9 @@ public class FeedbackView {
             if ("Event".equals(f.getFeedbackType())) focus = f.getEventName();
             else if ("Project".equals(f.getFeedbackType())) focus = f.getProjectName();
             
-            String starts = (f.getRating() != null ? f.getRating() : 0) + " / 5 Sao";
+            Integer ratingValue = f.getRating();
+            int rating = ratingValue != null ? ratingValue : 0;
+            String starts = rating + " / 5 Sao";
 
             tableModel.addRow(new Object[]{
                 f.getFeedbackId(),

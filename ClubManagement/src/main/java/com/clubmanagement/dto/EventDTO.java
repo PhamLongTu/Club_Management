@@ -18,6 +18,7 @@ public class EventDTO {
     private String        status;
     private BigDecimal    budget;
     private Integer       maxParticipants;
+    private LocalDateTime registrationDeadline;
     private String        createdByName;    // Tên người tạo (từ Member)
     private Integer       registeredCount;  // Số lượng đã đăng ký (computed)
 
@@ -27,6 +28,7 @@ public class EventDTO {
     public EventDTO(Integer eventId, String eventName, String description,
                     LocalDateTime startDate, LocalDateTime endDate, String location,
                     String status, BigDecimal budget, Integer maxParticipants,
+                    LocalDateTime registrationDeadline,
                     String createdByName, Integer registeredCount) {
         this.eventId          = eventId;
         this.eventName        = eventName;
@@ -37,6 +39,7 @@ public class EventDTO {
         this.status           = status;
         this.budget           = budget;
         this.maxParticipants  = maxParticipants;
+        this.registrationDeadline = registrationDeadline;
         this.createdByName    = createdByName;
         this.registeredCount  = registeredCount;
     }
@@ -68,6 +71,9 @@ public class EventDTO {
 
     public Integer getMaxParticipants()      { return maxParticipants; }
     public void setMaxParticipants(Integer v){ this.maxParticipants = v; }
+
+    public LocalDateTime getRegistrationDeadline()       { return registrationDeadline; }
+    public void setRegistrationDeadline(LocalDateTime v) { this.registrationDeadline = v; }
 
     public String getCreatedByName()         { return createdByName; }
     public void setCreatedByName(String v)   { this.createdByName = v; }

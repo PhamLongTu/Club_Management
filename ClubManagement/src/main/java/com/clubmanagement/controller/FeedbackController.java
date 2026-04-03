@@ -1,5 +1,25 @@
 package com.clubmanagement.controller;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
+
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.FeedbackDTO;
 import com.clubmanagement.dto.MemberDTO;
@@ -8,11 +28,6 @@ import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.FeedbackService;
 import com.clubmanagement.service.ProjectService;
 import com.clubmanagement.view.FeedbackView;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.util.List;
 
 public class FeedbackController {
 
@@ -26,7 +41,7 @@ public class FeedbackController {
         this.view = view;
         this.currentUser = currentUser;
         attachListeners();
-        loadAllFeedbacks();
+        loadAllFeedbacksInternal();
     }
 
     private void attachListeners() {
@@ -38,7 +53,7 @@ public class FeedbackController {
         }
     }
 
-    public void loadAllFeedbacks() {
+    private void loadAllFeedbacksInternal() {
         view.setStatusMessage("Đang tải danh sách Phản hồi...");
         SwingWorker<List<FeedbackDTO>, Void> worker = new SwingWorker<>() {
             @Override
@@ -49,16 +64,23 @@ public class FeedbackController {
             protected void done() {
                 try {
                     view.loadData(get());
-                } catch (Exception e) {
-                    view.setStatusMessage("Lỗi: " + e.getMessage());
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
+                } catch (ExecutionException ex) {
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
                 }
             }
         };
         worker.execute();
     }
 
+    public final void loadAllFeedbacks() {
+        loadAllFeedbacksInternal();
+    }
+
     private void handleAdd() {
-        JDialog dialog = new JDialog((Frame) null, "📬 Gửi Feedback / Góp ý", true);
+        JDialog dialog = new JDialog((Frame) null, "Gửi Feedback / Góp ý", true);
         dialog.setSize(500, 350);
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
@@ -70,11 +92,11 @@ public class FeedbackController {
         JComboBox<String> cbType = new JComboBox<>(new String[]{"Club", "Event", "Project", "Other"});
         cbType.setFont(f);
 
-        JComboBox<EventDTO> cbEvent = new JComboBox<>(eventService.getAllEvents().toArray(new EventDTO[0]));
+        JComboBox<EventDTO> cbEvent = new JComboBox<>(eventService.getAllEvents().toArray(EventDTO[]::new));
         cbEvent.insertItemAt(null, 0); cbEvent.setSelectedIndex(0);
         cbEvent.setEnabled(false);
         
-        JComboBox<ProjectDTO> cbProject = new JComboBox<>(projectService.getAllProjects().toArray(new ProjectDTO[0]));
+        JComboBox<ProjectDTO> cbProject = new JComboBox<>(projectService.getAllProjects().toArray(ProjectDTO[]::new));
         cbProject.insertItemAt(null, 0); cbProject.setSelectedIndex(0);
         cbProject.setEnabled(false);
 
@@ -124,7 +146,7 @@ public class FeedbackController {
                 
                 dialog.dispose();
                 loadAllFeedbacks();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -161,7 +183,7 @@ public class FeedbackController {
                 feedbackService.deleteFeedback(id);
                 JOptionPane.showMessageDialog(null, "Đã xóa!");
                 loadAllFeedbacks();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }

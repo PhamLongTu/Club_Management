@@ -1,13 +1,17 @@
 package com.clubmanagement;
 
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.clubmanagement.controller.LoginController;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.util.HibernateUtil;
 import com.formdev.flatlaf.FlatLightLaf;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
 
 /**
  * ╔══════════════════════════════════════════════════════════════╗
@@ -62,7 +66,10 @@ public class MainApp {
             // Fallback: dùng system L&F
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception ignored) {}
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                     | UnsupportedLookAndFeelException ex) {
+                logger.warn("Không thể cài System L&F: {}", ex.getMessage());
+            }
         }
 
         // ─────────────────────────────────────────────────────
@@ -88,14 +95,19 @@ public class MainApp {
         } catch (Exception e) {
             logger.error("FATAL: Không thể kết nối database!", e);
             // Hiển thị thông báo lỗi cho người dùng
+            String message = """
+                Không thể kết nối tới database!
+
+                Vui lòng kiểm tra:
+                  1. MySQL đang chạy tại localhost:3306
+                  2. Database 'club_management' đã được tạo
+                  3. Username/Password trong hibernate.cfg.xml
+
+                Chi tiết lỗi: %s
+                """.formatted(e.getMessage());
             JOptionPane.showMessageDialog(
                 null,
-                "❌ Không thể kết nối tới database!\n\n" +
-                "Vui lòng kiểm tra:\n" +
-                "  1. MySQL đang chạy tại localhost:3306\n" +
-                "  2. Database 'club_management' đã được tạo\n" +
-                "  3. Username/Password trong hibernate.cfg.xml\n\n" +
-                "Chi tiết lỗi: " + e.getMessage(),
+                message,
                 "Lỗi kết nối Database",
                 JOptionPane.ERROR_MESSAGE
             );
@@ -119,7 +131,8 @@ public class MainApp {
             MemberService memberService = new MemberService();
 
             // Tạo Controller (kết nối View <-> Service)
-            new LoginController(loginView, memberService);
+            LoginController loginController = new LoginController(loginView, memberService);
+            loginView.getRootPane().putClientProperty("controller", loginController);
 
             // Hiển thị màn hình đăng nhập
             loginView.setVisible(true);

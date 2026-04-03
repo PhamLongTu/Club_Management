@@ -1,7 +1,19 @@
 package com.clubmanagement.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * Entity: Task (Nhiệm vụ)
@@ -46,15 +58,27 @@ public class Task {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    /** Người được giao (N-1 với Member) */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "assignee_id")
-    private Member assignee;
+    /** Hiển thị công khai hay riêng tư */
+    @Column(name = "visibility", length = 10)
+    private String visibility = "Public";
+
+    /** Số người tối đa có thể tham gia */
+    @Column(name = "max_assignees")
+    private Integer maxAssignees = 1;
 
     /** Người giao nhiệm vụ (N-1 với Member) */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assigner_id")
     private Member assigner;
+
+    /** Danh sách người thực hiện (N-N với Member) */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "task_members",
+        joinColumns = @JoinColumn(name = "task_id"),
+        inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
+    private List<Member> assignees;
 
     /** Sự kiện liên quan (nullable) */
     @ManyToOne(fetch = FetchType.EAGER)
@@ -67,12 +91,11 @@ public class Task {
     }
 
     public Task(String title, String description, LocalDateTime deadline,
-                String priority, Member assignee, Member assigner) {
+                String priority, Member assigner) {
         this.title       = title;
         this.description = description;
         this.deadline    = deadline;
         this.priority    = priority;
-        this.assignee    = assignee;
         this.assigner    = assigner;
         this.status      = "Todo";
         this.createdDate = LocalDateTime.now();
@@ -100,11 +123,17 @@ public class Task {
     public LocalDateTime getCreatedDate()        { return createdDate; }
     public void setCreatedDate(LocalDateTime v)  { this.createdDate = v; }
 
-    public Member getAssignee()            { return assignee; }
-    public void setAssignee(Member v)      { this.assignee = v; }
+    public String getVisibility()          { return visibility; }
+    public void setVisibility(String v)    { this.visibility = v; }
+
+    public Integer getMaxAssignees()       { return maxAssignees; }
+    public void setMaxAssignees(Integer v) { this.maxAssignees = v; }
 
     public Member getAssigner()            { return assigner; }
     public void setAssigner(Member v)      { this.assigner = v; }
+
+    public List<Member> getAssignees()         { return assignees; }
+    public void setAssignees(List<Member> v)   { this.assignees = v; }
 
     public Event getEvent()                { return event; }
     public void setEvent(Event v)          { this.event = v; }

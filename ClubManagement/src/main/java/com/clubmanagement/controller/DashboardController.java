@@ -1,13 +1,16 @@
 package com.clubmanagement.controller;
 
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
+
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.service.ProjectService;
 import com.clubmanagement.view.DashboardView;
 import com.clubmanagement.view.LoginView;
-
-import javax.swing.*;
 
 /**
  * DashboardController - Điều khiển màn hình Dashboard chính.
@@ -32,11 +35,7 @@ public class DashboardController {
     private EventController         eventController;
     private ProjectController       projectController;
     private AnnouncementController  announcementController;
-    private TeamController          teamController;
     private TaskController          taskController;
-    private SponsorController       sponsorController;
-    private AttendanceController    attendanceController;
-    private FeedbackController      feedbackController;
     private DocumentController      documentController;
 
     /**
@@ -57,11 +56,7 @@ public class DashboardController {
      */
     private void initSubControllers() {
         announcementController = new AnnouncementController(view.getAnnouncementView(), currentUser);
-        teamController         = new TeamController(view.getTeamView(), currentUser);
         taskController         = new TaskController(view.getTaskView(), currentUser);
-        sponsorController      = new SponsorController(view.getSponsorView(), currentUser);
-        attendanceController   = new AttendanceController(view.getAttendanceView(), currentUser);
-        feedbackController     = new FeedbackController(view.getFeedbackView(), currentUser);
         documentController     = new DocumentController(view.getDocumentView(), currentUser);
         memberController       = new MemberController(view.getMemberView(),  currentUser);
         eventController        = new EventController(view.getEventView(),    currentUser);
@@ -84,34 +79,10 @@ public class DashboardController {
             announcementController.loadAllAnnouncements();
         });
 
-        // Nút Ban / Nhóm
-        view.getBtnTeams().addActionListener(e -> {
-            view.showTeams();
-            teamController.loadAllTeams();
-        });
-
         // Nút Nhiệm vụ
         view.getBtnTasks().addActionListener(e -> {
             view.showTasks();
-            taskController.loadAllTasks();
-        });
-
-        // Nút Tài trợ
-        view.getBtnSponsors().addActionListener(e -> {
-            view.showSponsors();
-            sponsorController.loadAllSponsors();
-        });
-
-        // Nút Điểm danh
-        view.getBtnAttendances().addActionListener(e -> {
-            view.showAttendances();
-            attendanceController.loadAllAttendances();
-        });
-
-        // Nút Phản hồi
-        view.getBtnFeedbacks().addActionListener(e -> {
-            view.showFeedbacks();
-            feedbackController.loadAllFeedbacks();
+            taskController.loadTasksByFilter();
         });
 
         // Nút Tài liệu
@@ -184,9 +155,12 @@ public class DashboardController {
                 try {
                     long[] stats = get();
                     view.updateStats(stats[0], stats[1], stats[2]);
-                } catch (Exception e) {
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    System.err.println("Lỗi load dashboard stats: " + ex.getMessage());
+                } catch (ExecutionException ex) {
                     // Không hiển thị lỗi nghiêm trọng, chỉ log
-                    System.err.println("Lỗi load dashboard stats: " + e.getMessage());
+                    System.err.println("Lỗi load dashboard stats: " + ex.getMessage());
                 }
             }
         };
@@ -210,7 +184,8 @@ public class DashboardController {
             // Quay về màn hình đăng nhập
             LoginView loginView = new LoginView();
             MemberService ms = new MemberService();
-            new LoginController(loginView, ms);
+            LoginController loginController = new LoginController(loginView, ms);
+            loginView.getRootPane().putClientProperty("controller", loginController);
             loginView.setVisible(true);
         }
     }

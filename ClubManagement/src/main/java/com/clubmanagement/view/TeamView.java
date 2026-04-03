@@ -1,16 +1,30 @@
 package com.clubmanagement.view;
 
-import com.clubmanagement.dto.MemberDTO;
-import com.clubmanagement.dto.TeamDTO;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+
+import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.dto.TeamDTO;
 
 public class TeamView {
 
@@ -55,7 +69,7 @@ public class TeamView {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("🏢 Quản lý Ban / Nhóm");
+        JLabel title = new JLabel("Quản lý Ban / Nhóm");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -70,11 +84,11 @@ public class TeamView {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
 
-        btnRefresh     = makeBtn("🔄 Làm mới",          new Color(100,116,139), Color.WHITE);
-        btnViewMembers = makeBtn("👥 Xem thành viên",   INFO_CLR, Color.WHITE);
-        btnAdd         = makeBtn("➕ Tạo Ban mới",      SUCCESS_CLR, Color.WHITE);
-        btnEdit        = makeBtn("✏ Sửa Ban",         WARNING_CLR, Color.WHITE);
-        btnDelete      = makeBtn("🗑 Xóa Ban",         DANGER_CLR, Color.WHITE);
+        btnRefresh     = makeBtn("Làm mới",          new Color(100,116,139), Color.WHITE);
+        btnViewMembers = makeBtn("Xem thành viên",   INFO_CLR, Color.WHITE);
+        btnAdd         = makeBtn("Tạo Ban mới",      SUCCESS_CLR, Color.WHITE);
+        btnEdit        = makeBtn("Sửa Ban",         WARNING_CLR, Color.WHITE);
+        btnDelete      = makeBtn("Xóa Ban",         DANGER_CLR, Color.WHITE);
 
         // Nút xem thành viên sẽ có ở Controller (hiển thị Dialog các member thuộc nhóm này nếu cần bổ sung)
 

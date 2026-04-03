@@ -1,7 +1,16 @@
 package com.clubmanagement.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * Entity: Announcement (Thông báo nội bộ CLB)
@@ -43,18 +52,24 @@ public class Announcement {
     @JoinColumn(name = "author_id")
     private Member author;
 
+    /** Thông báo theo ban (nullable) */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "target_team_id")
+    private Team targetTeam;
+
     // ============ CONSTRUCTORS ============
     public Announcement() {
         this.createdDate = LocalDateTime.now();
     }
 
     public Announcement(String title, String content, Boolean isPinned,
-                        String targetAudience, Member author) {
+                        String targetAudience, Member author, Team targetTeam) {
         this.title          = title;
         this.content        = content;
         this.isPinned       = isPinned;
         this.targetAudience = targetAudience;
         this.author         = author;
+        this.targetTeam     = targetTeam;
         this.createdDate    = LocalDateTime.now();
     }
 
@@ -79,6 +94,9 @@ public class Announcement {
 
     public Member getAuthor()              { return author; }
     public void setAuthor(Member v)        { this.author = v; }
+
+    public Team getTargetTeam()            { return targetTeam; }
+    public void setTargetTeam(Team v)      { this.targetTeam = v; }
 
     @Override
     public String toString() { return title; }

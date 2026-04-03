@@ -1,15 +1,36 @@
 package com.clubmanagement.view;
 
-import com.clubmanagement.dto.MemberDTO;
-import com.clubmanagement.entity.Role;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
+
+import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.dto.TeamDTO;
+import com.clubmanagement.entity.Role;
 
 /**
  * MemberFormDialog - Dialog nhập liệu Thêm/Sửa thành viên.
@@ -28,6 +49,7 @@ public class MemberFormDialog extends JDialog {
     private JComboBox<String> cbGender, cbStatus;
     private JComboBox<Role>   cbRole;
     private JTextField  tfBirthDate;   // Format: yyyy-MM-dd
+    private JList<TeamDTO> listTeams;
 
     // ====== State ======
     private boolean confirmed = false; // true nếu nhấn nút Lưu
@@ -35,7 +57,6 @@ public class MemberFormDialog extends JDialog {
 
     private static final Color PRIMARY   = new Color(37, 99, 235);
     private static final Color TEXT_DARK = new Color(15, 23, 42);
-    private static final Color TEXT_GRAY = new Color(100, 116, 139);
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
@@ -43,10 +64,10 @@ public class MemberFormDialog extends JDialog {
      * @param parent   Cửa sổ cha
      * @param roles    Danh sách vai trò từ database
      */
-    public MemberFormDialog(Frame parent, List<Role> roles) {
+    public MemberFormDialog(Frame parent, List<Role> roles, List<TeamDTO> teams) {
         super(parent, "Thêm thành viên mới", true);  // modal=true: chặn cửa sổ cha
         this.isEdit = false;
-        buildUI(roles, null);
+        buildUI(roles, teams, null, java.util.Collections.emptyList());
     }
 
     /**
@@ -55,16 +76,18 @@ public class MemberFormDialog extends JDialog {
      * @param roles    Danh sách vai trò
      * @param member   MemberDTO cần chỉnh sửa (điền sẵn vào form)
      */
-    public MemberFormDialog(Frame parent, List<Role> roles, MemberDTO member) {
+    public MemberFormDialog(Frame parent, List<Role> roles, List<TeamDTO> teams,
+                            MemberDTO member, List<Integer> selectedTeamIds) {
         super(parent, "Chỉnh sửa thành viên", true);
         this.isEdit = true;
-        buildUI(roles, member);
+        buildUI(roles, teams, member, selectedTeamIds);
     }
 
     /**
      * Xây dựng giao diện form. Nếu member != null → điền sẵn dữ liệu.
      */
-    private void buildUI(List<Role> roles, MemberDTO member) {
+    private void buildUI(List<Role> roles, List<TeamDTO> teams,
+                         MemberDTO member, List<Integer> selectedTeamIds) {
         setSize(480, isEdit ? 540 : 600);
         setLocationRelativeTo(getParent());
         setResizable(false);
@@ -75,7 +98,7 @@ public class MemberFormDialog extends JDialog {
         mainPanel.setBackground(Color.WHITE);
 
         // ---- Tiêu đề ----
-        JLabel titleLabel = new JLabel(isEdit ? "✏ Chỉnh sửa thành viên" : "➕ Thêm thành viên mới");
+        JLabel titleLabel = new JLabel(isEdit ? "Chỉnh sửa thành viên" : "Thêm thành viên mới");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         titleLabel.setForeground(TEXT_DARK);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -119,6 +142,15 @@ public class MemberFormDialog extends JDialog {
         cbRole.setAlignmentX(Component.LEFT_ALIGNMENT);
         addLabeledRow(mainPanel, "Vai trò *", cbRole);
 
+        // Ban / Nhóm
+        listTeams = new JList<>(teams.toArray(TeamDTO[]::new));
+        listTeams.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        listTeams.setVisibleRowCount(4);
+        listTeams.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        JScrollPane teamScroll = new JScrollPane(listTeams);
+        teamScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+        addLabeledRow(mainPanel, "Ban / Nhóm (Member)", teamScroll);
+
         // Trạng thái (chỉ hiện khi EDIT)
         if (isEdit) {
             cbStatus = new JComboBox<>(new String[]{"Active", "Inactive", "Suspended"});
@@ -158,6 +190,16 @@ public class MemberFormDialog extends JDialog {
                 }
             }
         }
+
+        if (selectedTeamIds != null && !selectedTeamIds.isEmpty()) {
+            int[] indices = java.util.stream.IntStream.range(0, listTeams.getModel().getSize())
+                .filter(i -> selectedTeamIds.contains(listTeams.getModel().getElementAt(i).getTeamId()))
+                .toArray();
+            listTeams.setSelectedIndices(indices);
+        }
+
+        cbRole.addActionListener(e -> updateTeamSelectionState());
+        updateTeamSelectionState();
 
         // ---- Buttons ----
         mainPanel.add(Box.createVerticalStrut(20));
@@ -221,7 +263,7 @@ public class MemberFormDialog extends JDialog {
         btnCancel.setPreferredSize(new Dimension(90, 38));
         btnCancel.addActionListener(e -> dispose());
 
-        JButton btnSave = new JButton("💾 Lưu");
+        JButton btnSave = new JButton("Lưu");
         btnSave.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnSave.setBackground(PRIMARY);
         btnSave.setForeground(Color.WHITE);
@@ -297,6 +339,12 @@ public class MemberFormDialog extends JDialog {
     public Role   getSelectedRole() { return (Role) cbRole.getSelectedItem(); }
     public String getPassword()     { return pfPassword != null ? new String(pfPassword.getPassword()) : ""; }
 
+    public List<Integer> getSelectedTeamIds() {
+        return listTeams.getSelectedValuesList().stream()
+            .map(TeamDTO::getTeamId)
+            .toList();
+    }
+
     public LocalDate getBirthDate() {
         try {
             String txt = tfBirthDate.getText().trim();
@@ -304,5 +352,11 @@ public class MemberFormDialog extends JDialog {
         } catch (DateTimeParseException e) {
             return null;
         }
+    }
+
+    private void updateTeamSelectionState() {
+        Role role = (Role) cbRole.getSelectedItem();
+        boolean isMember = role != null && role.getPermissionLevel() != null && role.getPermissionLevel() < 2;
+        listTeams.setEnabled(isMember);
     }
 }

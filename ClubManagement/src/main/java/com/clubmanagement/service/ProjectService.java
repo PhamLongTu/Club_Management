@@ -1,20 +1,21 @@
 package com.clubmanagement.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.clubmanagement.dao.ProjectDAO;
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.ProjectDTO;
 import com.clubmanagement.entity.Member;
 import com.clubmanagement.entity.Project;
 import com.clubmanagement.util.HibernateUtil;
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * ProjectService - Tầng nghiệp vụ cho Dự án.
@@ -39,7 +40,8 @@ public class ProjectService {
     public ProjectDTO createProject(String projectName, String description,
                                     String objective, LocalDate startDate,
                                     LocalDate endDate, BigDecimal budget,
-                                    Integer managerId) {
+                                    String visibility, Integer maxMembers,
+                                    Integer managerId, List<Integer> memberIds) {
         // --- Validate ---
         if (projectName == null || projectName.isBlank())
             throw new IllegalArgumentException("Tên dự án không được để trống!");
@@ -56,14 +58,40 @@ public class ProjectService {
             budget != null ? budget : BigDecimal.ZERO,
             manager
         );
+        project.setVisibility(visibility != null ? visibility : "Public");
+        project.setMaxMembers(maxMembers != null ? maxMembers : 0);
 
         Project saved = projectDAO.save(project);
+        if (memberIds != null && !memberIds.isEmpty()) {
+            projectDAO.replaceMembers(saved.getProjectId(), memberIds);
+            saved = projectDAO.findById(saved.getProjectId()).orElse(saved);
+        }
         return toDTO(saved);
     }
 
     /** Lấy tất cả dự án. */
     public List<ProjectDTO> getAllProjects() {
         return projectDAO.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    public List<ProjectDTO> getPublicUnassignedProjects() {
+        return projectDAO.findPublicUnassigned().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    public List<ProjectDTO> getProjectsForUser(Integer memberId) {
+        return projectDAO.findByMember(memberId).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    public List<ProjectDTO> getVisibleProjectsForUser(Integer memberId) {
+        List<ProjectDTO> result = new java.util.ArrayList<>();
+        result.addAll(projectDAO.findPublic().stream().map(this::toDTO).collect(Collectors.toList()));
+        result.addAll(getProjectsForUser(memberId));
+        return result.stream()
+            .collect(Collectors.toMap(ProjectDTO::getProjectId, p -> p, (a, b) -> a))
+            .values()
+            .stream()
+            .sorted(java.util.Comparator.comparing(ProjectDTO::getStartDate, java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())).reversed())
+            .collect(Collectors.toList());
     }
 
     /** Lấy dự án theo trạng thái. */
@@ -88,7 +116,9 @@ public class ProjectService {
     public ProjectDTO updateProject(Integer projectId, String projectName,
                                     String description, String objective,
                                     LocalDate startDate, LocalDate endDate,
-                                    BigDecimal budget, String status, Integer managerId) {
+                                    BigDecimal budget, String status,
+                                    String visibility, Integer maxMembers,
+                                    Integer managerId, List<Integer> memberIds) {
         Project project = projectDAO.findById(projectId)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy dự án ID: " + projectId));
 
@@ -104,9 +134,16 @@ public class ProjectService {
         project.setEndDate(endDate);
         project.setBudget(budget);
         project.setStatus(status);
+        project.setVisibility(visibility != null ? visibility : project.getVisibility());
+        project.setMaxMembers(maxMembers != null ? maxMembers : project.getMaxMembers());
         project.setManager(findMemberById(managerId));
 
-        return toDTO(projectDAO.update(project));
+        Project updated = projectDAO.update(project);
+        if (memberIds != null) {
+            projectDAO.replaceMembers(projectId, memberIds);
+            updated = projectDAO.findById(projectId).orElse(updated);
+        }
+        return toDTO(updated);
     }
 
     /** Xóa dự án theo ID. */
@@ -138,6 +175,10 @@ public class ProjectService {
         projectDAO.addMember(projectId, memberId);
     }
 
+    public void registerForProject(Integer projectId, Integer memberId) {
+        projectDAO.addMember(projectId, memberId);
+    }
+
     /** Xóa thành viên khỏi dự án. */
     public void removeMemberFromProject(Integer projectId, Integer memberId) {
         projectDAO.removeMember(projectId, memberId);
@@ -145,6 +186,15 @@ public class ProjectService {
 
     /** Map Member entity → MemberDTO. */
     private MemberDTO memberToDTO(Member m) {
+        String teamNames = "";
+        if (m.getRole() != null && m.getRole().getPermissionLevel() != null
+            && m.getRole().getPermissionLevel() < 2) {
+            if (m.getTeams() != null && !m.getTeams().isEmpty()) {
+                teamNames = m.getTeams().stream()
+                    .map(t -> t.getTeamName())
+                    .collect(Collectors.joining(", "));
+            }
+        }
         return new MemberDTO(
             m.getMemberId(),
             m.getFullName(),
@@ -156,7 +206,8 @@ public class ProjectService {
             m.getJoinDate(),
             m.getStatus(),
             m.getRole() != null ? m.getRole().getRoleName() : "N/A",
-            m.getRole() != null ? m.getRole().getPermissionLevel() : 1
+            m.getRole() != null ? m.getRole().getPermissionLevel() : 1,
+            teamNames
         );
     }
 
@@ -170,7 +221,7 @@ public class ProjectService {
         return new ProjectDTO(
             p.getProjectId(), p.getProjectName(), p.getDescription(),
             p.getObjective(), p.getStartDate(), p.getEndDate(),
-            p.getBudget(), p.getStatus(),
+            p.getBudget(), p.getStatus(), p.getVisibility(), p.getMaxMembers(),
             p.getManager() != null ? p.getManager().getFullName() : "N/A",
             memberCount
         );

@@ -1,21 +1,36 @@
 package com.clubmanagement.view;
 
-import com.clubmanagement.dto.AnnouncementDTO;
-import com.clubmanagement.dto.MemberDTO;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+
+import com.clubmanagement.dto.AnnouncementDTO;
+import com.clubmanagement.dto.MemberDTO;
 
 public class AnnouncementView {
 
     private static final String[] COLUMNS = {
-        "ID", "Trạng thái", "Tiêu đề", "Nội dung", "Người đăng", "Đối tượng", "Ngày đăng"
+        "ID", "Trạng thái", "Tiêu đề", "Người đăng", "Ngày đăng"
     };
 
     private JPanel mainPanel;
@@ -53,7 +68,7 @@ public class AnnouncementView {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("📢 Bảng thông báo");
+        JLabel title = new JLabel("Bảng thông báo");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -68,10 +83,10 @@ public class AnnouncementView {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
 
-        btnRefresh = makeBtn("🔄 Làm mới", new Color(100,116,139), Color.WHITE);
-        btnAdd     = makeBtn("➕ Đăng bài",   SUCCESS_CLR,             Color.WHITE);
-        btnEdit    = makeBtn("✏ Sửa",      WARNING_CLR,             Color.WHITE);
-        btnDelete  = makeBtn("🗑 Xóa",     DANGER_CLR,              Color.WHITE);
+        btnRefresh = makeBtn("Làm mới", new Color(100,116,139), Color.WHITE);
+        btnAdd     = makeBtn("Đăng bài",   SUCCESS_CLR,             Color.WHITE);
+        btnEdit    = makeBtn("Sửa",      WARNING_CLR,             Color.WHITE);
+        btnDelete  = makeBtn("Xóa",     DANGER_CLR,              Color.WHITE);
 
         if (!currentUser.isLeader()) {
             btnAdd.setVisible(false);
@@ -117,7 +132,7 @@ public class AnnouncementView {
                     boolean sel, boolean foc, int row, int col) {
                 super.getTableCellRendererComponent(table, value, sel, foc, row, col);
                 setHorizontalAlignment(SwingConstants.CENTER);
-                if (value != null && value.toString().equals("📌 Đã ghim")) {
+                if (value != null && value.toString().equals("Đã ghim")) {
                     setForeground(new Color(239, 68, 68)); // Đỏ
                     setFont(new Font("Segoe UI", Font.BOLD, 12));
                 } else {
@@ -128,7 +143,7 @@ public class AnnouncementView {
             }
         });
 
-        int[] colWidths = {0, 100, 200, 300, 120, 100, 150};
+        int[] colWidths = {0, 100, 360, 140, 160};
         for (int i = 0; i < colWidths.length; i++) {
             if (colWidths[i] > 0)
                 announcementTable.getColumnModel().getColumn(i).setPreferredWidth(colWidths[i]);
@@ -203,11 +218,9 @@ public class AnnouncementView {
             String dateFormatted = a.getCreatedDate() != null ? a.getCreatedDate().format(formatter) : "";
             tableModel.addRow(new Object[]{
                 a.getAnnouncementId(),
-                Boolean.TRUE.equals(a.getIsPinned()) ? "📌 Đã ghim" : "Bình thường",
+                Boolean.TRUE.equals(a.getIsPinned()) ? "Đã ghim" : "Bình thường",
                 a.getTitle(),
-                buildSnippet(a.getContent()),
                 a.getAuthorName(),
-                a.getTargetAudience(),
                 dateFormatted
             });
         }
@@ -215,12 +228,6 @@ public class AnnouncementView {
         statusBar.setText("Đã tải " + data.size() + " thông báo.");
     }
     
-    private String buildSnippet(String text) {
-        if (text == null) return "";
-        String clean = text.replace("\n", " ");
-        if (clean.length() > 50) return clean.substring(0, 47) + "...";
-        return clean;
-    }
 
     public Integer getSelectedId() {
         int row = announcementTable.getSelectedRow();

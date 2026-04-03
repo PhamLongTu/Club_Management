@@ -1,12 +1,15 @@
 package com.clubmanagement.controller;
 
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.SwingWorker;
+import javax.swing.Timer;
+
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.service.MemberService;
-import com.clubmanagement.view.LoginView;
 import com.clubmanagement.view.DashboardView;
-
-import javax.swing.*;
-import java.util.Optional;
+import com.clubmanagement.view.LoginView;
 
 /**
  * LoginController - Bộ điều khiển màn hình Đăng nhập.
@@ -106,7 +109,10 @@ public class LoginController {
                         // Đăng nhập thất bại
                         view.showError("Email hoặc mật khẩu không đúng!");
                     }
-                } catch (Exception ex) {
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    view.showError("Lỗi kết nối: " + ex.getMessage());
+                } catch (ExecutionException ex) {
                     view.showError("Lỗi kết nối: " + ex.getMessage());
                 }
             }
@@ -121,6 +127,7 @@ public class LoginController {
     private void openDashboard(MemberDTO user) {
         DashboardView dashboard = new DashboardView(user);
         DashboardController dashCtrl = new DashboardController(dashboard, user);
+        dashboard.getRootPane().putClientProperty("controller", dashCtrl);
         dashboard.setVisible(true);
     }
 }

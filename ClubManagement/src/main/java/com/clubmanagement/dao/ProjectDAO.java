@@ -1,16 +1,17 @@
 package com.clubmanagement.dao;
 
-import com.clubmanagement.entity.Project;
-import com.clubmanagement.util.HibernateUtil;
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
 import com.clubmanagement.entity.Member;
+import com.clubmanagement.entity.Project;
+import com.clubmanagement.util.HibernateUtil;
 
 /**
  * ProjectDAO - Lớp truy cập dữ liệu cho thực thể Project (Dự án).
@@ -49,6 +50,9 @@ public class ProjectDAO {
             Project project = session.get(Project.class, projectId);
             if (project != null) {
                 org.hibernate.Hibernate.initialize(project.getMembers());
+                if (project.getMembers() != null) {
+                    project.getMembers().forEach(m -> org.hibernate.Hibernate.initialize(m.getTeams()));
+                }
             }
             return Optional.ofNullable(project);
         } catch (Exception e) {
@@ -68,7 +72,12 @@ public class ProjectDAO {
                 Project.class
             );
             List<Project> results = query.getResultList();
-            results.forEach(p -> org.hibernate.Hibernate.initialize(p.getMembers()));
+            results.forEach(p -> {
+                org.hibernate.Hibernate.initialize(p.getMembers());
+                if (p.getMembers() != null) {
+                    p.getMembers().forEach(m -> org.hibernate.Hibernate.initialize(m.getTeams()));
+                }
+            });
             return results;
         } catch (Exception e) {
             logger.error("Lỗi khi lấy danh sách dự án: {}", e.getMessage());
@@ -89,7 +98,12 @@ public class ProjectDAO {
             );
             query.setParameter("status", status);
             List<Project> results = query.getResultList();
-            results.forEach(p -> org.hibernate.Hibernate.initialize(p.getMembers()));
+            results.forEach(p -> {
+                org.hibernate.Hibernate.initialize(p.getMembers());
+                if (p.getMembers() != null) {
+                    p.getMembers().forEach(m -> org.hibernate.Hibernate.initialize(m.getTeams()));
+                }
+            });
             return results;
         } catch (Exception e) {
             logger.error("Lỗi khi lọc dự án: {}", e.getMessage());
@@ -112,7 +126,12 @@ public class ProjectDAO {
             );
             query.setParameter("kw", pattern);
             List<Project> results = query.getResultList();
-            results.forEach(p -> org.hibernate.Hibernate.initialize(p.getMembers()));
+            results.forEach(p -> {
+                org.hibernate.Hibernate.initialize(p.getMembers());
+                if (p.getMembers() != null) {
+                    p.getMembers().forEach(m -> org.hibernate.Hibernate.initialize(m.getTeams()));
+                }
+            });
             return results;
         } catch (Exception e) {
             logger.error("Lỗi khi tìm kiếm dự án: {}", e.getMessage());
@@ -191,6 +210,11 @@ public class ProjectDAO {
             Member member = session.get(Member.class, memberId);
             if (project != null && member != null) {
                 org.hibernate.Hibernate.initialize(project.getMembers());
+                int maxMembers = project.getMaxMembers() != null ? project.getMaxMembers() : 0;
+                int current = project.getMembers() != null ? project.getMembers().size() : 0;
+                if (maxMembers > 0 && current >= maxMembers) {
+                    throw new IllegalStateException("Dự án đã đủ thành viên");
+                }
                 if (!project.getMembers().contains(member)) {
                     project.getMembers().add(member);
                     session.merge(project);
@@ -202,6 +226,77 @@ public class ProjectDAO {
             if (tx != null) tx.rollback();
             logger.error("Lỗi khi thêm thành viên: {}", e.getMessage(), e);
             throw new RuntimeException("Không thể thêm thành viên vào dự án", e);
+        }
+    }
+
+    public List<Project> findPublicUnassigned() {
+        try (Session session = HibernateUtil.openSession()) {
+            Query<Project> query = session.createQuery(
+                "SELECT DISTINCT p FROM Project p " +
+                "LEFT JOIN FETCH p.manager " +
+                "LEFT JOIN FETCH p.members " +
+                "WHERE p.visibility = 'Public' AND p.members IS EMPTY " +
+                "ORDER BY p.startDate DESC",
+                Project.class
+            );
+            List<Project> results = query.getResultList();
+            results.forEach(p -> {
+                if (p.getMembers() != null) {
+                    p.getMembers().forEach(m -> org.hibernate.Hibernate.initialize(m.getTeams()));
+                }
+            });
+            return results;
+        } catch (Exception e) {
+            logger.error("Lỗi khi lấy dự án public chưa chỉ định: {}", e.getMessage());
+            throw new RuntimeException("Không thể lấy dự án public chưa chỉ định", e);
+        }
+    }
+
+    public List<Project> findPublic() {
+        try (Session session = HibernateUtil.openSession()) {
+            Query<Project> query = session.createQuery(
+                "SELECT DISTINCT p FROM Project p " +
+                "LEFT JOIN FETCH p.manager " +
+                "LEFT JOIN FETCH p.members " +
+                "WHERE p.visibility = 'Public' " +
+                "ORDER BY p.startDate DESC",
+                Project.class
+            );
+            List<Project> results = query.getResultList();
+            results.forEach(p -> {
+                if (p.getMembers() != null) {
+                    p.getMembers().forEach(m -> org.hibernate.Hibernate.initialize(m.getTeams()));
+                }
+            });
+            return results;
+        } catch (Exception e) {
+            logger.error("Lỗi khi lấy dự án public: {}", e.getMessage());
+            throw new RuntimeException("Không thể lấy dự án public", e);
+        }
+    }
+
+    public List<Project> findByMember(Integer memberId) {
+        try (Session session = HibernateUtil.openSession()) {
+            Query<Project> query = session.createQuery(
+                "SELECT DISTINCT p FROM Project p " +
+                "JOIN p.members m " +
+                "LEFT JOIN FETCH p.manager " +
+                "LEFT JOIN FETCH p.members " +
+                "WHERE m.memberId = :memberId " +
+                "ORDER BY p.startDate DESC",
+                Project.class
+            );
+            query.setParameter("memberId", memberId);
+            List<Project> results = query.getResultList();
+            results.forEach(p -> {
+                if (p.getMembers() != null) {
+                    p.getMembers().forEach(m -> org.hibernate.Hibernate.initialize(m.getTeams()));
+                }
+            });
+            return results;
+        } catch (Exception e) {
+            logger.error("Lỗi khi lấy dự án của thành viên: {}", e.getMessage());
+            throw new RuntimeException("Không thể lấy dự án của thành viên", e);
         }
     }
 
@@ -227,6 +322,44 @@ public class ProjectDAO {
             if (tx != null) tx.rollback();
             logger.error("Lỗi khi xóa thành viên: {}", e.getMessage(), e);
             throw new RuntimeException("Không thể xóa thành viên khỏi dự án", e);
+        }
+    }
+
+    public void replaceMembers(Integer projectId, List<Integer> memberIds) {
+        Transaction tx = null;
+        try (Session session = HibernateUtil.openSession()) {
+            tx = session.beginTransaction();
+            Project project = session.get(Project.class, projectId);
+            if (project == null) {
+                throw new IllegalArgumentException("Không tìm thấy dự án");
+            }
+            org.hibernate.Hibernate.initialize(project.getMembers());
+            if (project.getMembers() == null) {
+                project.setMembers(new java.util.ArrayList<>());
+            } else {
+                project.getMembers().clear();
+            }
+
+            int maxMembers = project.getMaxMembers() != null ? project.getMaxMembers() : 0;
+            if (memberIds != null) {
+                int count = 0;
+                for (Integer memberId : memberIds) {
+                    if (memberId == null) continue;
+                    if (maxMembers > 0 && count >= maxMembers) break;
+                    Member member = session.get(Member.class, memberId);
+                    if (member != null && !project.getMembers().contains(member)) {
+                        project.getMembers().add(member);
+                        count++;
+                    }
+                }
+            }
+
+            session.merge(project);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            logger.error("Lỗi khi cập nhật thành viên dự án: {}", e.getMessage(), e);
+            throw new RuntimeException("Không thể cập nhật thành viên dự án", e);
         }
     }
 }

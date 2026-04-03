@@ -1,9 +1,21 @@
 package com.clubmanagement.entity;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 /**
  * Entity: Project (Dự án của CLB)
@@ -49,6 +61,14 @@ public class Project {
      */
     @Column(name = "status", length = 20)
     private String status = "Planning";
+
+    /** Hiển thị công khai hay riêng tư */
+    @Column(name = "visibility", length = 10)
+    private String visibility = "Public";
+
+    /** Số thành viên tối đa (0 = không giới hạn) */
+    @Column(name = "max_members")
+    private Integer maxMembers = 0;
 
     /** Quản lý dự án (N-1 với Member) */
     @ManyToOne(fetch = FetchType.EAGER)
@@ -107,6 +127,12 @@ public class Project {
 
     public String getStatus()              { return status; }
     public void setStatus(String v)        { this.status = v; }
+
+    public String getVisibility()          { return visibility; }
+    public void setVisibility(String v)    { this.visibility = v; }
+
+    public Integer getMaxMembers()         { return maxMembers; }
+    public void setMaxMembers(Integer v)   { this.maxMembers = v; }
 
     public Member getManager()             { return manager; }
     public void setManager(Member v)       { this.manager = v; }

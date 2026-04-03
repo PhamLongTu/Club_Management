@@ -1,13 +1,33 @@
 package com.clubmanagement.view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.ProjectDTO;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
-import java.awt.*;
-import java.util.List;
 
 /**
  * ProjectView - Màn hình quản lý Dự án.
@@ -22,7 +42,8 @@ public class ProjectView {
     private JPanel        mainPanel;
     private JTextField    searchField;
     private JComboBox<String> statusFilter;
-    private JButton       btnAdd, btnEdit, btnDelete, btnRefresh, btnSearch, btnMembers;
+    private JComboBox<String> assignmentFilter;
+    private JButton       btnAdd, btnEdit, btnDelete, btnRefresh, btnSearch;
     private JTable        projectTable;
     private DefaultTableModel tableModel;
     private JLabel        countLabel;
@@ -57,7 +78,7 @@ public class ProjectView {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("📋 Quản lý Dự án");
+        JLabel title = new JLabel("Quản lý Dự án");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -81,11 +102,20 @@ public class ProjectView {
             new EmptyBorder(4, 10, 4, 10)
         ));
 
-        btnSearch = makeBtn("🔍 Tìm", PRIMARY, Color.WHITE);
+        btnSearch = makeBtn("Tìm", PRIMARY, Color.WHITE);
 
         statusFilter = new JComboBox<>(new String[]{"Tất cả", "Planning", "Active", "OnHold", "Completed", "Cancelled"});
         statusFilter.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         statusFilter.setPreferredSize(new Dimension(150, 34));
+
+        assignmentFilter = new JComboBox<>(new String[]{
+            "Tất cả",
+            "Chưa chỉ định (Public)",
+            "Đã chỉ định (Public/Private)",
+            "Dự án của tôi"
+        });
+        assignmentFilter.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        assignmentFilter.setPreferredSize(new Dimension(190, 34));
 
         leftPanel.add(new JLabel("Tìm kiếm: "));
         leftPanel.add(searchField);
@@ -93,17 +123,20 @@ public class ProjectView {
         leftPanel.add(Box.createHorizontalStrut(8));
         leftPanel.add(new JLabel("Trạng thái: "));
         leftPanel.add(statusFilter);
+        leftPanel.add(Box.createHorizontalStrut(8));
+        leftPanel.add(new JLabel("Bộ lọc: "));
+        leftPanel.add(assignmentFilter);
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
 
-        btnRefresh = makeBtn("🔄 Làm mới", new Color(100,116,139), Color.WHITE);
-        btnMembers = makeBtn("👥 Thành viên", new Color(99, 102, 241), Color.WHITE);
-        btnAdd     = makeBtn("➕ Thêm",     SUCCESS_CLR,             Color.WHITE);
-        btnEdit    = makeBtn("✏ Sửa",      WARNING_CLR,             Color.WHITE);
-        btnDelete  = makeBtn("🗑 Xóa",     DANGER_CLR,              Color.WHITE);
+        btnRefresh = makeBtn("Làm mới", new Color(100,116,139), Color.WHITE);
+        btnAdd     = makeBtn("Thêm",     SUCCESS_CLR,             Color.WHITE);
+        btnEdit    = makeBtn("Sửa",      WARNING_CLR,             Color.WHITE);
+        btnDelete  = makeBtn("Xóa",     DANGER_CLR,              Color.WHITE);
 
         if (!currentUser.isLeader()) {
+            btnAdd.setVisible(false);
             btnEdit.setVisible(false);
             btnDelete.setVisible(false);
         }
@@ -115,7 +148,6 @@ public class ProjectView {
         rightPanel.add(countLabel);
         rightPanel.add(Box.createHorizontalStrut(8));
         rightPanel.add(btnRefresh);
-        rightPanel.add(btnMembers);
         rightPanel.add(btnAdd);
         rightPanel.add(btnEdit);
         rightPanel.add(btnDelete);
@@ -271,8 +303,8 @@ public class ProjectView {
     public JButton getBtnDelete()  { return btnDelete; }
     public JButton getBtnRefresh() { return btnRefresh; }
     public JButton getBtnSearch()  { return btnSearch; }
-    public JButton getBtnMembers() { return btnMembers; }
     public JTable  getTable()      { return projectTable; }
     public JTextField    getSearchField()    { return searchField; }
     public JComboBox<String> getStatusFilterBox() { return statusFilter; }
+    public JComboBox<String> getAssignmentFilterBox() { return assignmentFilter; }
 }

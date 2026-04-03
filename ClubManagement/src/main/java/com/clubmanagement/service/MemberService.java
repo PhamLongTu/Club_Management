@@ -1,20 +1,21 @@
 package com.clubmanagement.service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.clubmanagement.dao.MemberDAO;
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.entity.Member;
 import com.clubmanagement.entity.Role;
 import com.clubmanagement.util.HibernateUtil;
 import com.clubmanagement.util.PasswordUtil;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * MemberService - Tầng nghiệp vụ cho Thành viên.
@@ -114,7 +115,7 @@ public class MemberService {
      */
     public MemberDTO createMember(String fullName, String studentId, String email,
                                   String phone, String gender, LocalDate birthDate,
-                                  String password, Integer roleId) {
+                                  String password, Integer roleId, List<Integer> teamIds) {
         // --- Validate ---
         if (fullName == null || fullName.isBlank())
             throw new IllegalArgumentException("Họ tên không được để trống!");
@@ -145,6 +146,12 @@ public class MemberService {
 
         // --- Lưu vào DB ---
         Member saved = memberDAO.save(member);
+        if (role.getPermissionLevel() != null && role.getPermissionLevel() < 2) {
+            memberDAO.replaceTeams(saved.getMemberId(), teamIds);
+            saved = memberDAO.findById(saved.getMemberId()).orElse(saved);
+        } else {
+            memberDAO.replaceTeams(saved.getMemberId(), java.util.Collections.emptyList());
+        }
         return toDTO(saved);
     }
 
@@ -193,7 +200,7 @@ public class MemberService {
      */
     public MemberDTO updateMember(Integer memberId, String fullName, String phone,
                                   String gender, LocalDate birthDate,
-                                  String status, Integer roleId) {
+                                  String status, Integer roleId, List<Integer> teamIds) {
         Member member = memberDAO.findById(memberId)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thành viên ID: " + memberId));
 
@@ -212,6 +219,12 @@ public class MemberService {
         member.setRole(role);
 
         Member updated = memberDAO.update(member);
+        if (role.getPermissionLevel() != null && role.getPermissionLevel() < 2) {
+            memberDAO.replaceTeams(memberId, teamIds);
+            updated = memberDAO.findById(memberId).orElse(updated);
+        } else {
+            memberDAO.replaceTeams(memberId, java.util.Collections.emptyList());
+        }
         return toDTO(updated);
     }
 
@@ -249,6 +262,15 @@ public class MemberService {
      * @return MemberDTO tương ứng
      */
     private MemberDTO toDTO(Member member) {
+        String teamNames = "";
+        if (member.getRole() != null && member.getRole().getPermissionLevel() != null
+            && member.getRole().getPermissionLevel() < 2) {
+            if (member.getTeams() != null && !member.getTeams().isEmpty()) {
+                teamNames = member.getTeams().stream()
+                    .map(t -> t.getTeamName())
+                    .collect(Collectors.joining(", "));
+            }
+        }
         return new MemberDTO(
             member.getMemberId(),
             member.getFullName(),
@@ -260,7 +282,8 @@ public class MemberService {
             member.getJoinDate(),
             member.getStatus(),
             member.getRole() != null ? member.getRole().getRoleName() : "N/A",
-            member.getRole() != null ? member.getRole().getPermissionLevel() : 1
+            member.getRole() != null ? member.getRole().getPermissionLevel() : 1,
+            teamNames
         );
     }
 
@@ -291,6 +314,19 @@ public class MemberService {
         } catch (Exception e) {
             logger.error("Lỗi khi lấy danh sách vai trò: {}", e.getMessage());
             throw new RuntimeException("Không thể lấy danh sách vai trò", e);
+        }
+    }
+
+    public List<Integer> getTeamIdsForMember(Integer memberId) {
+        if (memberId == null) return java.util.Collections.emptyList();
+        try (Session session = HibernateUtil.openSession()) {
+            return session.createQuery(
+                "SELECT t.teamId FROM Member m JOIN m.teams t WHERE m.memberId = :mid",
+                Integer.class
+            ).setParameter("mid", memberId).getResultList();
+        } catch (Exception e) {
+            logger.error("Lỗi khi lấy ban của thành viên: {}", e.getMessage());
+            return java.util.Collections.emptyList();
         }
     }
 }

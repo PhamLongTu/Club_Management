@@ -1,16 +1,30 @@
 package com.clubmanagement.controller;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
+
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.TeamDTO;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.service.TeamService;
 import com.clubmanagement.view.TeamView;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.util.List;
-import java.util.Optional;
 
 public class TeamController {
 
@@ -23,7 +37,7 @@ public class TeamController {
         this.view = view;
         this.currentUser = currentUser;
         attachListeners();
-        loadAllTeams();
+        loadAllTeamsInternal();
     }
 
     private void attachListeners() {
@@ -44,7 +58,7 @@ public class TeamController {
         }
     }
 
-    public void loadAllTeams() {
+    private void loadAllTeamsInternal() {
         view.setStatusMessage("Đang tải danh sách Ban/Nhóm...");
         SwingWorker<List<TeamDTO>, Void> worker = new SwingWorker<>() {
             @Override
@@ -55,12 +69,19 @@ public class TeamController {
             protected void done() {
                 try {
                     view.loadData(get());
-                } catch (Exception e) {
-                    view.setStatusMessage("Lỗi: " + e.getMessage());
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
+                } catch (ExecutionException ex) {
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
                 }
             }
         };
         worker.execute();
+    }
+
+    public final void loadAllTeams() {
+        loadAllTeamsInternal();
     }
 
     private void handleAdd() {
@@ -82,7 +103,7 @@ public class TeamController {
     }
 
     private void showFormDialog(TeamDTO team) {
-        JDialog dialog = new JDialog((Frame) null, team == null ? "🏢 Tạo Ban mới" : "✏ Sửa thông tin Ban", true);
+        JDialog dialog = new JDialog((Frame) null, team == null ? "Tạo Ban mới" : "Sửa thông tin Ban", true);
         dialog.setSize(450, 300);
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
@@ -100,7 +121,7 @@ public class TeamController {
         if (team != null) txtDesc.setText(team.getDescription());
 
         List<MemberDTO> allMembers = memberService.getAllMembers();
-        JComboBox<MemberDTO> cbLeader = new JComboBox<>(allMembers.toArray(new MemberDTO[0]));
+        JComboBox<MemberDTO> cbLeader = new JComboBox<>(allMembers.toArray(MemberDTO[]::new));
         cbLeader.setFont(f);
         
         // Chọn sẵn leader nếu là edit
@@ -146,7 +167,7 @@ public class TeamController {
                 
                 dialog.dispose();
                 loadAllTeams();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -177,7 +198,7 @@ public class TeamController {
                 teamService.deleteTeam(id);
                 JOptionPane.showMessageDialog(null, "Đã xóa Xong!");
                 loadAllTeams();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }

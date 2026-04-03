@@ -1,5 +1,27 @@
 package com.clubmanagement.controller;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
+
 import com.clubmanagement.dto.AttendanceDTO;
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
@@ -7,14 +29,6 @@ import com.clubmanagement.service.AttendanceService;
 import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.view.AttendanceView;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
 
 public class AttendanceController {
 
@@ -30,7 +44,7 @@ public class AttendanceController {
         this.view = view;
         this.currentUser = currentUser;
         attachListeners();
-        loadAllAttendances();
+        loadAllAttendancesInternal();
     }
 
     private void attachListeners() {
@@ -50,7 +64,7 @@ public class AttendanceController {
         }
     }
 
-    public void loadAllAttendances() {
+    private void loadAllAttendancesInternal() {
         view.setStatusMessage("Đang tải danh sách Điểm danh...");
         SwingWorker<List<AttendanceDTO>, Void> worker = new SwingWorker<>() {
             @Override
@@ -61,12 +75,19 @@ public class AttendanceController {
             protected void done() {
                 try {
                     view.loadData(get());
-                } catch (Exception e) {
-                    view.setStatusMessage("Lỗi: " + e.getMessage());
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
+                } catch (ExecutionException ex) {
+                    view.setStatusMessage("Lỗi: " + ex.getMessage());
                 }
             }
         };
         worker.execute();
+    }
+
+    public final void loadAllAttendances() {
+        loadAllAttendancesInternal();
     }
 
     private void handleAdd() {
@@ -88,7 +109,7 @@ public class AttendanceController {
     }
 
     private void showFormDialog(AttendanceDTO attendance) {
-        JDialog dialog = new JDialog((Frame) null, attendance == null ? "✅ Cấp mã Điểm danh" : "✏ Sửa Điểm danh", true);
+        JDialog dialog = new JDialog((Frame) null, attendance == null ? "Cấp mã Điểm danh" : "Sửa Điểm danh", true);
         dialog.setSize(500, 350);
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
@@ -98,11 +119,11 @@ public class AttendanceController {
         Font f = new Font("Segoe UI", Font.PLAIN, 13);
 
         List<MemberDTO> allMembers = memberService.getAllMembers();
-        JComboBox<MemberDTO> cbMember = new JComboBox<>(allMembers.toArray(new MemberDTO[0]));
+        JComboBox<MemberDTO> cbMember = new JComboBox<>(allMembers.toArray(MemberDTO[]::new));
         cbMember.setFont(f);
 
         List<EventDTO> allEvents = eventService.getAllEvents();
-        JComboBox<EventDTO> cbEvent = new JComboBox<>(allEvents.toArray(new EventDTO[0]));
+        JComboBox<EventDTO> cbEvent = new JComboBox<>(allEvents.toArray(EventDTO[]::new));
         cbEvent.setFont(f);
 
         JTextField txtCheckIn = new JTextField(LocalDateTime.now().format(DATE_FMT));
@@ -182,7 +203,7 @@ public class AttendanceController {
                 }
                 dialog.dispose();
                 loadAllAttendances();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -213,7 +234,7 @@ public class AttendanceController {
                 attendanceService.deleteAttendance(id);
                 JOptionPane.showMessageDialog(null, "Đã xóa!");
                 loadAllAttendances();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }

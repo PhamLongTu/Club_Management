@@ -1,19 +1,20 @@
 package com.clubmanagement.service;
 
-import com.clubmanagement.dao.EventDAO;
-import com.clubmanagement.dto.EventDTO;
-import com.clubmanagement.entity.Event;
-import com.clubmanagement.entity.Member;
-import com.clubmanagement.util.HibernateUtil;
-import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.clubmanagement.dao.EventDAO;
+import com.clubmanagement.dto.EventDTO;
+import com.clubmanagement.entity.Event;
+import com.clubmanagement.entity.Member;
+import com.clubmanagement.util.HibernateUtil;
 
 /**
  * EventService - Tầng nghiệp vụ cho Sự kiện.
@@ -43,8 +44,9 @@ public class EventService {
      */
     public EventDTO createEvent(String eventName, String description,
                                 LocalDateTime startDate, LocalDateTime endDate,
-                                String location, BigDecimal budget,
-                                Integer maxParticipants, Integer createdById) {
+                                LocalDateTime registrationDeadline, String location,
+                                BigDecimal budget, Integer maxParticipants,
+                                Integer createdById) {
         // --- Validate ---
         if (eventName == null || eventName.isBlank())
             throw new IllegalArgumentException("Tên sự kiện không được để trống!");
@@ -52,6 +54,8 @@ public class EventService {
             throw new IllegalArgumentException("Ngày bắt đầu và kết thúc không được để trống!");
         if (endDate.isBefore(startDate) || endDate.isEqual(startDate))
             throw new IllegalArgumentException("Ngày kết thúc phải sau ngày bắt đầu!");
+        if (registrationDeadline != null && registrationDeadline.isAfter(startDate))
+            throw new IllegalArgumentException("Hạn đăng ký phải trước ngày bắt đầu!");
         if (budget != null && budget.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("Ngân sách không được âm!");
         if (maxParticipants != null && maxParticipants <= 0)
@@ -66,6 +70,7 @@ public class EventService {
             budget != null ? budget : BigDecimal.ZERO, creator
         );
         if (maxParticipants != null) event.setMaxParticipants(maxParticipants);
+        event.setRegistrationDeadline(registrationDeadline);
 
         Event saved = eventDAO.save(event);
         return toDTO(saved);
@@ -113,6 +118,25 @@ public class EventService {
         return eventDAO.findById(eventId).map(this::toDTO);
     }
 
+    public List<EventDTO> getEventsForMember(Integer memberId) {
+        if (memberId == null) return java.util.Collections.emptyList();
+        try (Session session = HibernateUtil.openSession()) {
+            List<Event> events = session.createQuery(
+                "SELECT DISTINCT e FROM Event e " +
+                "JOIN e.participations p " +
+                "JOIN p.member m " +
+                "LEFT JOIN FETCH e.createdBy " +
+                "LEFT JOIN FETCH e.participations " +
+                "WHERE m.memberId = :mid",
+                Event.class
+            ).setParameter("mid", memberId).getResultList();
+            return events.stream().map(this::toDTO).collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Lỗi khi lấy sự kiện của thành viên: {}", e.getMessage());
+            return java.util.Collections.emptyList();
+        }
+    }
+
     /**
      * Cập nhật thông tin sự kiện.
      *
@@ -128,7 +152,8 @@ public class EventService {
      */
     public EventDTO updateEvent(Integer eventId, String eventName, String description,
                                 LocalDateTime startDate, LocalDateTime endDate,
-                                String location, BigDecimal budget, String status) {
+                                LocalDateTime registrationDeadline, String location,
+                                BigDecimal budget, String status) {
         Event event = eventDAO.findById(eventId)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sự kiện ID: " + eventId));
 
@@ -136,11 +161,14 @@ public class EventService {
             throw new IllegalArgumentException("Tên sự kiện không được để trống!");
         if (endDate != null && startDate != null && endDate.isBefore(startDate))
             throw new IllegalArgumentException("Ngày kết thúc phải sau ngày bắt đầu!");
+        if (registrationDeadline != null && startDate != null && registrationDeadline.isAfter(startDate))
+            throw new IllegalArgumentException("Hạn đăng ký phải trước ngày bắt đầu!");
 
         event.setEventName(eventName.trim());
         event.setDescription(description);
         event.setStartDate(startDate);
         event.setEndDate(endDate);
+        event.setRegistrationDeadline(registrationDeadline);
         event.setLocation(location);
         event.setBudget(budget);
         event.setStatus(status);
@@ -186,6 +214,7 @@ public class EventService {
             event.getStatus(),
             event.getBudget(),
             event.getMaxParticipants(),
+            event.getRegistrationDeadline(),
             event.getCreatedBy() != null ? event.getCreatedBy().getFullName() : "N/A",
             regCount
         );
@@ -199,6 +228,63 @@ public class EventService {
         } catch (Exception e) {
             logger.error("Lỗi khi tìm Member ID={}: {}", memberId, e.getMessage());
             return null;
+        }
+    }
+
+    public void registerForEvent(Integer eventId, Integer memberId) {
+        if (eventId == null || memberId == null) {
+            throw new IllegalArgumentException("Thiếu thông tin đăng ký sự kiện");
+        }
+        org.hibernate.Transaction tx = null;
+        try (Session session = HibernateUtil.openSession()) {
+            tx = session.beginTransaction();
+            Event event = session.get(Event.class, eventId);
+            Member member = session.get(Member.class, memberId);
+            if (event == null || member == null) {
+                throw new IllegalArgumentException("Không tìm thấy sự kiện hoặc thành viên");
+            }
+            if (event.getRegistrationDeadline() != null
+                && LocalDateTime.now().isAfter(event.getRegistrationDeadline())) {
+                throw new IllegalStateException("Đã hết thời gian đăng ký sự kiện");
+            }
+            org.hibernate.Hibernate.initialize(event.getParticipations());
+            long currentCount = event.getParticipations() != null ? event.getParticipations().size() : 0;
+            int max = event.getMaxParticipants() != null ? event.getMaxParticipants() : 0;
+            if (max > 0 && currentCount >= max) {
+                throw new IllegalStateException("Sự kiện đã đủ số lượng đăng ký");
+            }
+            boolean alreadyRegistered = event.getParticipations() != null
+                && event.getParticipations().stream().anyMatch(p -> p.getMember().getMemberId().equals(memberId));
+            if (alreadyRegistered) {
+                throw new IllegalStateException("Bạn đã đăng ký sự kiện này rồi");
+            }
+            com.clubmanagement.entity.Participation participation = new com.clubmanagement.entity.Participation();
+            participation.setEvent(event);
+            participation.setMember(member);
+            participation.setStatus("Registered");
+            participation.setRegistrationDate(LocalDateTime.now());
+            session.persist(participation);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw new RuntimeException("Không thể đăng ký sự kiện: " + e.getMessage(), e);
+        }
+    }
+
+    public boolean isMemberRegistered(Integer eventId, Integer memberId) {
+        if (eventId == null || memberId == null) return false;
+        try (Session session = HibernateUtil.openSession()) {
+            Long count = session.createQuery(
+                "SELECT COUNT(p) FROM Participation p WHERE p.event.eventId = :eid AND p.member.memberId = :mid",
+                Long.class
+            )
+            .setParameter("eid", eventId)
+            .setParameter("mid", memberId)
+            .uniqueResult();
+            return count != null && count > 0;
+        } catch (Exception e) {
+            logger.error("Lỗi khi kiểm tra đăng ký sự kiện: {}", e.getMessage());
+            return false;
         }
     }
 }

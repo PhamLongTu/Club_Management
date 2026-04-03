@@ -14,6 +14,8 @@ public class TaskDTO {
     private String priority;
     private String status;
     private LocalDateTime createdDate;
+    private String visibility;
+    private Integer maxAssignees;
 
     // Tên người dùng liên quan
     private String assigneeName;
@@ -25,12 +27,17 @@ public class TaskDTO {
     private Integer assignerId;
     private Integer eventId;
 
+    private java.util.List<Integer> assigneeIds;
+    private java.util.List<String> assigneeNames;
+
     public TaskDTO() {}
 
     public TaskDTO(Integer taskId, String title, String description, LocalDateTime deadline,
                    String priority, String status, LocalDateTime createdDate,
+                   String visibility, Integer maxAssignees,
                    String assigneeName, String assignerName, String eventName,
-                   Integer assigneeId, Integer assignerId, Integer eventId) {
+                   Integer assigneeId, Integer assignerId, Integer eventId,
+                   java.util.List<Integer> assigneeIds, java.util.List<String> assigneeNames) {
         this.taskId = taskId;
         this.title = title;
         this.description = description;
@@ -38,12 +45,16 @@ public class TaskDTO {
         this.priority = priority;
         this.status = status;
         this.createdDate = createdDate;
+        this.visibility = visibility;
+        this.maxAssignees = maxAssignees;
         this.assigneeName = assigneeName;
         this.assignerName = assignerName;
         this.eventName = eventName;
         this.assigneeId = assigneeId;
         this.assignerId = assignerId;
         this.eventId = eventId;
+        this.assigneeIds = assigneeIds;
+        this.assigneeNames = assigneeNames;
     }
 
     public Integer getTaskId() { return taskId; }
@@ -67,6 +78,12 @@ public class TaskDTO {
     public LocalDateTime getCreatedDate() { return createdDate; }
     public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
 
+    public String getVisibility() { return visibility; }
+    public void setVisibility(String visibility) { this.visibility = visibility; }
+
+    public Integer getMaxAssignees() { return maxAssignees; }
+    public void setMaxAssignees(Integer maxAssignees) { this.maxAssignees = maxAssignees; }
+
     public String getAssigneeName() { return assigneeName; }
     public void setAssigneeName(String assigneeName) { this.assigneeName = assigneeName; }
 
@@ -84,6 +101,12 @@ public class TaskDTO {
 
     public Integer getEventId() { return eventId; }
     public void setEventId(Integer eventId) { this.eventId = eventId; }
+
+    public java.util.List<Integer> getAssigneeIds() { return assigneeIds; }
+    public void setAssigneeIds(java.util.List<Integer> assigneeIds) { this.assigneeIds = assigneeIds; }
+
+    public java.util.List<String> getAssigneeNames() { return assigneeNames; }
+    public void setAssigneeNames(java.util.List<String> assigneeNames) { this.assigneeNames = assigneeNames; }
 
     @Override
     public String toString() {

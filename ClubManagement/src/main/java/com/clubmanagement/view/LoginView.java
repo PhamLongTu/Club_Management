@@ -1,11 +1,34 @@
 package com.clubmanagement.view;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 /**
  * LoginView - Màn hình đăng nhập của ứng dụng.
@@ -86,7 +109,7 @@ public class LoginView extends JFrame {
                 // Bật anti-aliasing cho đẹp hơn
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 // Vẽ gradient dọc từ trên (PRIMARY) xuống dưới (PRIMARY_L)
-                GradientPaint gp = new GradientPaint(0, 0, PRIMARY, 0, getHeight(), new Color(29, 78, 216));
+                GradientPaint gp = new GradientPaint(0, 0, PRIMARY, 0, getHeight(), PRIMARY_L);
                 g2.setPaint(gp);
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
@@ -98,11 +121,6 @@ public class LoginView extends JFrame {
         inner.setOpaque(false);
         inner.setLayout(new BoxLayout(inner, BoxLayout.Y_AXIS));
         inner.setBorder(new EmptyBorder(0, 40, 0, 40));
-
-        // Icon CLB (emoji text)
-        JLabel iconLabel = new JLabel("🏫", SwingConstants.CENTER);
-        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 72));
-        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Tên hệ thống
         JLabel titleLabel = new JLabel("CLB Manager", SwingConstants.CENTER);
@@ -122,7 +140,7 @@ public class LoginView extends JFrame {
         sep.setForeground(new Color(147, 197, 253, 100));
 
         // Các tính năng
-        String[] features = {"✅ Quản lý thành viên", "✅ Theo dõi sự kiện", "✅ Quản lý dự án", "✅ Thông báo nội bộ"};
+        String[] features = {"Quản lý thành viên", "Theo dõi sự kiện", "Quản lý dự án", "Thông báo nội bộ"};
         JPanel featuresPanel = new JPanel();
         featuresPanel.setOpaque(false);
         featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
@@ -138,7 +156,6 @@ public class LoginView extends JFrame {
         }
 
         inner.add(Box.createVerticalGlue());
-        inner.add(iconLabel);
         inner.add(Box.createVerticalStrut(16));
         inner.add(titleLabel);
         inner.add(Box.createVerticalStrut(8));
@@ -178,12 +195,12 @@ public class LoginView extends JFrame {
         subLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // ---- Email ----
-        JLabel emailLabel = makeLabel("📧  Email");
+        JLabel emailLabel = makeLabel("Email");
         emailField = new JTextField();
         styleTextField(emailField, "example@email.com");
 
         // ---- Password ----
-        JLabel passLabel = makeLabel("🔒  Mật khẩu");
+        JLabel passLabel = makeLabel("Mật khẩu");
         passwordField = new JPasswordField();
         styleTextField(passwordField, "Nhập mật khẩu...");
 
@@ -231,7 +248,7 @@ public class LoginView extends JFrame {
         });
 
         // ---- Footer ----
-        JLabel footerLabel = new JLabel("© 2025 Club Management System", SwingConstants.CENTER);
+        JLabel footerLabel = new JLabel("2025 Club Management System", SwingConstants.CENTER);
         footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         footerLabel.setForeground(new Color(148, 163, 184));
         footerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -326,13 +343,13 @@ public class LoginView extends JFrame {
     /** Hiển thị thông báo lỗi (chữ đỏ). */
     public void showError(String msg) {
         statusLabel.setForeground(ERROR_RED);
-        statusLabel.setText("⚠ " + msg);
+        statusLabel.setText(msg);
     }
 
     /** Hiển thị thông báo thành công (chữ xanh). */
     public void showSuccess(String msg) {
         statusLabel.setForeground(SUCCESS);
-        statusLabel.setText("✓ " + msg);
+        statusLabel.setText(msg);
     }
 
     /** Xóa thông báo. */

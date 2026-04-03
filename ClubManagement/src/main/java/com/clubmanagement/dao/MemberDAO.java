@@ -1,15 +1,16 @@
 package com.clubmanagement.dao;
 
-import com.clubmanagement.entity.Member;
-import com.clubmanagement.util.HibernateUtil;
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
+import com.clubmanagement.entity.Member;
+import com.clubmanagement.util.HibernateUtil;
 
 /**
  * MemberDAO - Lớp truy cập dữ liệu cho thực thể Member.
@@ -63,7 +64,12 @@ public class MemberDAO {
     public Optional<Member> findById(Integer memberId) {
         try (Session session = HibernateUtil.openSession()) {
             // session.get() trả về null nếu không tìm thấy, không ném exception
-            Member member = session.get(Member.class, memberId);
+            Query<Member> query = session.createQuery(
+                "SELECT DISTINCT m FROM Member m JOIN FETCH m.role LEFT JOIN FETCH m.teams WHERE m.memberId = :id",
+                Member.class
+            );
+            query.setParameter("id", memberId);
+            Member member = query.uniqueResult();
             return Optional.ofNullable(member);
         } catch (Exception e) {
             logger.error("Lỗi khi tìm thành viên ID={}: {}", memberId, e.getMessage());
@@ -80,7 +86,8 @@ public class MemberDAO {
         try (Session session = HibernateUtil.openSession()) {
             // HQL (Hibernate Query Language) - tương tự SQL nhưng dùng tên Entity/field
             Query<Member> query = session.createQuery(
-                "FROM Member m JOIN FETCH m.role ORDER BY m.fullName", Member.class
+                "SELECT DISTINCT m FROM Member m JOIN FETCH m.role LEFT JOIN FETCH m.teams ORDER BY m.fullName",
+                Member.class
             );
             return query.getResultList();
         } catch (Exception e) {
@@ -99,7 +106,8 @@ public class MemberDAO {
         try (Session session = HibernateUtil.openSession()) {
             // setParameter() chống SQL injection
             Query<Member> query = session.createQuery(
-                "FROM Member m JOIN FETCH m.role WHERE m.email = :email", Member.class
+                "SELECT DISTINCT m FROM Member m JOIN FETCH m.role LEFT JOIN FETCH m.teams WHERE m.email = :email",
+                Member.class
             );
             query.setParameter("email", email);
             return query.uniqueResultOptional();  // trả về Optional
@@ -118,7 +126,8 @@ public class MemberDAO {
     public Optional<Member> findByStudentId(String studentId) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Member> query = session.createQuery(
-                "FROM Member m WHERE m.studentId = :sid", Member.class
+                "SELECT DISTINCT m FROM Member m JOIN FETCH m.role LEFT JOIN FETCH m.teams WHERE m.studentId = :sid",
+                Member.class
             );
             query.setParameter("sid", studentId);
             return query.uniqueResultOptional();
@@ -139,7 +148,7 @@ public class MemberDAO {
             // LIKE với % ở hai đầu = tìm kiếm substring
             String pattern = "%" + keyword.toLowerCase() + "%";
             Query<Member> query = session.createQuery(
-                "FROM Member m JOIN FETCH m.role " +
+                "SELECT DISTINCT m FROM Member m JOIN FETCH m.role LEFT JOIN FETCH m.teams " +
                 "WHERE LOWER(m.fullName) LIKE :kw " +
                 "   OR LOWER(m.email) LIKE :kw " +
                 "   OR LOWER(m.studentId) LIKE :kw " +
@@ -225,6 +234,38 @@ public class MemberDAO {
             if (tx != null) tx.rollback();
             logger.error("Lỗi khi xóa thành viên ID={}: {}", memberId, e.getMessage(), e);
             throw new RuntimeException("Không thể xóa thành viên: " + e.getMessage(), e);
+        }
+    }
+
+    public void replaceTeams(Integer memberId, List<Integer> teamIds) {
+        Transaction tx = null;
+        try (Session session = HibernateUtil.openSession()) {
+            tx = session.beginTransaction();
+            Member member = session.get(Member.class, memberId);
+            if (member == null) {
+                throw new IllegalArgumentException("Không tìm thấy thành viên");
+            }
+            org.hibernate.Hibernate.initialize(member.getTeams());
+            if (member.getTeams() == null) {
+                member.setTeams(new java.util.ArrayList<>());
+            } else {
+                member.getTeams().clear();
+            }
+            if (teamIds != null) {
+                for (Integer teamId : teamIds) {
+                    if (teamId == null) continue;
+                    com.clubmanagement.entity.Team team = session.get(com.clubmanagement.entity.Team.class, teamId);
+                    if (team != null && !member.getTeams().contains(team)) {
+                        member.getTeams().add(team);
+                    }
+                }
+            }
+            session.merge(member);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            logger.error("Lỗi khi cập nhật ban của thành viên: {}", e.getMessage(), e);
+            throw new RuntimeException("Không thể cập nhật ban của thành viên", e);
         }
     }
 }
