@@ -53,6 +53,8 @@ public class MemberFormDialog extends JDialog {
     private JTextField  tfFullName, tfStudentId, tfEmail, tfPhone;
     private JTextField  tfAvatarPath;
     private JPasswordField pfPassword;
+    private JPasswordField pfOldPassword;
+    private JPasswordField pfNewPassword;
     private JComboBox<String> cbGender, cbStatus;
     private JComboBox<Role>   cbRole;
     private JDateChooser dcBirthDate;   // Format: yyyy-MM-dd
@@ -63,6 +65,8 @@ public class MemberFormDialog extends JDialog {
     // ====== State ======
     private boolean confirmed = false; // true nếu nhấn nút Lưu
     private boolean isEdit    = false; // true nếu đang sửa (ẩn field password)
+    private boolean selfEdit  = false; // true nếu user tự chỉnh sửa profile
+    private boolean allowPasswordReset = false; // true nếu admin được đặt lại mật khẩu
 
     private static final Color PRIMARY   = new Color(37, 99, 235);
     private static final Color TEXT_DARK = new Color(15, 23, 42);
@@ -92,13 +96,36 @@ public class MemberFormDialog extends JDialog {
     }
 
     /**
+     * Constructor cho chế độ CHỈNH SỬA (Admin có thể đặt lại mật khẩu).
+     */
+    public MemberFormDialog(Frame parent, List<Role> roles, List<TeamDTO> teams,
+                            MemberDTO member, List<Integer> selectedTeamIds,
+                            boolean allowPasswordReset) {
+        super(parent, "Chỉnh sửa thành viên", true);
+        this.isEdit = true;
+        this.allowPasswordReset = allowPasswordReset;
+        buildUI(roles, teams, member, selectedTeamIds);
+    }
+
+    /**
+     * Constructor cho chế độ tự chỉnh sửa thông tin cá nhân.
+     */
+    public MemberFormDialog(Frame parent, MemberDTO member, boolean selfEdit) {
+        super(parent, "Chỉnh sửa thông tin cá nhân", true);
+        this.isEdit = true;
+        this.selfEdit = selfEdit;
+        buildUI(null, null, member, java.util.Collections.emptyList());
+    }
+
+    /**
      * Xây dựng giao diện form. Nếu member != null → điền sẵn dữ liệu.
      */
     private void buildUI(List<Role> roles, List<TeamDTO> teams,
                          MemberDTO member, List<Integer> selectedTeamIds) {
-        setSize(520, isEdit ? 620 : 690);
-        setLocationRelativeTo(getParent());
-        setResizable(false);
+        int baseHeight = selfEdit ? 560 : (isEdit ? 640 : 720);
+        setPreferredSize(new Dimension(560, baseHeight));
+        setMinimumSize(new Dimension(520, selfEdit ? 520 : 600));
+        setResizable(true);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -145,30 +172,36 @@ public class MemberFormDialog extends JDialog {
         cbGender.setAlignmentX(Component.LEFT_ALIGNMENT);
         addLabeledRow(mainPanel, "Giới tính", cbGender);
 
-        // Vai trò
-        cbRole = new JComboBox<>();
-        for (Role r : roles) cbRole.addItem(r);
-        cbRole.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        cbRole.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-        cbRole.setAlignmentX(Component.LEFT_ALIGNMENT);
-        addLabeledRow(mainPanel, "Vai trò *", cbRole);
+        if (!selfEdit) {
+            // Vai trò
+            cbRole = new JComboBox<>();
+            if (roles != null) {
+                for (Role r : roles) cbRole.addItem(r);
+            }
+            cbRole.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            cbRole.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+            cbRole.setAlignmentX(Component.LEFT_ALIGNMENT);
+            addLabeledRow(mainPanel, "Vai trò *", cbRole);
 
-        // Ban / Nhóm
-        listTeams = new JList<>(teams.toArray(TeamDTO[]::new));
-        listTeams.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        listTeams.setVisibleRowCount(4);
-        listTeams.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        JScrollPane teamScroll = new JScrollPane(listTeams);
-        teamScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-        addLabeledRow(mainPanel, "Ban / Nhóm", teamScroll);
+            // Ban / Nhóm
+            if (teams != null) {
+                listTeams = new JList<>(teams.toArray(TeamDTO[]::new));
+                listTeams.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                listTeams.setVisibleRowCount(4);
+                listTeams.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+                JScrollPane teamScroll = new JScrollPane(listTeams);
+                teamScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+                addLabeledRow(mainPanel, "Ban / Nhóm", teamScroll);
+            }
 
-        // Trạng thái (chỉ hiện khi EDIT)
-        if (isEdit) {
-            cbStatus = new JComboBox<>(new String[]{"Active", "Inactive", "Suspended"});
-            cbStatus.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-            cbStatus.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-            cbStatus.setAlignmentX(Component.LEFT_ALIGNMENT);
-            addLabeledRow(mainPanel, "Trạng thái", cbStatus);
+            // Trạng thái (chỉ hiện khi EDIT)
+            if (isEdit) {
+                cbStatus = new JComboBox<>(new String[]{"Active", "Inactive", "Suspended"});
+                cbStatus.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                cbStatus.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+                cbStatus.setAlignmentX(Component.LEFT_ALIGNMENT);
+                addLabeledRow(mainPanel, "Trạng thái", cbStatus);
+            }
         }
 
         // Mật khẩu (chỉ hiện khi THÊM MỚI)
@@ -182,6 +215,42 @@ public class MemberFormDialog extends JDialog {
                 new EmptyBorder(4, 10, 4, 10)
             ));
             addLabeledRow(mainPanel, "Mật khẩu * (≥6 ký tự)", pfPassword);
+        }
+
+        // Đổi mật khẩu (self edit)
+        if (selfEdit) {
+            pfOldPassword = new JPasswordField();
+            pfOldPassword.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            pfOldPassword.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+            pfOldPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
+            pfOldPassword.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(203, 213, 225), 1),
+                new EmptyBorder(4, 10, 4, 10)
+            ));
+            addLabeledRow(mainPanel, "Mật khẩu cũ *", pfOldPassword);
+
+            pfNewPassword = new JPasswordField();
+            pfNewPassword.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            pfNewPassword.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+            pfNewPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
+            pfNewPassword.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(203, 213, 225), 1),
+                new EmptyBorder(4, 10, 4, 10)
+            ));
+            addLabeledRow(mainPanel, "Mật khẩu mới (≥6 ký tự)", pfNewPassword);
+        }
+
+        // Admin đặt lại mật khẩu (tùy chọn)
+        if (!selfEdit && isEdit && allowPasswordReset) {
+            pfNewPassword = new JPasswordField();
+            pfNewPassword.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+            pfNewPassword.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
+            pfNewPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
+            pfNewPassword.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(203, 213, 225), 1),
+                new EmptyBorder(4, 10, 4, 10)
+            ));
+            addLabeledRow(mainPanel, "Đặt lại mật khẩu (tùy chọn)", pfNewPassword);
         }
 
         // ---- Điền sẵn dữ liệu nếu là EDIT ----
@@ -198,15 +267,17 @@ public class MemberFormDialog extends JDialog {
             }
 
             // Chọn Role tương ứng trong ComboBox
-            for (int i = 0; i < cbRole.getItemCount(); i++) {
-                if (cbRole.getItemAt(i).getRoleName().equals(member.getRoleName())) {
-                    cbRole.setSelectedIndex(i);
-                    break;
+            if (cbRole != null) {
+                for (int i = 0; i < cbRole.getItemCount(); i++) {
+                    if (cbRole.getItemAt(i).getRoleName().equals(member.getRoleName())) {
+                        cbRole.setSelectedIndex(i);
+                        break;
+                    }
                 }
             }
         }
 
-        if (selectedTeamIds != null && !selectedTeamIds.isEmpty()) {
+        if (listTeams != null && selectedTeamIds != null && !selectedTeamIds.isEmpty()) {
             int[] indices = java.util.stream.IntStream.range(0, listTeams.getModel().getSize())
                 .filter(i -> selectedTeamIds.contains(listTeams.getModel().getElementAt(i).getTeamId()))
                 .toArray();
@@ -215,8 +286,10 @@ public class MemberFormDialog extends JDialog {
 
         updateAvatarPreview();
 
-        cbRole.addActionListener(e -> updateTeamSelectionState());
-        updateTeamSelectionState();
+        if (cbRole != null) {
+            cbRole.addActionListener(e -> updateTeamSelectionState());
+            updateTeamSelectionState();
+        }
 
         // ---- Buttons ----
         mainPanel.add(Box.createVerticalStrut(20));
@@ -225,6 +298,8 @@ public class MemberFormDialog extends JDialog {
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setBorder(null);
         setContentPane(scrollPane);
+        pack();
+        setLocationRelativeTo(getParent());
     }
 
     /** Thêm một hàng TextField có label vào panel. */
@@ -328,6 +403,34 @@ public class MemberFormDialog extends JDialog {
             pfPassword.requestFocus();
             return;
         }
+
+        // Validate đổi mật khẩu (self edit)
+        if (selfEdit && pfNewPassword != null) {
+            String newPass = new String(pfNewPassword.getPassword()).trim();
+            String oldPass = pfOldPassword != null ? new String(pfOldPassword.getPassword()).trim() : "";
+            if (!newPass.isEmpty()) {
+                if (oldPass.isEmpty()) {
+                    showError("Vui lòng nhập mật khẩu cũ!");
+                    pfOldPassword.requestFocus();
+                    return;
+                }
+                if (newPass.length() < 6) {
+                    showError("Mật khẩu mới phải có ít nhất 6 ký tự!");
+                    pfNewPassword.requestFocus();
+                    return;
+                }
+            }
+        }
+
+        // Validate đặt lại mật khẩu (admin edit)
+        if (!selfEdit && isEdit && allowPasswordReset && pfNewPassword != null) {
+            String newPass = new String(pfNewPassword.getPassword()).trim();
+            if (!newPass.isEmpty() && newPass.length() < 6) {
+                showError("Mật khẩu mới phải có ít nhất 6 ký tự!");
+                pfNewPassword.requestFocus();
+                return;
+            }
+        }
         confirmed = true;
         dispose();
     }
@@ -347,11 +450,14 @@ public class MemberFormDialog extends JDialog {
     public String getPhone()        { return tfPhone.getText().trim(); }
     public String getGender()       { return (String) cbGender.getSelectedItem(); }
     public String getStatus()       { return cbStatus != null ? (String) cbStatus.getSelectedItem() : "Active"; }
-    public Role   getSelectedRole() { return (Role) cbRole.getSelectedItem(); }
+    public Role   getSelectedRole() { return cbRole != null ? (Role) cbRole.getSelectedItem() : null; }
     public String getPassword()     { return pfPassword != null ? new String(pfPassword.getPassword()) : ""; }
     public String getAvatarUrl()    { return avatarUrl; }
+    public String getOldPassword()  { return pfOldPassword != null ? new String(pfOldPassword.getPassword()) : ""; }
+    public String getNewPassword()  { return pfNewPassword != null ? new String(pfNewPassword.getPassword()) : ""; }
 
     public List<Integer> getSelectedTeamIds() {
+        if (listTeams == null) return java.util.Collections.emptyList();
         return listTeams.getSelectedValuesList().stream()
             .map(TeamDTO::getTeamId)
             .toList();
@@ -362,7 +468,9 @@ public class MemberFormDialog extends JDialog {
     }
 
     private void updateTeamSelectionState() {
-        listTeams.setEnabled(true);
+        if (listTeams != null) {
+            listTeams.setEnabled(true);
+        }
     }
 
     private void addAvatarRow(JPanel panel) {

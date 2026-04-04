@@ -179,6 +179,18 @@ public class ProjectService {
         projectDAO.addMember(projectId, memberId);
     }
 
+    public void unregisterFromProject(Integer projectId, Integer memberId) {
+        if (projectId == null || memberId == null) {
+            throw new IllegalArgumentException("Thiếu thông tin hủy đăng ký dự án");
+        }
+        Project project = projectDAO.findById(projectId)
+            .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy dự án"));
+        if (project.getStartDate() != null && !project.getStartDate().isAfter(LocalDate.now())) {
+            throw new IllegalStateException("Dự án đã bắt đầu, không thể hủy");
+        }
+        projectDAO.removeMember(projectId, memberId);
+    }
+
     /** Xóa thành viên khỏi dự án. */
     public void removeMemberFromProject(Integer projectId, Integer memberId) {
         projectDAO.removeMember(projectId, memberId);

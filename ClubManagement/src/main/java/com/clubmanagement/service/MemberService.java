@@ -233,6 +233,83 @@ public class MemberService {
     }
 
     /**
+     * Cập nhật thông tin thành viên, cho phép đặt lại mật khẩu (Admin).
+     */
+    public MemberDTO updateMemberWithPassword(Integer memberId, String fullName, String phone,
+                                              String gender, LocalDate birthDate,
+                                              String status, Integer roleId, List<Integer> teamIds,
+                                              String avatarUrl, String newPassword) {
+        Member member = memberDAO.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thành viên ID: " + memberId));
+
+        if (fullName == null || fullName.isBlank())
+            throw new IllegalArgumentException("Họ tên không được để trống!");
+
+        Role role = findRoleById(roleId);
+        if (role == null)
+            throw new IllegalArgumentException("Vai trò không tồn tại!");
+
+        member.setFullName(fullName.trim());
+        member.setPhone(phone);
+        member.setGender(gender);
+        member.setBirthDate(birthDate);
+        member.setStatus(status);
+        member.setRole(role);
+        member.setAvatarUrl(normalizeAvatarUrl(avatarUrl));
+
+        if (newPassword != null && !newPassword.isBlank()) {
+            if (newPassword.length() < 6) {
+                throw new IllegalArgumentException("Mật khẩu mới phải có ít nhất 6 ký tự!");
+            }
+            member.setPasswordHash(PasswordUtil.hashPassword(newPassword));
+        }
+
+        Member updated = memberDAO.update(member);
+        if (role.getPermissionLevel() != null && role.getPermissionLevel() <= 2) {
+            memberDAO.replaceTeams(memberId, teamIds);
+            updated = memberDAO.findById(memberId).orElse(updated);
+        } else {
+            memberDAO.replaceTeams(memberId, java.util.Collections.emptyList());
+        }
+        return toDTO(updated);
+    }
+
+    /**
+     * Cập nhật thông tin cá nhân (yêu cầu mật khẩu cũ nếu đổi mật khẩu).
+     */
+    public MemberDTO updateSelfProfile(Integer memberId, String fullName, String phone,
+                                       String gender, LocalDate birthDate,
+                                       String avatarUrl, String oldPassword, String newPassword) {
+        Member member = memberDAO.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thành viên ID: " + memberId));
+
+        if (fullName == null || fullName.isBlank())
+            throw new IllegalArgumentException("Họ tên không được để trống!");
+
+        member.setFullName(fullName.trim());
+        member.setPhone(phone);
+        member.setGender(gender);
+        member.setBirthDate(birthDate);
+        member.setAvatarUrl(normalizeAvatarUrl(avatarUrl));
+
+        if (newPassword != null && !newPassword.isBlank()) {
+            if (oldPassword == null || oldPassword.isBlank()) {
+                throw new IllegalArgumentException("Vui lòng nhập mật khẩu cũ!");
+            }
+            if (!PasswordUtil.checkPassword(oldPassword, member.getPasswordHash())) {
+                throw new IllegalArgumentException("Mật khẩu cũ không đúng!");
+            }
+            if (newPassword.length() < 6) {
+                throw new IllegalArgumentException("Mật khẩu mới phải có ít nhất 6 ký tự!");
+            }
+            member.setPasswordHash(PasswordUtil.hashPassword(newPassword));
+        }
+
+        Member updated = memberDAO.update(member);
+        return toDTO(updated);
+    }
+
+    /**
      * Xóa thành viên (soft delete: chuyển status = Inactive).
      * Không xóa vật lý để bảo toàn lịch sử hoạt động.
      *

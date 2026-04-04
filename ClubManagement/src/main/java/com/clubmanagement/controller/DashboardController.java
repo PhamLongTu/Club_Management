@@ -37,6 +37,7 @@ public class DashboardController {
     private AnnouncementController  announcementController;
     private TaskController          taskController;
     private DocumentController      documentController;
+    private MyInfoController        myInfoController;
 
     /**
      * @param view        DashboardView đã khởi tạo
@@ -61,6 +62,10 @@ public class DashboardController {
         memberController       = new MemberController(view.getMemberView(),  currentUser);
         eventController        = new EventController(view.getEventView(),    currentUser);
         projectController      = new ProjectController(view.getProjectView(), currentUser);
+        myInfoController       = new MyInfoController(
+            view.getMyInfoView(), view, currentUser,
+            taskController, eventController, projectController
+        );
     }
 
     /**
@@ -83,6 +88,12 @@ public class DashboardController {
         view.getBtnTasks().addActionListener(e -> {
             view.showTasks();
             taskController.loadTasksByFilter();
+        });
+
+        // Nút Thông tin của tôi
+        view.getBtnMyInfo().addActionListener(e -> {
+            view.showMyInfo();
+            myInfoController.reloadAll();
         });
 
         // Nút Tài liệu

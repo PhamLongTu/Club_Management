@@ -121,6 +121,16 @@ public class TaskService {
         taskDAO.addMemberToTask(taskId, memberId);
     }
 
+    public void unregisterFromTask(Integer taskId, Integer memberId) {
+        Task task = taskDAO.findById(taskId)
+            .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhiệm vụ"));
+        if (task.getAssignees() == null || task.getAssignees().stream()
+            .noneMatch(m -> m.getMemberId().equals(memberId))) {
+            throw new IllegalStateException("Bạn chưa đăng ký nhiệm vụ này");
+        }
+        taskDAO.removeMemberFromTask(taskId, memberId);
+    }
+
     public void deleteTask(Integer taskId) {
         if (!taskDAO.deleteById(taskId)) {
             throw new IllegalArgumentException("Không thể tìm thấy Nhiệm vụ để xóa!");

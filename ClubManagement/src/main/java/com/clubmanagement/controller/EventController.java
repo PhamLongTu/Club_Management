@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -27,19 +27,18 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
-
-import com.toedter.calendar.JDateChooser;
 
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.service.EventService;
 import com.clubmanagement.view.EventView;
+import com.toedter.calendar.JDateChooser;
 
 /**
  * EventController - Bộ điều khiển màn hình Sự kiện.
@@ -391,13 +390,17 @@ public class EventController {
     }
 
     private void handleViewDetail() {
-        Integer id = view.getSelectedEventId();
-        if (id == null) return;
+        openDetailById(view.getSelectedEventId(), null);
+    }
 
+    public void openDetailById(Integer id, Runnable afterClose) {
+        if (id == null) return;
         Optional<EventDTO> opt = eventService.getEventById(id);
         if (opt.isEmpty()) return;
-        EventDTO event = opt.get();
+        showDetailDialog(opt.get(), afterClose);
+    }
 
+    private void showDetailDialog(EventDTO event, Runnable afterClose) {
         JDialog dialog = new JDialog((Frame) null, "Chi tiết sự kiện", true);
         dialog.setSize(740, 560);
         dialog.setLocationRelativeTo(null);
@@ -467,6 +470,13 @@ public class EventController {
         boolean alreadyRegistered = eventService.isMemberRegistered(event.getEventId(), currentUser.getMemberId());
         if (alreadyRegistered) {
             canRegister = false;
+            JButton btnCancel = new JButton("Hủy đăng ký");
+            btnCancel.setBackground(new Color(239, 68, 68));
+            btnCancel.setForeground(Color.WHITE);
+            btnCancel.setBorderPainted(false);
+            btnCancel.setFocusPainted(false);
+            btnCancel.addActionListener(e -> handleCancelEvent(event, dialog));
+            footer.add(btnCancel, 0);
         }
 
         if (canRegister) {
@@ -488,10 +498,54 @@ public class EventController {
             footer.add(btnRegister, 0);
         }
 
+        if (afterClose != null) {
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                private boolean handled = false;
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent e) {
+                    if (handled) return;
+                    handled = true;
+                    afterClose.run();
+                }
+
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    if (handled) return;
+                    handled = true;
+                    afterClose.run();
+                }
+            });
+        }
+
         dialog.add(header, BorderLayout.NORTH);
         dialog.add(content, BorderLayout.CENTER);
         dialog.add(footer, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+
+    private void handleCancelEvent(EventDTO event, JDialog dialog) {
+        if (event.getRegistrationDeadline() != null
+            && LocalDateTime.now().isAfter(event.getRegistrationDeadline())) {
+            JOptionPane.showMessageDialog(dialog,
+                "Đã hết hạn đăng ký, không thể hủy.",
+                "Từ chối", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int choice = JOptionPane.showConfirmDialog(dialog,
+            "Bạn có chắc muốn hủy đăng ký sự kiện này?",
+            "Xác nhận hủy", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                eventService.unregisterFromEvent(event.getEventId(), currentUser.getMemberId());
+                JOptionPane.showMessageDialog(dialog, "Đã hủy đăng ký sự kiện!");
+                dialog.dispose();
+                loadAllEvents();
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private JLabel makeInfoLabel(String text) {

@@ -9,9 +9,9 @@ import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -33,13 +33,12 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
-import com.toedter.calendar.JDateChooser;
-
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.ProjectDTO;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.service.ProjectService;
 import com.clubmanagement.view.ProjectView;
+import com.toedter.calendar.JDateChooser;
 
 /**
  * ProjectController - Bộ điều khiển màn hình Dự án.
@@ -410,9 +409,11 @@ public class ProjectController {
     }
 
     private void handleViewDetail() {
-        Integer id = view.getSelectedProjectId();
-        if (id == null) return;
+        openDetailById(view.getSelectedProjectId(), null);
+    }
 
+    public void openDetailById(Integer id, Runnable afterClose) {
+        if (id == null) return;
         Optional<ProjectDTO> opt = projectService.getProjectById(id);
         if (opt.isEmpty()) return;
         ProjectDTO project = opt.get();
@@ -428,7 +429,7 @@ public class ProjectController {
             protected void done() {
                 try {
                     List<MemberDTO> members = get();
-                    showDetailDialog(project, members);
+                    showDetailDialog(project, members, afterClose);
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                     JOptionPane.showMessageDialog(null,
@@ -444,7 +445,7 @@ public class ProjectController {
         worker.execute();
     }
 
-    private void showDetailDialog(ProjectDTO project, List<MemberDTO> members) {
+    private void showDetailDialog(ProjectDTO project, List<MemberDTO> members, Runnable afterClose) {
         JDialog dialog = new JDialog((Frame) null, "Chi tiết dự án", true);
         dialog.setSize(760, 560);
         dialog.setLocationRelativeTo(null);
@@ -524,6 +525,16 @@ public class ProjectController {
         footer.add(btnClose);
 
         boolean alreadyInProject = members.stream().anyMatch(m -> m.getMemberId().equals(currentUser.getMemberId()));
+        if (alreadyInProject) {
+            JButton btnCancel = new JButton("Hủy đăng ký");
+            btnCancel.setBackground(new Color(239, 68, 68));
+            btnCancel.setForeground(Color.WHITE);
+            btnCancel.setBorderPainted(false);
+            btnCancel.setFocusPainted(false);
+            btnCancel.addActionListener(e -> handleCancelProject(project, dialog));
+            footer.add(btnCancel, 0);
+        }
+
         int maxMembers = safeInt(project.getMaxMembers());
         int current = safeInt(project.getMemberCount());
         boolean canRegister = "Public".equalsIgnoreCase(project.getVisibility())
@@ -549,10 +560,53 @@ public class ProjectController {
             footer.add(btnRegister, 0);
         }
 
+        if (afterClose != null) {
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                private boolean handled = false;
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent e) {
+                    if (handled) return;
+                    handled = true;
+                    afterClose.run();
+                }
+
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    if (handled) return;
+                    handled = true;
+                    afterClose.run();
+                }
+            });
+        }
+
         dialog.add(header, BorderLayout.NORTH);
         dialog.add(new JScrollPane(content), BorderLayout.CENTER);
         dialog.add(footer, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+
+    private void handleCancelProject(ProjectDTO project, JDialog dialog) {
+        if (project.getStartDate() != null && !project.getStartDate().isAfter(LocalDate.now())) {
+            JOptionPane.showMessageDialog(dialog,
+                "Dự án đã bắt đầu, không thể hủy.",
+                "Từ chối", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int choice = JOptionPane.showConfirmDialog(dialog,
+            "Bạn có chắc muốn hủy đăng ký dự án này?",
+            "Xác nhận hủy", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                projectService.unregisterFromProject(project.getProjectId(), currentUser.getMemberId());
+                JOptionPane.showMessageDialog(dialog, "Đã hủy đăng ký dự án!");
+                dialog.dispose();
+                loadAllProjects();
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private JLabel makeInfoLabel(String text) {

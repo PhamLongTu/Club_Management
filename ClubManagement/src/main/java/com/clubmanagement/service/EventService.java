@@ -271,6 +271,42 @@ public class EventService {
         }
     }
 
+    public void unregisterFromEvent(Integer eventId, Integer memberId) {
+        if (eventId == null || memberId == null) {
+            throw new IllegalArgumentException("Thiếu thông tin hủy đăng ký sự kiện");
+        }
+        org.hibernate.Transaction tx = null;
+        try (Session session = HibernateUtil.openSession()) {
+            tx = session.beginTransaction();
+            Event event = session.get(Event.class, eventId);
+            if (event == null) {
+                throw new IllegalArgumentException("Không tìm thấy sự kiện");
+            }
+            if (event.getRegistrationDeadline() != null
+                && LocalDateTime.now().isAfter(event.getRegistrationDeadline())) {
+                throw new IllegalStateException("Đã hết hạn đăng ký sự kiện");
+            }
+
+            com.clubmanagement.entity.Participation participation = session.createQuery(
+                "FROM Participation p WHERE p.event.eventId = :eid AND p.member.memberId = :mid",
+                com.clubmanagement.entity.Participation.class
+            )
+            .setParameter("eid", eventId)
+            .setParameter("mid", memberId)
+            .uniqueResult();
+
+            if (participation == null) {
+                throw new IllegalStateException("Bạn chưa đăng ký sự kiện này");
+            }
+
+            session.remove(participation);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw new RuntimeException("Không thể hủy đăng ký sự kiện: " + e.getMessage(), e);
+        }
+    }
+
     public boolean isMemberRegistered(Integer eventId, Integer memberId) {
         if (eventId == null || memberId == null) return false;
         try (Session session = HibernateUtil.openSession()) {

@@ -242,11 +242,12 @@ public class MemberController {
             List<com.clubmanagement.dto.TeamDTO> teams = teamService.getAllTeams();
             List<Integer> teamIds = memberService.getTeamIdsForMember(selectedId);
             Frame parent      = JOptionPane.getFrameForComponent(view.getPanel());
-            MemberFormDialog dialog = new MemberFormDialog(parent, roles, teams, memberOpt.get(), teamIds);
+            boolean allowPasswordReset = currentUser.isAdmin();
+            MemberFormDialog dialog = new MemberFormDialog(parent, roles, teams, memberOpt.get(), teamIds, allowPasswordReset);
             dialog.setVisible(true);
 
             if (dialog.isConfirmed()) {
-                memberService.updateMember(
+                memberService.updateMemberWithPassword(
                     selectedId,
                     dialog.getFullName(),
                     dialog.getPhone(),
@@ -255,7 +256,8 @@ public class MemberController {
                     dialog.getStatus(),
                     dialog.getSelectedRole().getRoleId(),
                     dialog.getSelectedTeamIds(),
-                    dialog.getAvatarUrl()
+                    dialog.getAvatarUrl(),
+                    dialog.getNewPassword()
                 );
                 JOptionPane.showMessageDialog(null, "Đã cập nhật thành công!",
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);

@@ -88,3 +88,99 @@
 2026-04-04 01:07:08.646 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
 2026-04-04 01:07:08.658 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
 2026-04-04 01:07:08.658 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-04 01:09:17.209 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-04 01:09:17.210 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
+2026-04-04 01:09:17.240 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
+2026-04-04 01:09:17.251 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-04 11:13:17.102 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-04 11:13:17.104 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-04 11:13:17.105 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-04 11:13:17.412 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-04 11:13:17.663 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-04 11:13:18.655 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-04 11:13:18.655 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-04 11:13:18.659 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-04 11:13:18.937 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-04 11:13:18.937 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-04 11:14:01.393 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Lê Hoàng Chương [Member]
+2026-04-04 11:27:21.096 [SwingWorker-pool-1-thread-10] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
+2026-04-04 12:12:32.553 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-04 12:12:32.556 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
+2026-04-04 12:12:32.566 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
+2026-04-04 12:12:32.566 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-04 12:12:38.037 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-04 12:12:38.039 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-04 12:12:38.040 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-04 12:12:38.382 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-04 12:12:38.643 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-04 12:12:39.597 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-04 12:12:39.598 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-04 12:12:39.601 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-04 12:12:39.868 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-04 12:12:39.868 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-04 12:12:55.781 [SwingWorker-pool-1-thread-1] WARN  c.clubmanagement.service.MemberService - Mật khẩu sai cho tài khoản: em.hoang@email.com
+2026-04-04 12:13:07.537 [SwingWorker-pool-1-thread-2] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
+2026-04-04 12:21:00.165 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-04 12:21:00.165 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
+2026-04-04 12:21:00.182 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
+2026-04-04 12:21:00.183 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-04 12:21:07.491 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-04 12:21:07.492 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-04 12:21:07.493 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-04 12:21:07.784 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-04 12:21:07.951 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-04 12:21:08.834 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-04 12:21:08.835 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-04 12:21:08.837 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-04 12:21:09.043 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-04 12:21:09.044 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-04 12:21:25.666 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Lê Hoàng Chương [Member]
+2026-04-04 12:22:27.241 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-04 12:22:27.242 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-04 12:22:27.243 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-04 12:22:27.543 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-04 12:22:27.716 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-04 12:22:28.592 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-04 12:22:28.592 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-04 12:22:28.594 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-04 12:22:28.795 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-04 12:22:28.795 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-04 12:22:38.321 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Lê Hoàng Chương [Member]
+2026-04-04 12:28:05.241 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-04 12:28:05.243 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-04 12:28:05.243 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-04 12:28:05.551 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-04 12:28:05.720 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-04 12:28:06.612 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-04 12:28:06.613 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-04 12:28:06.615 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-04 12:28:06.819 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-04 12:28:06.820 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-04 12:28:19.411 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Lê Hoàng Chương [Member]
+2026-04-04 12:30:16.913 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-04 12:30:16.914 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
+2026-04-04 12:30:16.927 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
+2026-04-04 12:30:16.928 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-04 12:30:22.145 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-04 12:30:22.147 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-04 12:30:22.147 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-04 12:30:22.436 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-04 12:30:22.598 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-04 12:30:23.457 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-04 12:30:23.457 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-04 12:30:23.459 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-04 12:30:23.659 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-04 12:30:23.661 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-04 12:30:40.394 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Lê Hoàng Chương [Member]
+2026-04-04 12:32:03.507 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-04 12:32:03.509 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-04 12:32:03.510 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-04 12:32:03.811 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-04 12:32:03.982 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-04 12:32:04.852 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-04 12:32:04.853 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-04 12:32:04.855 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-04 12:32:05.056 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-04 12:32:05.057 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-04 12:32:16.269 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Lê Hoàng Chương [Member]
+2026-04-04 12:32:42.915 [AWT-EventQueue-0] INFO  com.clubmanagement.dao.MemberDAO - Đã cập nhật thành viên: Nguyễn Lê Hoàng Chương

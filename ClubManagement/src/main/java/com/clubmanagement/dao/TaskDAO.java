@@ -154,6 +154,30 @@ public class TaskDAO {
         }
     }
 
+    public void removeMemberFromTask(Integer taskId, Integer memberId) {
+        Transaction tx = null;
+        try (Session session = HibernateUtil.openSession()) {
+            tx = session.beginTransaction();
+            Task task = session.get(Task.class, taskId);
+            if (task == null) {
+                throw new IllegalArgumentException("Không tìm thấy nhiệm vụ");
+            }
+            var member = session.get(com.clubmanagement.entity.Member.class, memberId);
+            if (member == null) {
+                throw new IllegalArgumentException("Không tìm thấy thành viên");
+            }
+            org.hibernate.Hibernate.initialize(task.getAssignees());
+            if (task.getAssignees() != null && task.getAssignees().contains(member)) {
+                task.getAssignees().remove(member);
+                session.merge(task);
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw new RuntimeException("Không thể hủy đăng ký nhiệm vụ: " + e.getMessage(), e);
+        }
+    }
+
     public void replaceAssignees(Integer taskId, List<Integer> memberIds) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {

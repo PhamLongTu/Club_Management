@@ -47,10 +47,14 @@ public class DashboardView extends JFrame {
     private AnnouncementView  announcementView;
     private TaskView          taskView;
     private DocumentView      documentView;
+    private MyInfoView        myInfoView;
 
     // ====== Components ======
     private JLabel   userNameLabel;
     private JLabel   userRoleLabel;
+    private JLabel   sidebarNameLabel;
+    private JLabel   sidebarRoleLabel;
+    private JLabel   sidebarAvatarLabel;
     private JButton  btnLogout;
     private JPanel   contentArea;    // Vùng thay đổi nội dung
     private CardLayout cardLayout;   // Quản lý chuyển màn hình
@@ -68,6 +72,7 @@ public class DashboardView extends JFrame {
     private JButton btnProjects;
     private JButton btnAnnouncements;
     private JButton btnTasks;
+    private JButton btnMyInfo;
     private JButton btnDocuments;
 
     // Quick action buttons (Dashboard home)
@@ -182,29 +187,29 @@ public class DashboardView extends JFrame {
         userCard.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         String initials = ImageUtil.buildInitials(currentUser.getFullName());
-        JLabel avatar = new JLabel();
-        avatar.setPreferredSize(new Dimension(64, 64));
-        avatar.setMinimumSize(new Dimension(64, 64));
-        avatar.setMaximumSize(new Dimension(64, 64));
-        avatar.setAlignmentX(Component.LEFT_ALIGNMENT);
-        avatar.setIcon(ImageUtil.loadCircleAvatar(
+        sidebarAvatarLabel = new JLabel();
+        sidebarAvatarLabel.setPreferredSize(new Dimension(64, 64));
+        sidebarAvatarLabel.setMinimumSize(new Dimension(64, 64));
+        sidebarAvatarLabel.setMaximumSize(new Dimension(64, 64));
+        sidebarAvatarLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sidebarAvatarLabel.setIcon(ImageUtil.loadCircleAvatar(
             currentUser.getAvatarUrl(), 64, initials, new Color(30, 41, 59), new Color(226, 232, 240)
         ));
 
-        JLabel nameL = new JLabel(currentUser.getFullName());
-        nameL.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        nameL.setForeground(Color.WHITE);
-        nameL.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sidebarNameLabel = new JLabel(currentUser.getFullName());
+        sidebarNameLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        sidebarNameLabel.setForeground(Color.WHITE);
+        sidebarNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel roleL = new JLabel(currentUser.getRoleName());
-        roleL.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        roleL.setForeground(new Color(148, 163, 184));
-        roleL.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sidebarRoleLabel = new JLabel(currentUser.getRoleName());
+        sidebarRoleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        sidebarRoleLabel.setForeground(new Color(148, 163, 184));
+        sidebarRoleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        userCard.add(avatar);
+        userCard.add(sidebarAvatarLabel);
         userCard.add(Box.createVerticalStrut(8));
-        userCard.add(nameL);
-        userCard.add(roleL);
+        userCard.add(sidebarNameLabel);
+        userCard.add(sidebarRoleLabel);
 
         // Đường phân cách
         JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
@@ -214,6 +219,7 @@ public class DashboardView extends JFrame {
         btnHome          = makeSidebarBtn("Tổng quan",    true);
         btnAnnouncements = makeSidebarBtn("Thông báo",   false);
         btnTasks         = makeSidebarBtn("Nhiệm vụ",     false);
+        btnMyInfo        = makeSidebarBtn("Thông tin của tôi", false);
         btnMembers       = makeSidebarBtn("Thành viên",   false);
         btnEvents        = makeSidebarBtn("Sự kiện",      false);
         btnProjects      = makeSidebarBtn("Dự án",        false);
@@ -229,7 +235,10 @@ public class DashboardView extends JFrame {
         sidebar.add(btnEvents);
         sidebar.add(btnProjects);
         sidebar.add(btnDocuments);
+        sidebar.add(btnMyInfo);
         sidebar.add(Box.createVerticalGlue());
+
+        
 
         // Phiên bản ở dưới cùng
         JLabel versionLabel = new JLabel("  v1.0.0 - 2025");
@@ -286,6 +295,7 @@ public class DashboardView extends JFrame {
         announcementView = new AnnouncementView(currentUser);
         taskView         = new TaskView(currentUser);
         documentView     = new DocumentView(currentUser);
+        myInfoView       = new MyInfoView(currentUser);
         memberView       = new MemberView(currentUser);
         eventView        = new EventView(currentUser);
         projectView      = new ProjectView(currentUser);
@@ -294,6 +304,7 @@ public class DashboardView extends JFrame {
         contentArea.add(announcementView.getPanel(),"ANNOUNCEMENTS");
         contentArea.add(taskView.getPanel(),        "TASKS");
         contentArea.add(documentView.getPanel(),    "DOCUMENTS");
+        contentArea.add(myInfoView.getPanel(),      "MY_INFO");
         contentArea.add(memberView.getPanel(),      "MEMBERS");
         contentArea.add(eventView.getPanel(),       "EVENTS");
         contentArea.add(projectView.getPanel(),     "PROJECTS");
@@ -429,6 +440,7 @@ public class DashboardView extends JFrame {
     public void showHome()          { selectMenu(btnHome);          cardLayout.show(contentArea, "HOME"); }
     public void showAnnouncements() { selectMenu(btnAnnouncements); cardLayout.show(contentArea, "ANNOUNCEMENTS"); }
     public void showTasks()         { selectMenu(btnTasks);         cardLayout.show(contentArea, "TASKS"); }
+    public void showMyInfo()        { selectMenu(btnMyInfo);        cardLayout.show(contentArea, "MY_INFO"); }
     public void showMembers()       { selectMenu(btnMembers);       cardLayout.show(contentArea, "MEMBERS"); }
     public void showEvents()        { selectMenu(btnEvents);        cardLayout.show(contentArea, "EVENTS"); }
     public void showProjects()      { selectMenu(btnProjects);      cardLayout.show(contentArea, "PROJECTS"); }
@@ -440,7 +452,7 @@ public class DashboardView extends JFrame {
      */
     private void selectMenu(JButton selected) {
         for (JButton btn : new JButton[]{btnHome, btnAnnouncements, btnTasks,
-                                         btnMembers, btnEvents, btnProjects, btnDocuments}) {
+                                         btnMyInfo, btnMembers, btnEvents, btnProjects, btnDocuments}) {
             boolean isSelected = btn == selected;
             btn.setBackground(isSelected ? SIDEBAR_SEL : SIDEBAR_BG);
             btn.setForeground(isSelected ? Color.WHITE : new Color(148, 163, 184));
@@ -458,6 +470,7 @@ public class DashboardView extends JFrame {
     public JButton getBtnHome()           { return btnHome; }
     public JButton getBtnAnnouncements()  { return btnAnnouncements; }
     public JButton getBtnTasks()          { return btnTasks; }
+    public JButton getBtnMyInfo()         { return btnMyInfo; }
     public JButton getBtnMembers()        { return btnMembers; }
     public JButton getBtnEvents()         { return btnEvents; }
     public JButton getBtnProjects()       { return btnProjects; }
@@ -475,6 +488,19 @@ public class DashboardView extends JFrame {
     public AnnouncementView  getAnnouncementView() { return announcementView; }
     public TaskView          getTaskView()         { return taskView; }
     public DocumentView      getDocumentView()     { return documentView; }
+    public MyInfoView        getMyInfoView()       { return myInfoView; }
+
+    public void updateCurrentUserInfo(MemberDTO user) {
+        if (user == null) return;
+        String initials = ImageUtil.buildInitials(user.getFullName());
+        userNameLabel.setText(user.getFullName());
+        userRoleLabel.setText("[" + user.getRoleName() + "]");
+        sidebarNameLabel.setText(user.getFullName());
+        sidebarRoleLabel.setText(user.getRoleName());
+        sidebarAvatarLabel.setIcon(ImageUtil.loadCircleAvatar(
+            user.getAvatarUrl(), 64, initials, new Color(30, 41, 59), new Color(226, 232, 240)
+        ));
+    }
 
     /** Tạo nút quick action với style nhất quán. */
     private JButton makeQuickBtn(String text) {

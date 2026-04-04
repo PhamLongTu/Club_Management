@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.Box;
@@ -32,12 +32,10 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
-
-import com.toedter.calendar.JDateChooser;
 
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
@@ -46,6 +44,7 @@ import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.service.TaskService;
 import com.clubmanagement.view.TaskView;
+import com.toedter.calendar.JDateChooser;
 
 public class TaskController {
 
@@ -392,16 +391,20 @@ public class TaskController {
     }
 
     private void handleViewDetail() {
-        Integer id = view.getSelectedId();
-        if (id == null) return;
+        openDetailById(view.getSelectedId(), null);
+    }
 
+    public void openDetailById(Integer id, Runnable afterClose) {
+        if (id == null) return;
         List<TaskDTO> source = currentUser.isLeader()
             ? taskService.getAllTasks()
             : taskService.getVisibleTasksForUser(currentUser.getMemberId());
         Optional<TaskDTO> opt = source.stream().filter(t -> t.getTaskId().equals(id)).findFirst();
         if (opt.isEmpty()) return;
-        TaskDTO task = opt.get();
+        showDetailDialog(opt.get(), afterClose);
+    }
 
+    private void showDetailDialog(TaskDTO task, Runnable afterClose) {
         JDialog dialog = new JDialog((Frame) null, "Chi tiết nhiệm vụ", true);
         dialog.setSize(720, 520);
         dialog.setLocationRelativeTo(null);
@@ -465,6 +468,16 @@ public class TaskController {
             && !alreadyAssigned
             && (max <= 0 || current < max);
 
+        if (alreadyAssigned) {
+            JButton btnCancel = new JButton("Hủy đăng ký");
+            btnCancel.setBackground(new Color(239, 68, 68));
+            btnCancel.setForeground(Color.WHITE);
+            btnCancel.setBorderPainted(false);
+            btnCancel.setFocusPainted(false);
+            btnCancel.addActionListener(e -> handleCancelTask(task, dialog));
+            footer.add(btnCancel, 0);
+        }
+
         if (canRegister) {
             JButton btnRegister = new JButton("Đăng ký nhận nhiệm vụ");
             btnRegister.setBackground(new Color(16, 185, 129));
@@ -484,10 +497,54 @@ public class TaskController {
             footer.add(btnRegister, 0);
         }
 
+        if (afterClose != null) {
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                private boolean handled = false;
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent e) {
+                    if (handled) return;
+                    handled = true;
+                    afterClose.run();
+                }
+
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    if (handled) return;
+                    handled = true;
+                    afterClose.run();
+                }
+            });
+        }
+
         dialog.add(header, BorderLayout.NORTH);
         dialog.add(content, BorderLayout.CENTER);
         dialog.add(footer, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+
+    private void handleCancelTask(TaskDTO task, JDialog dialog) {
+        LocalDateTime deadline = task.getDeadline();
+        if (deadline != null && !LocalDateTime.now().isBefore(deadline.minusDays(3))) {
+            JOptionPane.showMessageDialog(dialog,
+                "Không thể hủy khi còn 3 ngày hoặc ít hơn đến hạn chót.",
+                "Từ chối", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int choice = JOptionPane.showConfirmDialog(dialog,
+            "Bạn có chắc muốn hủy đăng ký nhiệm vụ này?",
+            "Xác nhận hủy", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                taskService.unregisterFromTask(task.getTaskId(), currentUser.getMemberId());
+                JOptionPane.showMessageDialog(dialog, "Đã hủy đăng ký nhiệm vụ!");
+                dialog.dispose();
+                loadTasksByFilter();
+            } catch (RuntimeException ex) {
+                JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private JLabel makeInfoLabel(String text) {
