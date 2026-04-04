@@ -53,6 +53,11 @@ public class EventController {
 
     private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    /**
+     * Khởi tạo controller cho màn hình Sự kiện.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public EventController(EventView view, MemberDTO currentUser) {
         this.view        = view;
         this.currentUser = currentUser;
@@ -170,6 +175,11 @@ public class EventController {
         }
     }
 
+    /**
+     * Mở dialog thêm/sửa sự kiện.
+     * @param event Dữ liệu hiện tại (nullable)
+     * @param isEdit true nếu sửa, false nếu thêm mới
+     */
     private void showEventDialog(EventDTO event, boolean isEdit) {
         EventFormFields fields = buildEventForm(event);
         String title = isEdit ? "Sửa sự kiện" : "Thêm sự kiện mới";
@@ -185,6 +195,11 @@ public class EventController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Tạo header cho dialog.
+     * @param title Tiêu đề
+     * @return JPanel header
+     */
     private JPanel buildDialogHeader(String title) {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(248, 250, 252));
@@ -197,6 +212,14 @@ public class EventController {
         return header;
     }
 
+    /**
+     * Tạo footer chứa các nút hành động.
+     * @param dialog Dialog hiện tại
+     * @param fields Trường dữ liệu form
+     * @param event Dữ liệu hiện tại
+     * @param isEdit true nếu sửa
+     * @return JPanel footer
+     */
     private JPanel buildDialogFooter(JDialog dialog, EventFormFields fields, EventDTO event, boolean isEdit) {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         footer.setBorder(new EmptyBorder(8, 16, 12, 16));
@@ -309,6 +332,11 @@ public class EventController {
         return data;
     }
 
+    /**
+     * Tạo bộ chọn ngày.
+     * @param dateTime Ngày giờ mặc định
+     * @return JDateChooser
+     */
     private JDateChooser createDateChooser(LocalDateTime dateTime) {
         JDateChooser chooser = new JDateChooser();
         chooser.setDateFormatString("yyyy-MM-dd");
@@ -319,6 +347,11 @@ public class EventController {
         return chooser;
     }
 
+    /**
+     * Tạo spinner chọn giờ.
+     * @param dateTime Ngày giờ mặc định
+     * @return JSpinner
+     */
     private JSpinner createTimeSpinner(LocalDateTime dateTime) {
         LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
         Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
@@ -330,6 +363,12 @@ public class EventController {
         return spinner;
     }
 
+    /**
+     * Gộp input ngày + giờ thành một panel.
+     * @param dateChooser Bộ chọn ngày
+     * @param timeSpinner Bộ chọn giờ
+     * @return JPanel chứa cả hai input
+     */
     private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
         JPanel panel = new JPanel(new BorderLayout(8, 0));
         panel.setOpaque(false);
@@ -339,6 +378,12 @@ public class EventController {
         return panel;
     }
 
+    /**
+     * Chuyển giá trị từ input ngày + giờ sang LocalDateTime.
+     * @param dateChooser Bộ chọn ngày
+     * @param timeSpinner Bộ chọn giờ
+     * @return LocalDateTime hoặc null
+     */
     private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
         Date date = dateChooser.getDate();
         if (date == null) return null;
@@ -348,16 +393,32 @@ public class EventController {
         return LocalDateTime.of(localDate, localTime);
     }
 
+    /**
+     * Chuyển LocalDateTime sang Date.
+     * @param dateTime Ngày giờ
+     * @return Date
+     */
     private Date toDate(LocalDateTime dateTime) {
         return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
+    /**
+     * Tạo TextField với giá trị mặc định.
+     * @param value Giá trị ban đầu
+     * @param f Font áp dụng
+     * @return JTextField
+     */
     private JTextField createField(String value, Font f) {
         JTextField tf = new JTextField(value);
         tf.setFont(f);
         return tf;
     }
 
+    /**
+     * Tạo label cho form nhập liệu.
+     * @param text Nội dung
+     * @return JLabel
+     */
     private JLabel makeLabel(String text) {
         JLabel l = new JLabel(text);
         l.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -389,10 +450,18 @@ public class EventController {
         JComboBox<String> cbStatus;
     }
 
+    /**
+     * Mở dialog chi tiết sự kiện từ dòng đang chọn.
+     */
     private void handleViewDetail() {
         openDetailById(view.getSelectedEventId(), null);
     }
 
+    /**
+     * Mở dialog chi tiết sự kiện theo ID.
+     * @param id ID sự kiện
+     * @param afterClose Callback sau khi đóng (nullable)
+     */
     public void openDetailById(Integer id, Runnable afterClose) {
         if (id == null) return;
         Optional<EventDTO> opt = eventService.getEventById(id);
@@ -400,6 +469,11 @@ public class EventController {
         showDetailDialog(opt.get(), afterClose);
     }
 
+    /**
+     * Hiển thị dialog chi tiết sự kiện.
+     * @param event Dữ liệu sự kiện
+     * @param afterClose Callback sau khi đóng (nullable)
+     */
     private void showDetailDialog(EventDTO event, Runnable afterClose) {
         JDialog dialog = new JDialog((Frame) null, "Chi tiết sự kiện", true);
         dialog.setSize(740, 560);
@@ -523,6 +597,11 @@ public class EventController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Hủy đăng ký sự kiện.
+     * @param event Dữ liệu sự kiện
+     * @param dialog Dialog đang hiển thị
+     */
     private void handleCancelEvent(EventDTO event, JDialog dialog) {
         if (event.getRegistrationDeadline() != null
             && LocalDateTime.now().isAfter(event.getRegistrationDeadline())) {
@@ -548,6 +627,11 @@ public class EventController {
         }
     }
 
+    /**
+     * Tạo label hiển thị thông tin.
+     * @param text Nội dung
+     * @return JLabel
+     */
     private JLabel makeInfoLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -555,6 +639,12 @@ public class EventController {
         return label;
     }
 
+    /**
+     * Parse số nguyên với giá trị mặc định.
+     * @param text Chuỗi nhập
+     * @param fallback Giá trị mặc định
+     * @return Giá trị số nguyên
+     */
     private int parseIntOrDefault(String text, int fallback) {
         if (text == null) return fallback;
         String t = text.trim();

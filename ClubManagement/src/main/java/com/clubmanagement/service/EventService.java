@@ -118,6 +118,11 @@ public class EventService {
         return eventDAO.findById(eventId).map(this::toDTO);
     }
 
+    /**
+     * Lấy danh sách sự kiện mà thành viên đã tham gia/đăng ký.
+     * @param memberId ID thành viên
+     * @return Danh sách EventDTO
+     */
     public List<EventDTO> getEventsForMember(Integer memberId) {
         if (memberId == null) return java.util.Collections.emptyList();
         try (Session session = HibernateUtil.openSession()) {
@@ -231,6 +236,11 @@ public class EventService {
         }
     }
 
+    /**
+     * Đăng ký thành viên tham gia sự kiện.
+     * @param eventId ID sự kiện
+     * @param memberId ID thành viên
+     */
     public void registerForEvent(Integer eventId, Integer memberId) {
         if (eventId == null || memberId == null) {
             throw new IllegalArgumentException("Thiếu thông tin đăng ký sự kiện");
@@ -249,7 +259,8 @@ public class EventService {
             }
             org.hibernate.Hibernate.initialize(event.getParticipations());
             long currentCount = event.getParticipations() != null ? event.getParticipations().size() : 0;
-            int max = event.getMaxParticipants() != null ? event.getMaxParticipants() : 0;
+            Integer maxParticipants = event.getMaxParticipants();
+            int max = maxParticipants != null ? maxParticipants : 0;
             if (max > 0 && currentCount >= max) {
                 throw new IllegalStateException("Sự kiện đã đủ số lượng đăng ký");
             }
@@ -271,6 +282,11 @@ public class EventService {
         }
     }
 
+    /**
+     * Hủy đăng ký sự kiện.
+     * @param eventId ID sự kiện
+     * @param memberId ID thành viên
+     */
     public void unregisterFromEvent(Integer eventId, Integer memberId) {
         if (eventId == null || memberId == null) {
             throw new IllegalArgumentException("Thiếu thông tin hủy đăng ký sự kiện");
@@ -307,6 +323,12 @@ public class EventService {
         }
     }
 
+    /**
+     * Kiểm tra thành viên đã đăng ký sự kiện hay chưa.
+     * @param eventId ID sự kiện
+     * @param memberId ID thành viên
+     * @return true nếu đã đăng ký
+     */
     public boolean isMemberRegistered(Integer eventId, Integer memberId) {
         if (eventId == null || memberId == null) return false;
         try (Session session = HibernateUtil.openSession()) {

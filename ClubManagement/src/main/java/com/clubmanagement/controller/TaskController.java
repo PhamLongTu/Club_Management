@@ -46,6 +46,9 @@ import com.clubmanagement.service.TaskService;
 import com.clubmanagement.view.TaskView;
 import com.toedter.calendar.JDateChooser;
 
+/**
+ * TaskController - Điều khiển màn hình Nhiệm vụ.
+ */
 public class TaskController {
 
     private final TaskView view;
@@ -56,6 +59,11 @@ public class TaskController {
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
+    /**
+     * Khởi tạo controller cho màn hình Nhiệm vụ.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public TaskController(TaskView view, MemberDTO currentUser) {
         this.view = view;
         this.currentUser = currentUser;
@@ -63,6 +71,9 @@ public class TaskController {
         loadTasksByFilterInternal();
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> loadTasksByFilter());
         view.getFilterBox().addActionListener(e -> loadTasksByFilter());
@@ -81,6 +92,9 @@ public class TaskController {
         });
     }
 
+    /**
+     * Tải danh sách nhiệm vụ theo bộ lọc (chạy nền).
+     */
     private void loadTasksByFilterInternal() {
         view.setStatusMessage("Đang tải danh sách Nhiệm vụ...");
         SwingWorker<List<TaskDTO>, Void> worker = new SwingWorker<>() {
@@ -125,14 +139,23 @@ public class TaskController {
         worker.execute();
     }
 
+    /**
+     * Refresh danh sách nhiệm vụ theo bộ lọc.
+     */
     public final void loadTasksByFilter() {
         loadTasksByFilterInternal();
     }
 
+    /**
+     * Mở form thêm nhiệm vụ.
+     */
     private void handleAdd() {
         showFormDialog(null);
     }
 
+    /**
+     * Mở form sửa nhiệm vụ.
+     */
     private void handleEdit() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -157,6 +180,10 @@ public class TaskController {
         showFormDialog(task);
     }
 
+    /**
+     * Hiển thị form thêm/sửa nhiệm vụ.
+     * @param task Dữ liệu hiện tại (nullable)
+     */
     private void showFormDialog(TaskDTO task) {
         String dialogTitle = task == null ? "Tạo Nhiệm vụ" : "Sửa Nhiệm vụ";
         JDialog dialog = new JDialog((Frame) null, dialogTitle, true);
@@ -317,6 +344,11 @@ public class TaskController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Tạo header cho dialog.
+     * @param title Tiêu đề
+     * @return JPanel header
+     */
     private JPanel buildDialogHeader(String title) {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(248, 250, 252));
@@ -329,6 +361,11 @@ public class TaskController {
         return header;
     }
 
+    /**
+     * Tạo bộ chọn ngày.
+     * @param dateTime Ngày giờ mặc định
+     * @return JDateChooser
+     */
     private JDateChooser createDateChooser(LocalDateTime dateTime) {
         JDateChooser chooser = new JDateChooser();
         chooser.setDateFormatString("yyyy-MM-dd");
@@ -339,6 +376,11 @@ public class TaskController {
         return chooser;
     }
 
+    /**
+     * Tạo spinner chọn giờ.
+     * @param dateTime Ngày giờ mặc định
+     * @return JSpinner
+     */
     private JSpinner createTimeSpinner(LocalDateTime dateTime) {
         LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
         Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
@@ -350,6 +392,12 @@ public class TaskController {
         return spinner;
     }
 
+    /**
+     * Gộp input ngày + giờ thành một panel.
+     * @param dateChooser Bộ chọn ngày
+     * @param timeSpinner Bộ chọn giờ
+     * @return JPanel chứa cả hai input
+     */
     private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
         JPanel panel = new JPanel(new BorderLayout(8, 0));
         panel.setOpaque(false);
@@ -359,6 +407,12 @@ public class TaskController {
         return panel;
     }
 
+    /**
+     * Chuyển giá trị từ input ngày + giờ sang LocalDateTime.
+     * @param dateChooser Bộ chọn ngày
+     * @param timeSpinner Bộ chọn giờ
+     * @return LocalDateTime hoặc null
+     */
     private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
         Date date = dateChooser.getDate();
         if (date == null) return null;
@@ -368,6 +422,9 @@ public class TaskController {
         return LocalDateTime.of(localDate, localTime);
     }
 
+    /**
+     * Xóa nhiệm vụ đang chọn.
+     */
     private void handleDelete() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -390,10 +447,18 @@ public class TaskController {
         }
     }
 
+    /**
+     * Mở dialog chi tiết nhiệm vụ từ dòng đang chọn.
+     */
     private void handleViewDetail() {
         openDetailById(view.getSelectedId(), null);
     }
 
+    /**
+     * Mở dialog chi tiết nhiệm vụ theo ID.
+     * @param id ID nhiệm vụ
+     * @param afterClose Callback sau khi đóng (nullable)
+     */
     public void openDetailById(Integer id, Runnable afterClose) {
         if (id == null) return;
         List<TaskDTO> source = currentUser.isLeader()
@@ -404,6 +469,11 @@ public class TaskController {
         showDetailDialog(opt.get(), afterClose);
     }
 
+    /**
+     * Hiển thị dialog chi tiết nhiệm vụ.
+     * @param task Dữ liệu nhiệm vụ
+     * @param afterClose Callback sau khi đóng (nullable)
+     */
     private void showDetailDialog(TaskDTO task, Runnable afterClose) {
         JDialog dialog = new JDialog((Frame) null, "Chi tiết nhiệm vụ", true);
         dialog.setSize(720, 520);
@@ -522,6 +592,11 @@ public class TaskController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Hủy đăng ký nhiệm vụ.
+     * @param task Dữ liệu nhiệm vụ
+     * @param dialog Dialog đang hiển thị
+     */
     private void handleCancelTask(TaskDTO task, JDialog dialog) {
         LocalDateTime deadline = task.getDeadline();
         if (deadline != null && !LocalDateTime.now().isBefore(deadline.minusDays(3))) {
@@ -547,6 +622,11 @@ public class TaskController {
         }
     }
 
+    /**
+     * Tạo label hiển thị thông tin.
+     * @param text Nội dung
+     * @return JLabel
+     */
     private JLabel makeInfoLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 13));

@@ -27,6 +27,9 @@ import javax.swing.table.JTableHeader;
 import com.clubmanagement.dto.AttendanceDTO;
 import com.clubmanagement.dto.MemberDTO;
 
+/**
+ * View for displaying and managing attendance records.
+ */
 public class AttendanceView {
 
     private static final String[] COLUMNS = {
@@ -50,11 +53,19 @@ public class AttendanceView {
 
     private final MemberDTO currentUser;
 
+    /**
+     * Creates the view for the current user.
+     *
+     * @param currentUser the logged-in member
+     */
     public AttendanceView(MemberDTO currentUser) {
         this.currentUser = currentUser;
         buildUI();
     }
 
+    /**
+     * Builds the main layout.
+     */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
         mainPanel.setBackground(BG);
@@ -65,6 +76,11 @@ public class AttendanceView {
         mainPanel.add(buildFooter(), BorderLayout.SOUTH);
     }
 
+    /**
+     * Builds the header section with toolbar actions.
+     *
+     * @return the header panel
+     */
     private JPanel buildHeader() {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
@@ -113,6 +129,11 @@ public class AttendanceView {
         return panel;
     }
 
+    /**
+     * Builds the table container for attendance.
+     *
+     * @return the scroll pane containing the table
+     */
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -157,6 +178,11 @@ public class AttendanceView {
         return sp;
     }
 
+    /**
+     * Builds the status footer.
+     *
+     * @return the footer panel
+     */
     private JPanel buildFooter() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bar.setOpaque(false);
@@ -167,6 +193,11 @@ public class AttendanceView {
         return bar;
     }
 
+    /**
+     * Applies consistent styling to the table.
+     *
+     * @param table the table to style
+     */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         table.setRowHeight(40);
@@ -203,6 +234,14 @@ public class AttendanceView {
         });
     }
 
+    /**
+     * Creates a toolbar button.
+     *
+     * @param text button label
+     * @param bg background color
+     * @param fg foreground color
+     * @return the configured button
+     */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -215,6 +254,11 @@ public class AttendanceView {
         return btn;
     }
 
+    /**
+     * Loads attendance rows into the table.
+     *
+     * @param data attendance data list
+     */
     public void loadData(List<AttendanceDTO> data) {
         tableModel.setRowCount(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -237,18 +281,53 @@ public class AttendanceView {
         statusBar.setText("Đã tải " + data.size() + " lượt điểm danh.");
     }
 
+    /**
+     * Gets the selected attendance id.
+     *
+     * @return selected id or null
+     */
     public Integer getSelectedId() {
         int row = attendanceTable.getSelectedRow();
         if (row < 0) return null;
         return (Integer) tableModel.getValueAt(row, 0);
     }
-    
+
+    /**
+     * Updates the status bar message.
+     *
+     * @param msg message to display
+     */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
+
+    /**
+     * Returns the root panel for this view.
+     *
+     * @return main panel
+     */
     public JPanel getPanel() { return mainPanel; }
 
+    /**
+     * @return add button
+     */
     public JButton getBtnAdd()         { return btnAdd; }
+
+    /**
+     * @return edit button
+     */
     public JButton getBtnEdit()        { return btnEdit; }
+
+    /**
+     * @return delete button
+     */
     public JButton getBtnDelete()      { return btnDelete; }
+
+    /**
+     * @return refresh button
+     */
     public JButton getBtnRefresh()     { return btnRefresh; }
+
+    /**
+     * @return attendance table
+     */
     public JTable  getTable()          { return attendanceTable; }
 }

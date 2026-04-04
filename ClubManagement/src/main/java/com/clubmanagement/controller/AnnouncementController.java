@@ -31,6 +31,9 @@ import com.clubmanagement.service.AnnouncementService;
 import com.clubmanagement.service.TeamService;
 import com.clubmanagement.view.AnnouncementView;
 
+/**
+ * AnnouncementController - Điều khiển màn hình Thông báo.
+ */
 public class AnnouncementController {
 
     private final AnnouncementView view;
@@ -38,6 +41,11 @@ public class AnnouncementController {
     private final AnnouncementService announcementService = new AnnouncementService();
     private final TeamService teamService = new TeamService();
 
+    /**
+     * Khởi tạo controller cho màn hình Thông báo.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public AnnouncementController(AnnouncementView view, MemberDTO currentUser) {
         this.view = view;
         this.currentUser = currentUser;
@@ -45,6 +53,9 @@ public class AnnouncementController {
         loadAllAnnouncementsInternal(); // Tải data lúc mới vào
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> loadAllAnnouncements());
 
@@ -64,6 +75,9 @@ public class AnnouncementController {
         }
     }
 
+    /**
+     * Tải dữ liệu thông báo theo quyền người dùng (chạy nền).
+     */
     private void loadAllAnnouncementsInternal() {
         view.setStatusMessage("Đang tải danh sách thông báo...");
         SwingWorker<List<AnnouncementDTO>, Void> worker = new SwingWorker<>() {
@@ -86,10 +100,16 @@ public class AnnouncementController {
         worker.execute();
     }
 
+    /**
+     * Refresh danh sách thông báo.
+     */
     public final void loadAllAnnouncements() {
         loadAllAnnouncementsInternal();
     }
 
+    /**
+     * Xử lý thêm thông báo.
+     */
     private void handleAdd() {
         JPanel form = buildForm(null);
         int res = JOptionPane.showConfirmDialog(null, form,
@@ -109,6 +129,9 @@ public class AnnouncementController {
         }
     }
 
+    /**
+     * Xử lý sửa thông báo đang chọn.
+     */
     private void handleEdit() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -139,6 +162,9 @@ public class AnnouncementController {
         }
     }
 
+    /**
+     * Xử lý xóa thông báo đang chọn.
+     */
     private void handleDelete() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -161,6 +187,11 @@ public class AnnouncementController {
         }
     }
 
+    /**
+     * Tạo form nhập liệu thông báo.
+     * @param ann Thông báo hiện tại (nullable)
+     * @return JPanel form
+     */
     private JPanel buildForm(AnnouncementDTO ann) {
         JPanel form = new JPanel(new BorderLayout(8, 8));
         form.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -224,6 +255,11 @@ public class AnnouncementController {
         return form;
     }
 
+    /**
+     * Đọc dữ liệu từ form nhập liệu.
+     * @param form Panel form
+     * @return Dữ liệu form
+     */
     private AnnounceFormData extractData(JPanel form) {
         AnnounceFormData d = new AnnounceFormData();
         JPanel topPanel = (JPanel) form.getComponent(0);
@@ -257,6 +293,9 @@ public class AnnouncementController {
         Integer targetTeamId;
     }
 
+    /**
+     * Hiển thị chi tiết thông báo.
+     */
     private void handleViewDetail() {
         Integer id = view.getSelectedId();
         if (id == null) return;

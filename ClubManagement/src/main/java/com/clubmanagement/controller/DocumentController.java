@@ -33,6 +33,9 @@ import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.ProjectService;
 import com.clubmanagement.view.DocumentView;
 
+/**
+ * DocumentController - Điều khiển màn hình Tài liệu.
+ */
 public class DocumentController {
 
     private final DocumentView view;
@@ -41,6 +44,11 @@ public class DocumentController {
     private final EventService eventService = new EventService();
     private final ProjectService projectService = new ProjectService();
 
+    /**
+     * Khởi tạo controller cho màn hình Tài liệu.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public DocumentController(DocumentView view, MemberDTO currentUser) {
         this.view = view;
         this.currentUser = currentUser;
@@ -48,6 +56,9 @@ public class DocumentController {
         loadAllDocumentsInternal();
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> loadAllDocuments());
         view.getBtnOpen().addActionListener(e -> handleOpenFile());
@@ -73,6 +84,9 @@ public class DocumentController {
         }
     }
 
+    /**
+     * Tải danh sách tài liệu (chạy nền).
+     */
     private void loadAllDocumentsInternal() {
         view.setStatusMessage("Đang tải danh sách Tài liệu...");
         SwingWorker<List<DocumentDTO>, Void> worker = new SwingWorker<>() {
@@ -95,10 +109,16 @@ public class DocumentController {
         worker.execute();
     }
 
+    /**
+     * Refresh danh sách tài liệu.
+     */
     public final void loadAllDocuments() {
         loadAllDocumentsInternal();
     }
 
+    /**
+     * Mở file tài liệu đang chọn.
+     */
     private void handleOpenFile() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -129,10 +149,16 @@ public class DocumentController {
         }
     }
 
+    /**
+     * Mở form thêm tài liệu.
+     */
     private void handleAdd() {
         showFormDialog(null);
     }
 
+    /**
+     * Mở form sửa tài liệu.
+     */
     private void handleEdit() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -147,6 +173,10 @@ public class DocumentController {
         showFormDialog(opt.get());
     }
 
+    /**
+     * Hiển thị form upload/sửa tài liệu.
+     * @param document Dữ liệu hiện tại (nullable)
+     */
     private void showFormDialog(DocumentDTO document) {
         JDialog dialog = new JDialog((Frame) null, document == null ? "Upload Tài liệu" : "Sửa Thông tin Tài liệu", true);
         dialog.setSize(550, 450);
@@ -263,6 +293,9 @@ public class DocumentController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Xóa tài liệu đang chọn.
+     */
     private void handleDelete() {
         Integer id = view.getSelectedId();
         if (id == null) {

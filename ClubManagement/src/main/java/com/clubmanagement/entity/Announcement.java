@@ -58,10 +58,23 @@ public class Announcement {
     private Team targetTeam;
 
     // ============ CONSTRUCTORS ============
+    /**
+     * Constructor mặc định (bắt buộc cho JPA).
+     */
     public Announcement() {
         this.createdDate = LocalDateTime.now();
     }
 
+    /**
+     * Constructor khởi tạo nhanh thông báo.
+     *
+     * @param title          Tiêu đề
+     * @param content        Nội dung
+     * @param isPinned       Trạng thái ghim
+     * @param targetAudience Đối tượng nhận
+     * @param author         Người đăng
+     * @param targetTeam     Ban/nhóm nhận (nullable)
+     */
     public Announcement(String title, String content, Boolean isPinned,
                         String targetAudience, Member author, Team targetTeam) {
         this.title          = title;
@@ -74,30 +87,51 @@ public class Announcement {
     }
 
     // ============ GETTERS & SETTERS ============
+    /** @return ID thông báo. */
     public Integer getAnnouncementId()       { return announcementId; }
+    /** @param v ID thông báo mới. */
     public void setAnnouncementId(Integer v) { this.announcementId = v; }
 
+    /** @return Tiêu đề thông báo. */
     public String getTitle()               { return title; }
+    /** @param v Tiêu đề mới. */
     public void setTitle(String v)         { this.title = v; }
 
+    /** @return Nội dung thông báo. */
     public String getContent()             { return content; }
+    /** @param v Nội dung mới. */
     public void setContent(String v)       { this.content = v; }
 
+    /** @return Ngày đăng. */
     public LocalDateTime getCreatedDate()        { return createdDate; }
+    /** @param v Ngày đăng mới. */
     public void setCreatedDate(LocalDateTime v)  { this.createdDate = v; }
 
+    /** @return Trạng thái ghim. */
     public Boolean getIsPinned()           { return isPinned; }
+    /** @param v Trạng thái ghim mới. */
     public void setIsPinned(Boolean v)     { this.isPinned = v; }
 
+    /** @return Đối tượng nhận thông báo. */
     public String getTargetAudience()      { return targetAudience; }
+    /** @param v Đối tượng nhận mới. */
     public void setTargetAudience(String v){ this.targetAudience = v; }
 
+    /** @return Người đăng thông báo. */
     public Member getAuthor()              { return author; }
+    /** @param v Người đăng mới. */
     public void setAuthor(Member v)        { this.author = v; }
 
+    /** @return Ban/nhóm nhận thông báo. */
     public Team getTargetTeam()            { return targetTeam; }
+    /** @param v Ban/nhóm nhận mới. */
     public void setTargetTeam(Team v)      { this.targetTeam = v; }
 
+    /**
+     * Hiển thị tiêu đề thông báo trong UI.
+     *
+     * @return Chuỗi hiển thị
+     */
     @Override
     public String toString() { return title; }
 }

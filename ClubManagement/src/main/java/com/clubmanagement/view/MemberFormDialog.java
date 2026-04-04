@@ -443,19 +443,58 @@ public class MemberFormDialog extends JDialog {
     // ===================================================
     // PUBLIC GETTERS (dùng bởi MemberController)
     // ===================================================
+    /**
+     * @return true if the dialog was confirmed
+     */
     public boolean isConfirmed()    { return confirmed; }
+    /**
+     * @return full name input
+     */
     public String getFullName()     { return tfFullName.getText().trim(); }
+    /**
+     * @return student id input
+     */
     public String getStudentId()    { return tfStudentId != null ? tfStudentId.getText().trim() : ""; }
+    /**
+     * @return email input
+     */
     public String getEmail()        { return tfEmail.getText().trim(); }
+    /**
+     * @return phone input
+     */
     public String getPhone()        { return tfPhone.getText().trim(); }
+    /**
+     * @return selected gender
+     */
     public String getGender()       { return (String) cbGender.getSelectedItem(); }
+    /**
+     * @return selected status
+     */
     public String getStatus()       { return cbStatus != null ? (String) cbStatus.getSelectedItem() : "Active"; }
+    /**
+     * @return selected role
+     */
     public Role   getSelectedRole() { return cbRole != null ? (Role) cbRole.getSelectedItem() : null; }
+    /**
+     * @return password input (add mode only)
+     */
     public String getPassword()     { return pfPassword != null ? new String(pfPassword.getPassword()) : ""; }
+    /**
+     * @return avatar url/path
+     */
     public String getAvatarUrl()    { return avatarUrl; }
+    /**
+     * @return old password input (self edit)
+     */
     public String getOldPassword()  { return pfOldPassword != null ? new String(pfOldPassword.getPassword()) : ""; }
+    /**
+     * @return new password input (self edit or reset)
+     */
     public String getNewPassword()  { return pfNewPassword != null ? new String(pfNewPassword.getPassword()) : ""; }
 
+    /**
+     * @return selected team ids
+     */
     public List<Integer> getSelectedTeamIds() {
         if (listTeams == null) return java.util.Collections.emptyList();
         return listTeams.getSelectedValuesList().stream()
@@ -463,16 +502,27 @@ public class MemberFormDialog extends JDialog {
             .toList();
     }
 
+    /**
+     * @return selected birth date
+     */
     public LocalDate getBirthDate() {
         return toLocalDate(dcBirthDate.getDate());
     }
 
+    /**
+     * Updates team selection state when role changes.
+     */
     private void updateTeamSelectionState() {
         if (listTeams != null) {
             listTeams.setEnabled(true);
         }
     }
 
+    /**
+     * Adds the avatar picker row to the form.
+     *
+     * @param panel target panel
+     */
     private void addAvatarRow(JPanel panel) {
         avatarPreview = new JLabel();
         avatarPreview.setPreferredSize(new Dimension(72, 72));
@@ -516,6 +566,9 @@ public class MemberFormDialog extends JDialog {
         addLabeledRow(panel, "Ảnh đại diện", row);
     }
 
+    /**
+     * Opens a file chooser to select an avatar image.
+     */
     private void chooseAvatar() {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Chọn ảnh đại diện");
@@ -533,12 +586,18 @@ public class MemberFormDialog extends JDialog {
         }
     }
 
+    /**
+     * Clears the selected avatar.
+     */
     private void clearAvatar() {
         avatarUrl = null;
         tfAvatarPath.setText("");
         updateAvatarPreview();
     }
 
+    /**
+     * Refreshes the avatar preview image.
+     */
     private void updateAvatarPreview() {
         if (avatarPreview == null) return;
         String initials = ImageUtil.buildInitials(tfFullName != null ? tfFullName.getText() : null);
@@ -547,6 +606,13 @@ public class MemberFormDialog extends JDialog {
         ));
     }
 
+    /**
+     * Adds a date picker row.
+     *
+     * @param panel target panel
+     * @param labelText label text
+     * @return the date chooser
+     */
     private JDateChooser addDateRow(JPanel panel, String labelText) {
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -566,11 +632,23 @@ public class MemberFormDialog extends JDialog {
         return chooser;
     }
 
+    /**
+     * Converts a Date to LocalDate.
+     *
+     * @param date input date
+     * @return local date or null
+     */
     private LocalDate toLocalDate(Date date) {
         if (date == null) return null;
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
+    /**
+     * Converts a LocalDate to Date.
+     *
+     * @param localDate input local date
+     * @return date or null
+     */
     private Date toDate(LocalDate localDate) {
         if (localDate == null) return null;
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());

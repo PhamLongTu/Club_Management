@@ -124,6 +124,11 @@ public class AnnouncementDAO {
         }
     }
 
+    /**
+     * Lọc danh sách thông báo phù hợp với quyền và ban/nhóm của người dùng.
+     * @param user Người dùng hiện tại
+     * @return Danh sách thông báo đã lọc
+     */
     public List<Announcement> findForUser(MemberDTO user) {
         try (Session session = HibernateUtil.openSession()) {
             List<Team> teamList = user.getMemberId() != null

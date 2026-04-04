@@ -101,8 +101,22 @@ public class Member {
     private List<Announcement> announcements;
 
     // ============ CONSTRUCTORS ============
+    /**
+     * Constructor mặc định (bắt buộc cho JPA).
+     */
     public Member() {}
 
+    /**
+     * Constructor khởi tạo nhanh khi tạo mới thành viên.
+     *
+     * @param fullName     Họ tên
+     * @param studentId    Mã sinh viên
+     * @param email        Email
+     * @param phone        Số điện thoại
+     * @param gender       Giới tính
+     * @param passwordHash Mật khẩu đã hash
+     * @param role         Vai trò
+     */
     public Member(String fullName, String studentId, String email,
                   String phone, String gender, String passwordHash, Role role) {
         this.fullName     = fullName;
@@ -117,54 +131,91 @@ public class Member {
     }
 
     // ============ GETTERS & SETTERS ============
+    /** @return ID thành viên. */
     public Integer getMemberId()          { return memberId; }
+    /** @param v ID thành viên mới. */
     public void setMemberId(Integer v)    { this.memberId = v; }
 
+    /** @return Họ tên đầy đủ. */
     public String getFullName()           { return fullName; }
+    /** @param v Họ tên mới. */
     public void setFullName(String v)     { this.fullName = v; }
 
+    /** @return Mã sinh viên. */
     public String getStudentId()          { return studentId; }
+    /** @param v Mã sinh viên mới. */
     public void setStudentId(String v)    { this.studentId = v; }
 
+    /** @return Email. */
     public String getEmail()              { return email; }
+    /** @param v Email mới. */
     public void setEmail(String v)        { this.email = v; }
 
+    /** @return Số điện thoại. */
     public String getPhone()              { return phone; }
+    /** @param v Số điện thoại mới. */
     public void setPhone(String v)        { this.phone = v; }
 
+    /** @return Giới tính. */
     public String getGender()             { return gender; }
+    /** @param v Giới tính mới. */
     public void setGender(String v)       { this.gender = v; }
 
+    /** @return Ngày sinh. */
     public LocalDate getBirthDate()       { return birthDate; }
+    /** @param v Ngày sinh mới. */
     public void setBirthDate(LocalDate v) { this.birthDate = v; }
 
+    /** @return Ngày gia nhập. */
     public LocalDate getJoinDate()        { return joinDate; }
+    /** @param v Ngày gia nhập mới. */
     public void setJoinDate(LocalDate v)  { this.joinDate = v; }
 
+    /** @return Trạng thái tài khoản. */
     public String getStatus()             { return status; }
+    /** @param v Trạng thái mới. */
     public void setStatus(String v)       { this.status = v; }
 
+    /** @return URL ảnh đại diện. */
     public String getAvatarUrl()          { return avatarUrl; }
+    /** @param v URL ảnh đại diện mới. */
     public void setAvatarUrl(String v)    { this.avatarUrl = v; }
 
+    /** @return Mật khẩu đã hash. */
     public String getPasswordHash()       { return passwordHash; }
+    /** @param v Mật khẩu đã hash mới. */
     public void setPasswordHash(String v) { this.passwordHash = v; }
 
+    /** @return Vai trò hiện tại. */
     public Role getRole()                 { return role; }
+    /** @param v Vai trò mới. */
     public void setRole(Role v)           { this.role = v; }
 
+    /** @return Danh sách ban/nhóm. */
     public List<Team> getTeams()          { return teams; }
+    /** @param v Danh sách ban/nhóm mới. */
     public void setTeams(List<Team> v)    { this.teams = v; }
 
+    /** @return Danh sách tham gia sự kiện. */
     public List<Participation> getParticipations()      { return participations; }
+    /** @param v Danh sách tham gia sự kiện mới. */
     public void setParticipations(List<Participation> v){ this.participations = v; }
 
+    /** @return Danh sách nhiệm vụ đã nhận. */
     public List<Task> getAssignedTasks()        { return assignedTasks; }
+    /** @param v Danh sách nhiệm vụ đã nhận mới. */
     public void setAssignedTasks(List<Task> v)  { this.assignedTasks = v; }
 
+    /** @return Danh sách thông báo đã đăng. */
     public List<Announcement> getAnnouncements()        { return announcements; }
+    /** @param v Danh sách thông báo đã đăng mới. */
     public void setAnnouncements(List<Announcement> v)  { this.announcements = v; }
 
+    /**
+     * Hiển thị tên thành viên trong UI (dùng cho ComboBox/JList).
+     *
+     * @return Chuỗi hiển thị
+     */
     @Override
     public String toString() { return fullName + " (" + studentId + ")"; }
 }

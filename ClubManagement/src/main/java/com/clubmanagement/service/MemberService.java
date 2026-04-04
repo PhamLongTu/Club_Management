@@ -371,6 +371,12 @@ public class MemberService {
         );
     }
 
+    /**
+     * Chuẩn hóa URL avatar (trim, chuỗi rỗng -> null).
+     *
+     * @param avatarUrl URL nhập từ UI
+     * @return URL đã chuẩn hóa
+     */
     private String normalizeAvatarUrl(String avatarUrl) {
         if (avatarUrl == null) return null;
         String trimmed = avatarUrl.trim();
@@ -407,6 +413,12 @@ public class MemberService {
         }
     }
 
+    /**
+     * Lấy danh sách ID ban/nhóm mà thành viên đang thuộc về.
+     *
+     * @param memberId ID thành viên
+     * @return Danh sách ID ban/nhóm
+     */
     public List<Integer> getTeamIdsForMember(Integer memberId) {
         if (memberId == null) return java.util.Collections.emptyList();
         try (Session session = HibernateUtil.openSession()) {

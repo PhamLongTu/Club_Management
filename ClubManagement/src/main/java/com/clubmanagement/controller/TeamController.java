@@ -26,6 +26,9 @@ import com.clubmanagement.service.MemberService;
 import com.clubmanagement.service.TeamService;
 import com.clubmanagement.view.TeamView;
 
+/**
+ * TeamController - Điều khiển màn hình Ban/Nhóm.
+ */
 public class TeamController {
 
     private final TeamView view;
@@ -33,6 +36,11 @@ public class TeamController {
     private final TeamService teamService = new TeamService();
     private final MemberService memberService = new MemberService();
 
+    /**
+     * Khởi tạo controller cho màn hình Ban/Nhóm.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public TeamController(TeamView view, MemberDTO currentUser) {
         this.view = view;
         this.currentUser = currentUser;
@@ -40,6 +48,9 @@ public class TeamController {
         loadAllTeamsInternal();
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> loadAllTeams());
         view.getBtnViewMembers().addActionListener(e -> handleViewMembers());
@@ -58,6 +69,9 @@ public class TeamController {
         }
     }
 
+    /**
+     * Tải danh sách ban/nhóm (chạy nền).
+     */
     private void loadAllTeamsInternal() {
         view.setStatusMessage("Đang tải danh sách Ban/Nhóm...");
         SwingWorker<List<TeamDTO>, Void> worker = new SwingWorker<>() {
@@ -80,14 +94,23 @@ public class TeamController {
         worker.execute();
     }
 
+    /**
+     * Refresh danh sách ban/nhóm.
+     */
     public final void loadAllTeams() {
         loadAllTeamsInternal();
     }
 
+    /**
+     * Mở form thêm ban/nhóm.
+     */
     private void handleAdd() {
         showFormDialog(null);
     }
 
+    /**
+     * Mở form sửa ban/nhóm.
+     */
     private void handleEdit() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -102,6 +125,10 @@ public class TeamController {
         showFormDialog(opt.get());
     }
 
+    /**
+     * Hiển thị form thêm/sửa ban/nhóm.
+     * @param team Dữ liệu hiện tại (nullable)
+     */
     private void showFormDialog(TeamDTO team) {
         JDialog dialog = new JDialog((Frame) null, team == null ? "Tạo Ban mới" : "Sửa thông tin Ban", true);
         dialog.setSize(450, 300);
@@ -182,6 +209,9 @@ public class TeamController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Xóa ban/nhóm đang chọn.
+     */
     private void handleDelete() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -204,6 +234,9 @@ public class TeamController {
         }
     }
 
+    /**
+     * Hiển thị danh sách thành viên của ban (tạm thời hiển thị thông báo).
+     */
     private void handleViewMembers() {
         Integer teamId = view.getSelectedId();
         String teamName = view.getSelectedName();

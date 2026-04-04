@@ -85,8 +85,22 @@ public class Event {
     private List<Task> tasks;
 
     // ============ CONSTRUCTORS ============
+    /**
+     * Constructor mặc định (bắt buộc cho JPA).
+     */
     public Event() {}
 
+    /**
+     * Constructor khởi tạo nhanh sự kiện.
+     *
+     * @param eventName  Tên sự kiện
+     * @param description Mô tả
+     * @param startDate  Thời gian bắt đầu
+     * @param endDate    Thời gian kết thúc
+     * @param location   Địa điểm
+     * @param budget     Ngân sách
+     * @param createdBy  Người tạo
+     */
     public Event(String eventName, String description, LocalDateTime startDate,
                  LocalDateTime endDate, String location, BigDecimal budget, Member createdBy) {
         this.eventName  = eventName;
@@ -99,48 +113,81 @@ public class Event {
     }
 
     // ============ GETTERS & SETTERS ============
+    /** @return ID sự kiện. */
     public Integer getEventId()              { return eventId; }
+    /** @param v ID sự kiện mới. */
     public void setEventId(Integer v)        { this.eventId = v; }
 
+    /** @return Tên sự kiện. */
     public String getEventName()             { return eventName; }
+    /** @param v Tên sự kiện mới. */
     public void setEventName(String v)       { this.eventName = v; }
 
+    /** @return Mô tả sự kiện. */
     public String getDescription()           { return description; }
+    /** @param v Mô tả mới. */
     public void setDescription(String v)     { this.description = v; }
 
+    /** @return Thời gian bắt đầu. */
     public LocalDateTime getStartDate()          { return startDate; }
+    /** @param v Thời gian bắt đầu mới. */
     public void setStartDate(LocalDateTime v)    { this.startDate = v; }
 
+    /** @return Thời gian kết thúc. */
     public LocalDateTime getEndDate()            { return endDate; }
+    /** @param v Thời gian kết thúc mới. */
     public void setEndDate(LocalDateTime v)      { this.endDate = v; }
 
+    /** @return Hạn đăng ký. */
     public LocalDateTime getRegistrationDeadline()       { return registrationDeadline; }
+    /** @param v Hạn đăng ký mới. */
     public void setRegistrationDeadline(LocalDateTime v) { this.registrationDeadline = v; }
 
+    /** @return Địa điểm tổ chức. */
     public String getLocation()              { return location; }
+    /** @param v Địa điểm mới. */
     public void setLocation(String v)        { this.location = v; }
 
+    /** @return Trạng thái sự kiện. */
     public String getStatus()                { return status; }
+    /** @param v Trạng thái mới. */
     public void setStatus(String v)          { this.status = v; }
 
+    /** @return Ngân sách sự kiện. */
     public BigDecimal getBudget()            { return budget; }
+    /** @param v Ngân sách mới. */
     public void setBudget(BigDecimal v)      { this.budget = v; }
 
+    /** @return Số lượng tham gia tối đa. */
     public Integer getMaxParticipants()      { return maxParticipants; }
+    /** @param v Số lượng tham gia tối đa mới. */
     public void setMaxParticipants(Integer v){ this.maxParticipants = v; }
 
+    /** @return Người tạo sự kiện. */
     public Member getCreatedBy()             { return createdBy; }
+    /** @param v Người tạo mới. */
     public void setCreatedBy(Member v)       { this.createdBy = v; }
 
+    /** @return Danh sách đăng ký tham gia. */
     public List<Participation> getParticipations()       { return participations; }
+    /** @param v Danh sách đăng ký mới. */
     public void setParticipations(List<Participation> v) { this.participations = v; }
 
+    /** @return Danh sách điểm danh. */
     public List<Attendance> getAttendances()       { return attendances; }
+    /** @param v Danh sách điểm danh mới. */
     public void setAttendances(List<Attendance> v) { this.attendances = v; }
 
+    /** @return Danh sách nhiệm vụ liên quan. */
     public List<Task> getTasks()         { return tasks; }
+    /** @param v Danh sách nhiệm vụ mới. */
     public void setTasks(List<Task> v)   { this.tasks = v; }
 
+    /**
+     * Hiển thị tên sự kiện trong UI.
+     *
+     * @return Chuỗi hiển thị
+     */
     @Override
     public String toString() { return eventName; }
 }

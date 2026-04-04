@@ -26,12 +26,20 @@ import com.clubmanagement.dto.SponsorDTO;
 import com.clubmanagement.service.SponsorService;
 import com.clubmanagement.view.SponsorView;
 
+/**
+ * SponsorController - Điều khiển màn hình Nhà tài trợ.
+ */
 public class SponsorController {
 
     private final SponsorView view;
     private final MemberDTO currentUser;
     private final SponsorService sponsorService = new SponsorService();
 
+    /**
+     * Khởi tạo controller cho màn hình Nhà tài trợ.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public SponsorController(SponsorView view, MemberDTO currentUser) {
         this.view = view;
         this.currentUser = currentUser;
@@ -39,6 +47,9 @@ public class SponsorController {
         loadAllSponsorsInternal();
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> loadAllSponsors());
 
@@ -56,6 +67,9 @@ public class SponsorController {
         }
     }
 
+    /**
+     * Tải danh sách nhà tài trợ (chạy nền).
+     */
     private void loadAllSponsorsInternal() {
         view.setStatusMessage("Đang tải danh sách Nhà tài trợ...");
         SwingWorker<List<SponsorDTO>, Void> worker = new SwingWorker<>() {
@@ -78,14 +92,23 @@ public class SponsorController {
         worker.execute();
     }
 
+    /**
+     * Refresh danh sách nhà tài trợ.
+     */
     public final void loadAllSponsors() {
         loadAllSponsorsInternal();
     }
 
+    /**
+     * Mở form thêm nhà tài trợ.
+     */
     private void handleAdd() {
         showFormDialog(null);
     }
 
+    /**
+     * Mở form sửa nhà tài trợ.
+     */
     private void handleEdit() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -100,6 +123,10 @@ public class SponsorController {
         showFormDialog(opt.get());
     }
 
+    /**
+     * Hiển thị form thêm/sửa nhà tài trợ.
+     * @param sponsor Dữ liệu hiện tại (nullable)
+     */
     private void showFormDialog(SponsorDTO sponsor) {
         JDialog dialog = new JDialog((Frame) null, sponsor == null ? "Thêm Nhà Tài Trợ" : "Sửa Thông Tin", true);
         dialog.setSize(450, 450);
@@ -190,6 +217,9 @@ public class SponsorController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Xóa nhà tài trợ đang chọn.
+     */
     private void handleDelete() {
         Integer id = view.getSelectedId();
         if (id == null) {

@@ -10,10 +10,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.List;
-import java.util.Optional;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -24,11 +24,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SwingWorker;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
-
-import com.toedter.calendar.JDateChooser;
 
 import com.clubmanagement.dto.AttendanceDTO;
 import com.clubmanagement.dto.EventDTO;
@@ -37,7 +35,11 @@ import com.clubmanagement.service.AttendanceService;
 import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.view.AttendanceView;
+import com.toedter.calendar.JDateChooser;
 
+/**
+ * AttendanceController - Điều khiển màn hình Điểm danh.
+ */
 public class AttendanceController {
 
     private final AttendanceView view;
@@ -46,6 +48,11 @@ public class AttendanceController {
     private final MemberService memberService = new MemberService();
     private final EventService eventService = new EventService();
 
+    /**
+     * Khởi tạo controller cho màn hình Điểm danh.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public AttendanceController(AttendanceView view, MemberDTO currentUser) {
         this.view = view;
         this.currentUser = currentUser;
@@ -53,6 +60,9 @@ public class AttendanceController {
         loadAllAttendancesInternal();
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> loadAllAttendances());
 
@@ -70,6 +80,9 @@ public class AttendanceController {
         }
     }
 
+    /**
+     * Tải danh sách điểm danh (chạy nền).
+     */
     private void loadAllAttendancesInternal() {
         view.setStatusMessage("Đang tải danh sách Điểm danh...");
         SwingWorker<List<AttendanceDTO>, Void> worker = new SwingWorker<>() {
@@ -92,14 +105,23 @@ public class AttendanceController {
         worker.execute();
     }
 
+    /**
+     * Refresh danh sách điểm danh.
+     */
     public final void loadAllAttendances() {
         loadAllAttendancesInternal();
     }
 
+    /**
+     * Mở form thêm mới điểm danh.
+     */
     private void handleAdd() {
         showFormDialog(null);
     }
 
+    /**
+     * Mở form sửa điểm danh đang chọn.
+     */
     private void handleEdit() {
         Integer id = view.getSelectedId();
         if (id == null) {
@@ -114,6 +136,10 @@ public class AttendanceController {
         showFormDialog(opt.get());
     }
 
+    /**
+     * Hiển thị form nhập liệu điểm danh.
+     * @param attendance Dữ liệu hiện tại (nullable)
+     */
     private void showFormDialog(AttendanceDTO attendance) {
         String title = attendance == null ? "Cấp mã Điểm danh" : "Sửa Điểm danh";
         JDialog dialog = new JDialog((Frame) null, title, true);
@@ -225,6 +251,11 @@ public class AttendanceController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Tạo header cho dialog.
+     * @param title Tiêu đề hiển thị
+     * @return JPanel header
+     */
     private JPanel buildDialogHeader(String title) {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(248, 250, 252));
@@ -237,6 +268,11 @@ public class AttendanceController {
         return header;
     }
 
+    /**
+     * Tạo bộ chọn ngày.
+     * @param dateTime Ngày giờ mặc định
+     * @return JDateChooser
+     */
     private JDateChooser createDateChooser(LocalDateTime dateTime) {
         JDateChooser chooser = new JDateChooser();
         chooser.setDateFormatString("yyyy-MM-dd");
@@ -247,6 +283,11 @@ public class AttendanceController {
         return chooser;
     }
 
+    /**
+     * Tạo spinner chọn giờ.
+     * @param dateTime Ngày giờ mặc định
+     * @return JSpinner
+     */
     private JSpinner createTimeSpinner(LocalDateTime dateTime) {
         LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
         Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
@@ -258,6 +299,12 @@ public class AttendanceController {
         return spinner;
     }
 
+    /**
+     * Gộp input ngày + giờ thành một panel.
+     * @param dateChooser Bộ chọn ngày
+     * @param timeSpinner Bộ chọn giờ
+     * @return JPanel chứa cả hai input
+     */
     private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
         JPanel panel = new JPanel(new BorderLayout(8, 0));
         panel.setOpaque(false);
@@ -267,6 +314,12 @@ public class AttendanceController {
         return panel;
     }
 
+    /**
+     * Chuyển giá trị từ input ngày + giờ sang LocalDateTime.
+     * @param dateChooser Bộ chọn ngày
+     * @param timeSpinner Bộ chọn giờ
+     * @return LocalDateTime hoặc null
+     */
     private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
         Date date = dateChooser.getDate();
         if (date == null) return null;
@@ -276,6 +329,9 @@ public class AttendanceController {
         return LocalDateTime.of(localDate, localTime);
     }
 
+    /**
+     * Xóa lượt điểm danh đang chọn.
+     */
     private void handleDelete() {
         Integer id = view.getSelectedId();
         if (id == null) {

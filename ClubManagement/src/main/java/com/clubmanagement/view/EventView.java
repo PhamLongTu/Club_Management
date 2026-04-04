@@ -64,11 +64,19 @@ public class EventView {
 
     private final MemberDTO currentUser;
 
+    /**
+     * Creates the view for the current user.
+     *
+     * @param currentUser the logged-in member
+     */
     public EventView(MemberDTO currentUser) {
         this.currentUser = currentUser;
         buildUI();
     }
 
+    /**
+     * Builds the main layout.
+     */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
         mainPanel.setBackground(BG);
@@ -79,6 +87,11 @@ public class EventView {
         mainPanel.add(buildFooter(), BorderLayout.SOUTH);
     }
 
+    /**
+     * Builds the header section with filters and actions.
+     *
+     * @return the header panel
+     */
     private JPanel buildHeader() {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
@@ -158,6 +171,11 @@ public class EventView {
         return panel;
     }
 
+    /**
+     * Builds the table container for events.
+     *
+     * @return the scroll pane containing the table
+     */
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -205,6 +223,11 @@ public class EventView {
         return sp;
     }
 
+    /**
+     * Builds the status footer.
+     *
+     * @return the footer panel
+     */
     private JPanel buildFooter() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bar.setOpaque(false);
@@ -215,6 +238,11 @@ public class EventView {
         return bar;
     }
 
+    /**
+     * Applies consistent styling to the table.
+     *
+     * @param table the table to style
+     */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         table.setRowHeight(40);
@@ -245,6 +273,14 @@ public class EventView {
         });
     }
 
+    /**
+     * Creates a toolbar button.
+     *
+     * @param text button label
+     * @param bg background color
+     * @param fg foreground color
+     * @return the configured button
+     */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -278,23 +314,55 @@ public class EventView {
         statusBar.setText("Đã tải " + events.size() + " sự kiện.");
     }
 
+    /**
+     * Gets the selected event id.
+     *
+     * @return selected id or null
+     */
     public Integer getSelectedEventId() {
         int row = eventTable.getSelectedRow();
         if (row < 0) return null;
         return (Integer) tableModel.getValueAt(row, 0);
     }
 
+    /**
+     * @return search keyword from the input
+     */
     public String getSearchKeyword()  { return searchField.getText().trim(); }
+
+    /**
+     * @return selected status filter value
+     */
     public String getStatusFilter()   { return (String) statusFilter.getSelectedItem(); }
+
+    /**
+     * Updates the status bar message.
+     *
+     * @param msg message to display
+     */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
+
+    /**
+     * Returns the root panel for this view.
+     *
+     * @return main panel
+     */
     public JPanel getPanel()          { return mainPanel; }
 
+    /** @return add button */
     public JButton getBtnAdd()     { return btnAdd; }
+    /** @return edit button */
     public JButton getBtnEdit()    { return btnEdit; }
+    /** @return delete button */
     public JButton getBtnDelete()  { return btnDelete; }
+    /** @return refresh button */
     public JButton getBtnRefresh() { return btnRefresh; }
+    /** @return search button */
     public JButton getBtnSearch()  { return btnSearch; }
+    /** @return event table */
     public JTable  getTable()      { return eventTable; }
+    /** @return search text field */
     public JTextField    getSearchField() { return searchField; }
+    /** @return status filter combo box */
     public JComboBox<String> getStatusFilter2() { return statusFilter; }
 }

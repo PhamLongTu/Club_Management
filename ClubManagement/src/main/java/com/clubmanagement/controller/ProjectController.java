@@ -50,12 +50,20 @@ public class ProjectController {
     private final ProjectService projectService = new ProjectService();
     private final MemberService memberService = new MemberService();
 
+    /**
+     * Khởi tạo controller cho màn hình Dự án.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public ProjectController(ProjectView view, MemberDTO currentUser) {
         this.view = view;
         this.currentUser = currentUser;
         attachListeners();
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> loadAllProjects());
         view.getBtnSearch().addActionListener(e -> handleSearch());
@@ -84,6 +92,9 @@ public class ProjectController {
         handleSearch();
     }
 
+    /**
+     * Tìm kiếm và lọc dự án theo điều kiện hiện tại.
+     */
     private void handleSearch() {
         String keyword = view.getSearchKeyword();
         String status = (String) view.getStatusFilterBox().getSelectedItem();
@@ -151,6 +162,9 @@ public class ProjectController {
         worker.execute();
     }
 
+    /**
+     * Mở form thêm dự án.
+     */
     private void handleAdd() {
         if (!currentUser.isLeader()) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền tạo dự án!");
@@ -159,6 +173,9 @@ public class ProjectController {
         showProjectDialog(null, false);
     }
 
+    /**
+     * Mở form sửa dự án.
+     */
     private void handleEdit() {
         if (!currentUser.isLeader()) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền sửa dự án!");
@@ -178,6 +195,11 @@ public class ProjectController {
         showProjectDialog(opt.get(), true);
     }
 
+    /**
+     * Mở dialog thêm/sửa dự án.
+     * @param project Dữ liệu hiện tại (nullable)
+     * @param isEdit true nếu sửa
+     */
     private void showProjectDialog(ProjectDTO project, boolean isEdit) {
         ProjectFormFields fields = buildProjectForm(project);
         String title = isEdit ? "Sửa dự án" : "Tạo dự án mới";
@@ -193,6 +215,11 @@ public class ProjectController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Tạo header cho dialog.
+     * @param title Tiêu đề
+     * @return JPanel header
+     */
     private JPanel buildDialogHeader(String title) {
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(new Color(248, 250, 252));
@@ -205,6 +232,14 @@ public class ProjectController {
         return header;
     }
 
+    /**
+     * Tạo footer cho dialog.
+     * @param dialog Dialog hiện tại
+     * @param fields Trường dữ liệu form
+     * @param project Dữ liệu hiện tại
+     * @param isEdit true nếu sửa
+     * @return JPanel footer
+     */
     private JPanel buildDialogFooter(JDialog dialog, ProjectFormFields fields, ProjectDTO project, boolean isEdit) {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         footer.setBorder(new EmptyBorder(8, 16, 12, 16));
@@ -243,6 +278,9 @@ public class ProjectController {
         return footer;
     }
 
+    /**
+     * Xóa dự án đang chọn.
+     */
     private void handleDelete() {
         if (!currentUser.isLeader()) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền xóa dự án!");
@@ -336,6 +374,11 @@ public class ProjectController {
         return fields;
     }
 
+    /**
+     * Đọc dữ liệu từ form và validate.
+     * @param fields Trường dữ liệu form
+     * @return Dữ liệu form
+     */
     private ProjectFormData extractData(ProjectFormFields fields) {
         ProjectFormData d = new ProjectFormData();
         d.name = fields.tfName.getText().trim();
@@ -358,6 +401,11 @@ public class ProjectController {
         return d;
     }
 
+    /**
+     * Tạo bộ chọn ngày.
+     * @param date Ngày mặc định
+     * @return JDateChooser
+     */
     private JDateChooser createDateChooser(LocalDate date) {
         JDateChooser chooser = new JDateChooser();
         chooser.setDateFormatString("yyyy-MM-dd");
@@ -368,12 +416,23 @@ public class ProjectController {
         return chooser;
     }
 
+    /**
+     * Tạo TextField với giá trị mặc định.
+     * @param v Giá trị ban đầu
+     * @param f Font áp dụng
+     * @return JTextField
+     */
     private JTextField createField(String v, Font f) {
         JTextField tf = new JTextField(v);
         tf.setFont(f);
         return tf;
     }
 
+    /**
+     * Tạo label cho form nhập liệu.
+     * @param text Nội dung
+     * @return JLabel
+     */
     private JLabel makeLabel(String text) {
         JLabel l = new JLabel(text);
         l.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -403,15 +462,28 @@ public class ProjectController {
         JList<MemberDTO> listMembers;
     }
 
+    /**
+     * Chuyển Date sang LocalDate.
+     * @param date Ngày
+     * @return LocalDate hoặc null
+     */
     private LocalDate toLocalDate(Date date) {
         if (date == null) return null;
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
+    /**
+     * Mở dialog chi tiết dự án từ dòng đang chọn.
+     */
     private void handleViewDetail() {
         openDetailById(view.getSelectedProjectId(), null);
     }
 
+    /**
+     * Mở dialog chi tiết dự án theo ID.
+     * @param id ID dự án
+     * @param afterClose Callback sau khi đóng (nullable)
+     */
     public void openDetailById(Integer id, Runnable afterClose) {
         if (id == null) return;
         Optional<ProjectDTO> opt = projectService.getProjectById(id);
@@ -445,6 +517,12 @@ public class ProjectController {
         worker.execute();
     }
 
+    /**
+     * Hiển thị dialog chi tiết dự án.
+     * @param project Dữ liệu dự án
+     * @param members Danh sách thành viên
+     * @param afterClose Callback sau khi đóng (nullable)
+     */
     private void showDetailDialog(ProjectDTO project, List<MemberDTO> members, Runnable afterClose) {
         JDialog dialog = new JDialog((Frame) null, "Chi tiết dự án", true);
         dialog.setSize(760, 560);
@@ -585,6 +663,11 @@ public class ProjectController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Hủy đăng ký dự án.
+     * @param project Dữ liệu dự án
+     * @param dialog Dialog đang hiển thị
+     */
     private void handleCancelProject(ProjectDTO project, JDialog dialog) {
         if (project.getStartDate() != null && !project.getStartDate().isAfter(LocalDate.now())) {
             JOptionPane.showMessageDialog(dialog,
@@ -609,6 +692,11 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Tạo label hiển thị thông tin.
+     * @param text Nội dung
+     * @return JLabel
+     */
     private JLabel makeInfoLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -616,6 +704,11 @@ public class ProjectController {
         return label;
     }
 
+    /**
+     * Trả về giá trị int an toàn.
+     * @param value Giá trị nullable
+     * @return Giá trị int
+     */
     private int safeInt(Integer value) {
         return value != null ? value : 0;
     }

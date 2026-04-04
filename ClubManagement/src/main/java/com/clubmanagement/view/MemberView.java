@@ -66,6 +66,11 @@ public class MemberView {
 
     private final MemberDTO currentUser;
 
+    /**
+     * Creates the view for the current user.
+     *
+     * @param currentUser the logged-in member
+     */
     public MemberView(MemberDTO currentUser) {
         this.currentUser = currentUser;
         buildUI();
@@ -88,6 +93,11 @@ public class MemberView {
     // Header: tiêu đề + toolbar
     // ─────────────────────────────────────────────────────
 
+    /**
+     * Builds the header area containing the title and toolbar.
+     *
+     * @return the header panel
+     */
     private JPanel buildHeaderArea() {
         JPanel panel = new JPanel(new BorderLayout(16, 8));
         panel.setOpaque(false);
@@ -102,6 +112,11 @@ public class MemberView {
         return panel;
     }
 
+    /**
+     * Builds the toolbar with search/filter and actions.
+     *
+     * @return the toolbar panel
+     */
     private JPanel buildToolbar() {
         JPanel toolbar = new JPanel();
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.X_AXIS));
@@ -176,6 +191,11 @@ public class MemberView {
     // Table Area
     // ─────────────────────────────────────────────────────
 
+    /**
+     * Builds the table area for member data.
+     *
+     * @return the scroll pane containing the table
+     */
     private JScrollPane buildTableArea() {
         // Model không cho sửa trực tiếp trên table
         tableModel = new DefaultTableModel(COLUMNS, 0) {
@@ -244,6 +264,11 @@ public class MemberView {
         return scrollPane;
     }
 
+    /**
+     * Builds the status bar.
+     *
+     * @return the status bar panel
+     */
     private JPanel buildStatusBar() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bar.setOpaque(false);
@@ -351,12 +376,20 @@ public class MemberView {
     public JPanel getPanel() { return mainPanel; }
 
     // Getters cho Controller đăng ký listeners
+    /** @return add button */
     public JButton getBtnAdd()     { return btnAdd; }
+    /** @return edit button */
     public JButton getBtnEdit()    { return btnEdit; }
+    /** @return delete button */
     public JButton getBtnDelete()  { return btnDelete; }
+    /** @return refresh button */
     public JButton getBtnRefresh() { return btnRefresh; }
+    /** @return search button */
     public JButton getBtnSearch()  { return btnSearch; }
+    /** @return member table */
     public JTable  getTable()      { return memberTable; }
+    /** @return search text field */
     public JTextField getSearchField()   { return searchField; }
+    /** @return status filter combo box */
     public JComboBox<String> getStatusFilterComboBox() { return statusFilter; }
 }

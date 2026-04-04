@@ -310,6 +310,9 @@ public class MemberController {
         }
     }
 
+    /**
+     * Mở dialog chi tiết thành viên khi người dùng chọn một dòng.
+     */
     private void handleViewDetail() {
         Integer selectedId = view.getSelectedMemberId();
         if (selectedId == null) return;
@@ -408,6 +411,12 @@ public class MemberController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Tạo label hiển thị một dòng thông tin.
+     *
+     * @param text Nội dung hiển thị
+     * @return JLabel đã định dạng
+     */
     private JLabel makeInfoLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 13));

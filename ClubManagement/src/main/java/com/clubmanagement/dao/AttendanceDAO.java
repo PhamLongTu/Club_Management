@@ -1,20 +1,29 @@
 package com.clubmanagement.dao;
 
-import com.clubmanagement.entity.Attendance;
-import com.clubmanagement.util.HibernateUtil;
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
+import com.clubmanagement.entity.Attendance;
+import com.clubmanagement.util.HibernateUtil;
 
+/**
+ * AttendanceDAO - Lớp truy cập dữ liệu cho thực thể Attendance (Điểm danh).
+ */
 public class AttendanceDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(AttendanceDAO.class);
 
+    /**
+     * Lưu bản ghi điểm danh mới.
+     * @param attendance Đối tượng điểm danh
+     * @return Attendance đã lưu
+     */
     public Attendance save(Attendance attendance) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -28,6 +37,10 @@ public class AttendanceDAO {
         }
     }
 
+    /**
+     * Lấy tất cả điểm danh, sắp theo thời gian check-in giảm dần.
+     * @return Danh sách Attendance
+     */
     public List<Attendance> findAll() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Attendance> query = session.createQuery(
@@ -42,6 +55,11 @@ public class AttendanceDAO {
         }
     }
 
+    /**
+     * Tìm điểm danh theo ID.
+     * @param id ID điểm danh
+     * @return Optional<Attendance>
+     */
     public Optional<Attendance> findById(Integer id) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Attendance> query = session.createQuery(
@@ -54,6 +72,11 @@ public class AttendanceDAO {
         }
     }
 
+    /**
+     * Lấy điểm danh theo sự kiện.
+     * @param eventId ID sự kiện
+     * @return Danh sách Attendance
+     */
     public List<Attendance> findByEventId(Integer eventId) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Attendance> query = session.createQuery(
@@ -66,6 +89,11 @@ public class AttendanceDAO {
         }
     }
 
+    /**
+     * Cập nhật bản ghi điểm danh.
+     * @param attendance Đối tượng điểm danh
+     * @return Attendance đã cập nhật
+     */
     public Attendance update(Attendance attendance) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -79,6 +107,11 @@ public class AttendanceDAO {
         }
     }
 
+    /**
+     * Xóa điểm danh theo ID.
+     * @param id ID điểm danh
+     * @return true nếu xóa thành công
+     */
     public boolean deleteById(Integer id) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {

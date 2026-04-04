@@ -1,20 +1,29 @@
 package com.clubmanagement.dao;
 
-import com.clubmanagement.entity.Team;
-import com.clubmanagement.util.HibernateUtil;
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
+import com.clubmanagement.entity.Team;
+import com.clubmanagement.util.HibernateUtil;
 
+/**
+ * TeamDAO - Lớp truy cập dữ liệu cho thực thể Team (Nhóm/Ban).
+ */
 public class TeamDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(TeamDAO.class);
 
+    /**
+     * Lưu nhóm/ban mới.
+     * @param team Nhóm/ban cần lưu
+     * @return Team đã lưu
+     */
     public Team save(Team team) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -28,6 +37,10 @@ public class TeamDAO {
         }
     }
 
+    /**
+     * Lấy tất cả nhóm/ban.
+     * @return Danh sách Team
+     */
     public List<Team> findAll() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Team> query = session.createQuery(
@@ -41,6 +54,11 @@ public class TeamDAO {
         }
     }
 
+    /**
+     * Tìm nhóm/ban theo ID.
+     * @param id ID nhóm/ban
+     * @return Optional<Team>
+     */
     public Optional<Team> findById(Integer id) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Team> query = session.createQuery(
@@ -52,6 +70,11 @@ public class TeamDAO {
         }
     }
 
+    /**
+     * Cập nhật nhóm/ban.
+     * @param team Nhóm/ban cần cập nhật
+     * @return Team đã cập nhật
+     */
     public Team update(Team team) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -65,6 +88,11 @@ public class TeamDAO {
         }
     }
 
+    /**
+     * Xóa nhóm/ban theo ID.
+     * @param id ID nhóm/ban
+     * @return true nếu xóa thành công
+     */
     public boolean deleteById(Integer id) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {

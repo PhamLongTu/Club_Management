@@ -13,10 +13,21 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+/**
+ * ImageUtil - Tiện ích xử lý ảnh avatar cho UI.
+ */
 public final class ImageUtil {
 
+    /**
+     * Utility class, không cho khởi tạo.
+     */
     private ImageUtil() {}
 
+    /**
+     * Tạo chữ cái viết tắt từ họ tên.
+     * @param fullName Họ tên đầy đủ
+     * @return Chuỗi viết tắt (1-2 ký tự)
+     */
     public static String buildInitials(String fullName) {
         if (fullName == null) return "?";
         String trimmed = fullName.trim();
@@ -31,6 +42,15 @@ public final class ImageUtil {
         return value.isEmpty() ? "?" : value;
     }
 
+    /**
+     * Tải avatar hình tròn (có fallback chữ cái).
+     * @param avatarUrl Đường dẫn file ảnh
+     * @param size Kích thước
+     * @param initials Chữ cái fallback
+     * @param bg Màu nền
+     * @param fg Màu chữ
+     * @return ImageIcon
+     */
     public static ImageIcon loadCircleAvatar(String avatarUrl, int size,
                                              String initials, Color bg, Color fg) {
         BufferedImage base = loadImage(avatarUrl);
@@ -56,6 +76,15 @@ public final class ImageUtil {
         return new ImageIcon(canvas);
     }
 
+    /**
+     * Tải avatar hình vuông (có fallback chữ cái).
+     * @param avatarUrl Đường dẫn file ảnh
+     * @param size Kích thước
+     * @param initials Chữ cái fallback
+     * @param bg Màu nền
+     * @param fg Màu chữ
+     * @return ImageIcon
+     */
     public static ImageIcon loadSquareAvatar(String avatarUrl, int size,
                                              String initials, Color bg, Color fg) {
         BufferedImage base = loadImage(avatarUrl);
@@ -79,6 +108,11 @@ public final class ImageUtil {
         return new ImageIcon(square);
     }
 
+    /**
+     * Đọc ảnh từ đường dẫn.
+     * @param avatarUrl Đường dẫn file ảnh
+     * @return BufferedImage hoặc null
+     */
     private static BufferedImage loadImage(String avatarUrl) {
         if (avatarUrl == null) return null;
         String trimmed = avatarUrl.trim();
@@ -92,6 +126,12 @@ public final class ImageUtil {
         }
     }
 
+    /**
+     * Scale và crop ảnh về kích thước vuông.
+     * @param src Ảnh gốc
+     * @param size Kích thước vuông
+     * @return BufferedImage đã crop
+     */
     private static BufferedImage scaleAndCrop(BufferedImage src, int size) {
         int srcW = src.getWidth();
         int srcH = src.getHeight();
@@ -113,6 +153,13 @@ public final class ImageUtil {
         return out;
     }
 
+    /**
+     * Vẽ chữ cái viết tắt vào ảnh.
+     * @param g Graphics2D
+     * @param initials Chữ cái
+     * @param size Kích thước
+     * @param fg Màu chữ
+     */
     private static void drawInitials(Graphics2D g, String initials, int size, Color fg) {
         String value = (initials == null || initials.isBlank()) ? "?" : initials;
         int fontSize = Math.max(12, (int) (size * 0.4));

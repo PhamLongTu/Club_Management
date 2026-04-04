@@ -237,6 +237,12 @@ public class MemberDAO {
         }
     }
 
+    /**
+     * Cập nhật danh sách ban/nhóm của thành viên.
+     *
+     * @param memberId ID thành viên
+     * @param teamIds  Danh sách ID ban/nhóm mới
+     */
     public void replaceTeams(Integer memberId, List<Integer> teamIds) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {

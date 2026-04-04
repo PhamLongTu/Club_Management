@@ -89,8 +89,22 @@ public class Project {
     private List<Feedback> feedbacks;
 
     // ============ CONSTRUCTORS ============
+    /**
+     * Constructor mặc định (bắt buộc cho JPA).
+     */
     public Project() {}
 
+    /**
+     * Constructor khởi tạo nhanh dự án.
+     *
+     * @param projectName Tên dự án
+     * @param description Mô tả
+     * @param objective   Mục tiêu
+     * @param startDate   Ngày bắt đầu
+     * @param endDate     Ngày kết thúc
+     * @param budget      Ngân sách
+     * @param manager     Quản lý dự án
+     */
     public Project(String projectName, String description, String objective,
                    LocalDate startDate, LocalDate endDate, BigDecimal budget, Member manager) {
         this.projectName = projectName;
@@ -104,45 +118,76 @@ public class Project {
     }
 
     // ============ GETTERS & SETTERS ============
+    /** @return ID dự án. */
     public Integer getProjectId()          { return projectId; }
+    /** @param v ID dự án mới. */
     public void setProjectId(Integer v)    { this.projectId = v; }
 
+    /** @return Tên dự án. */
     public String getProjectName()         { return projectName; }
+    /** @param v Tên dự án mới. */
     public void setProjectName(String v)   { this.projectName = v; }
 
+    /** @return Mô tả dự án. */
     public String getDescription()         { return description; }
+    /** @param v Mô tả mới. */
     public void setDescription(String v)   { this.description = v; }
 
+    /** @return Mục tiêu dự án. */
     public String getObjective()           { return objective; }
+    /** @param v Mục tiêu mới. */
     public void setObjective(String v)     { this.objective = v; }
 
+    /** @return Ngày bắt đầu. */
     public LocalDate getStartDate()        { return startDate; }
+    /** @param v Ngày bắt đầu mới. */
     public void setStartDate(LocalDate v)  { this.startDate = v; }
 
+    /** @return Ngày kết thúc dự kiến. */
     public LocalDate getEndDate()          { return endDate; }
+    /** @param v Ngày kết thúc mới. */
     public void setEndDate(LocalDate v)    { this.endDate = v; }
 
+    /** @return Ngân sách dự án. */
     public BigDecimal getBudget()          { return budget; }
+    /** @param v Ngân sách mới. */
     public void setBudget(BigDecimal v)    { this.budget = v; }
 
+    /** @return Trạng thái dự án. */
     public String getStatus()              { return status; }
+    /** @param v Trạng thái mới. */
     public void setStatus(String v)        { this.status = v; }
 
+    /** @return Chế độ hiển thị. */
     public String getVisibility()          { return visibility; }
+    /** @param v Chế độ hiển thị mới. */
     public void setVisibility(String v)    { this.visibility = v; }
 
+    /** @return Số thành viên tối đa. */
     public Integer getMaxMembers()         { return maxMembers; }
+    /** @param v Số thành viên tối đa mới. */
     public void setMaxMembers(Integer v)   { this.maxMembers = v; }
 
+    /** @return Quản lý dự án. */
     public Member getManager()             { return manager; }
+    /** @param v Quản lý dự án mới. */
     public void setManager(Member v)       { this.manager = v; }
 
+    /** @return Danh sách thành viên tham gia. */
     public List<Member> getMembers()       { return members; }
+    /** @param v Danh sách thành viên mới. */
     public void setMembers(List<Member> v) { this.members = v; }
 
+    /** @return Danh sách phản hồi. */
     public List<Feedback> getFeedbacks()         { return feedbacks; }
+    /** @param v Danh sách phản hồi mới. */
     public void setFeedbacks(List<Feedback> v)   { this.feedbacks = v; }
 
+    /**
+     * Hiển thị tên dự án trong UI.
+     *
+     * @return Chuỗi hiển thị
+     */
     @Override
     public String toString() { return projectName; }
 }

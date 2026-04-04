@@ -26,6 +26,9 @@ import javax.swing.table.JTableHeader;
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.TeamDTO;
 
+/**
+ * View for listing and managing teams.
+ */
 public class TeamView {
 
     private static final String[] COLUMNS = {
@@ -50,11 +53,19 @@ public class TeamView {
 
     private final MemberDTO currentUser;
 
+    /**
+     * Creates the view for the current user.
+     *
+     * @param currentUser the logged-in member
+     */
     public TeamView(MemberDTO currentUser) {
         this.currentUser = currentUser;
         buildUI();
     }
 
+    /**
+     * Builds the main layout.
+     */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
         mainPanel.setBackground(BG);
@@ -65,6 +76,11 @@ public class TeamView {
         mainPanel.add(buildFooter(), BorderLayout.SOUTH);
     }
 
+    /**
+     * Builds the header section with toolbar actions.
+     *
+     * @return the header panel
+     */
     private JPanel buildHeader() {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
@@ -117,6 +133,11 @@ public class TeamView {
         return panel;
     }
 
+    /**
+     * Builds the table container for teams.
+     *
+     * @return the scroll pane containing the table
+     */
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -141,6 +162,11 @@ public class TeamView {
         return sp;
     }
 
+    /**
+     * Builds the status footer.
+     *
+     * @return the footer panel
+     */
     private JPanel buildFooter() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bar.setOpaque(false);
@@ -151,6 +177,11 @@ public class TeamView {
         return bar;
     }
 
+    /**
+     * Applies consistent styling to the table.
+     *
+     * @param table the table to style
+     */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         table.setRowHeight(40);
@@ -187,6 +218,14 @@ public class TeamView {
         });
     }
 
+    /**
+     * Creates a toolbar button.
+     *
+     * @param text button label
+     * @param bg background color
+     * @param fg foreground color
+     * @return the configured button
+     */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -199,6 +238,11 @@ public class TeamView {
         return btn;
     }
 
+    /**
+     * Loads team rows into the table.
+     *
+     * @param data team data list
+     */
     public void loadData(List<TeamDTO> data) {
         tableModel.setRowCount(0);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -216,25 +260,69 @@ public class TeamView {
         statusBar.setText("Đã tải " + data.size() + " Ban.");
     }
 
+    /**
+     * Gets the selected team id.
+     *
+     * @return selected id or null
+     */
     public Integer getSelectedId() {
         int row = teamTable.getSelectedRow();
         if (row < 0) return null;
         return (Integer) tableModel.getValueAt(row, 0);
     }
-    
+
+    /**
+     * Gets the selected team name.
+     *
+     * @return selected name or null
+     */
     public String getSelectedName() {
         int row = teamTable.getSelectedRow();
         if (row < 0) return null;
         return (String) tableModel.getValueAt(row, 1);
     }
 
+    /**
+     * Updates the status bar message.
+     *
+     * @param msg message to display
+     */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
+
+    /**
+     * Returns the root panel for this view.
+     *
+     * @return main panel
+     */
     public JPanel getPanel() { return mainPanel; }
 
+    /**
+     * @return add button
+     */
     public JButton getBtnAdd()         { return btnAdd; }
+
+    /**
+     * @return edit button
+     */
     public JButton getBtnEdit()        { return btnEdit; }
+
+    /**
+     * @return delete button
+     */
     public JButton getBtnDelete()      { return btnDelete; }
+
+    /**
+     * @return refresh button
+     */
     public JButton getBtnRefresh()     { return btnRefresh; }
+
+    /**
+     * @return view members button
+     */
     public JButton getBtnViewMembers() { return btnViewMembers; }
+
+    /**
+     * @return team table
+     */
     public JTable  getTable()          { return teamTable; }
 }

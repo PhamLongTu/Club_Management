@@ -1,7 +1,15 @@
 package com.clubmanagement.entity;
 
-import jakarta.persistence.*;
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 /**
  * Entity: Role (Vai trò)
@@ -42,8 +50,18 @@ public class Role {
     private List<Member> members;
 
     // ============ CONSTRUCTORS ============
+    /**
+     * Constructor mặc định (bắt buộc cho JPA).
+     */
     public Role() {}
 
+    /**
+     * Constructor khởi tạo nhanh vai trò.
+     *
+     * @param roleName        Tên vai trò
+     * @param description     Mô tả vai trò
+     * @param permissionLevel Cấp quyền
+     */
     public Role(String roleName, String description, Integer permissionLevel) {
         this.roleName = roleName;
         this.description = description;
@@ -51,21 +69,36 @@ public class Role {
     }
 
     // ============ GETTERS & SETTERS ============
+    /** @return ID vai trò. */
     public Integer getRoleId()       { return roleId; }
+    /** @param v ID vai trò mới. */
     public void setRoleId(Integer v) { this.roleId = v; }
 
+    /** @return Tên vai trò. */
     public String getRoleName()        { return roleName; }
+    /** @param v Tên vai trò mới. */
     public void setRoleName(String v)  { this.roleName = v; }
 
+    /** @return Mô tả vai trò. */
     public String getDescription()       { return description; }
+    /** @param v Mô tả mới. */
     public void setDescription(String v) { this.description = v; }
 
+    /** @return Cấp quyền. */
     public Integer getPermissionLevel()        { return permissionLevel; }
+    /** @param v Cấp quyền mới. */
     public void setPermissionLevel(Integer v)  { this.permissionLevel = v; }
 
+    /** @return Danh sách thành viên thuộc vai trò. */
     public List<Member> getMembers()         { return members; }
+    /** @param v Danh sách thành viên mới. */
     public void setMembers(List<Member> v)   { this.members = v; }
 
+    /**
+     * Hiển thị tên vai trò trong UI.
+     *
+     * @return Chuỗi hiển thị
+     */
     @Override
     public String toString() { return roleName; }
 }

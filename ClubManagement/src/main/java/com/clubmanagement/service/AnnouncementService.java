@@ -55,6 +55,11 @@ public class AnnouncementService {
         return announcementDAO.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    /**
+     * Lấy danh sách thông báo phù hợp với người dùng hiện tại.
+     * @param user Người dùng hiện tại
+     * @return Danh sách AnnouncementDTO
+     */
     public List<AnnouncementDTO> getAnnouncementsForUser(MemberDTO user) {
         return announcementDAO.findForUser(user).stream().map(this::toDTO).collect(Collectors.toList());
     }
@@ -92,6 +97,11 @@ public class AnnouncementService {
             throw new IllegalArgumentException("Không tìm thấy thông báo để xóa!");
     }
 
+    /**
+     * Map Announcement entity -> AnnouncementDTO.
+     * @param a Announcement entity
+     * @return AnnouncementDTO
+     */
     private AnnouncementDTO toDTO(Announcement a) {
         if (a == null) return null;
         return new AnnouncementDTO(
@@ -118,6 +128,11 @@ public class AnnouncementService {
         }
     }
 
+    /**
+     * Tìm Team theo ID.
+     * @param teamId ID ban/nhóm
+     * @return Team entity hoặc null
+     */
     private Team findTeamById(Integer teamId) {
         if (teamId == null) return null;
         try (Session session = HibernateUtil.openSession()) {

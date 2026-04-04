@@ -27,6 +27,9 @@ import javax.swing.table.JTableHeader;
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.util.ImageUtil;
 
+/**
+ * View for displaying the current member profile and related items.
+ */
 public class MyInfoView {
 
     private static final String[] INFO_COLUMNS = {"Trường", "Dữ liệu"};
@@ -62,11 +65,19 @@ public class MyInfoView {
     private static final Color TEXT_GRAY   = new Color(100, 116, 139);
     private static final int AVATAR_SIZE   = 200;
 
+    /**
+     * Creates the view and loads initial profile info.
+     *
+     * @param currentUser the logged-in member
+     */
     public MyInfoView(MemberDTO currentUser) {
         buildUI();
         setProfileInfo(currentUser);
     }
 
+    /**
+     * Builds the main layout.
+     */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
         mainPanel.setBackground(BG);
@@ -76,6 +87,11 @@ public class MyInfoView {
         mainPanel.add(buildContent(), BorderLayout.CENTER);
     }
 
+    /**
+     * Builds the header section with profile info and actions.
+     *
+     * @return the header panel
+     */
     private JPanel buildHeader() {
         JPanel header = new JPanel(new BorderLayout(16, 0));
         header.setOpaque(false);
@@ -169,6 +185,11 @@ public class MyInfoView {
         return header;
     }
 
+    /**
+     * Builds the content grid with tasks, events, and projects.
+     *
+     * @return the content panel
+     */
     private JPanel buildContent() {
         JPanel grid = new JPanel(new GridLayout(1, 3, 16, 0));
         grid.setOpaque(false);
@@ -208,6 +229,15 @@ public class MyInfoView {
         return grid;
     }
 
+    /**
+     * Builds a section panel with filter and table.
+     *
+     * @param title section title
+     * @param filter filter control
+     * @param countLabel label for total count
+     * @param table data table
+     * @return the section panel
+     */
     private JPanel buildSection(String title, JComboBox<String> filter,
                                 JLabel countLabel, JTable table) {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
@@ -249,6 +279,11 @@ public class MyInfoView {
         return panel;
     }
 
+    /**
+     * Applies consistent styling to the table.
+     *
+     * @param table the table to style
+     */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         table.setRowHeight(34);
@@ -284,12 +319,23 @@ public class MyInfoView {
         });
     }
 
+    /**
+     * Hides the id column by setting its width to zero.
+     *
+     * @param table the table to update
+     * @param index column index to hide
+     */
     private void hideIdColumn(JTable table, int index) {
         table.getColumnModel().getColumn(index).setMinWidth(0);
         table.getColumnModel().getColumn(index).setMaxWidth(0);
         table.getColumnModel().getColumn(index).setWidth(0);
     }
 
+    /**
+     * Updates the profile info section.
+     *
+     * @param member member data
+     */
     public void setProfileInfo(MemberDTO member) {
         if (member == null) return;
         String initials = ImageUtil.buildInitials(member.getFullName());
@@ -311,53 +357,105 @@ public class MyInfoView {
         addInfoRow("Ban/Nhóm", member.getTeamNames());
     }
 
+    /**
+     * Adds a labeled row to the info table.
+     *
+     * @param label label text
+     * @param value value text
+     */
     private void addInfoRow(String label, String value) {
         infoModel.addRow(new Object[]{label, value != null ? value : ""});
     }
 
+    /**
+     * Sets task rows in the tasks table.
+     *
+     * @param rows task rows
+     */
     public void setTaskRows(List<Object[]> rows) {
         taskModel.setRowCount(0);
         for (Object[] row : rows) taskModel.addRow(row);
         taskCountLabel.setText(String.valueOf(rows.size()));
     }
 
+    /**
+     * Sets event rows in the events table.
+     *
+     * @param rows event rows
+     */
     public void setEventRows(List<Object[]> rows) {
         eventModel.setRowCount(0);
         for (Object[] row : rows) eventModel.addRow(row);
         eventCountLabel.setText(String.valueOf(rows.size()));
     }
 
+    /**
+     * Sets project rows in the projects table.
+     *
+     * @param rows project rows
+     */
     public void setProjectRows(List<Object[]> rows) {
         projectModel.setRowCount(0);
         for (Object[] row : rows) projectModel.addRow(row);
         projectCountLabel.setText(String.valueOf(rows.size()));
     }
 
+    /**
+     * Gets the selected task id.
+     *
+     * @return selected id or null
+     */
     public Integer getSelectedTaskId() {
         return getSelectedId(taskTable, taskModel);
     }
 
+    /**
+     * Gets the selected event id.
+     *
+     * @return selected id or null
+     */
     public Integer getSelectedEventId() {
         return getSelectedId(eventTable, eventModel);
     }
 
+    /**
+     * Gets the selected project id.
+     *
+     * @return selected id or null
+     */
     public Integer getSelectedProjectId() {
         return getSelectedId(projectTable, projectModel);
     }
 
+    /**
+     * Reads the selected id from a table/model pair.
+     *
+     * @param table table to read
+     * @param model table model
+     * @return selected id or null
+     */
     private Integer getSelectedId(JTable table, DefaultTableModel model) {
         int row = table.getSelectedRow();
         if (row < 0) return null;
         return (Integer) model.getValueAt(row, 0);
     }
 
+    /** @return main panel */
     public JPanel getPanel() { return mainPanel; }
+    /** @return edit profile button */
     public JButton getBtnEditProfile() { return btnEditProfile; }
+    /** @return refresh button */
     public JButton getBtnRefresh() { return btnRefresh; }
+    /** @return task filter combo box */
     public JComboBox<String> getTaskFilter() { return taskFilter; }
+    /** @return event filter combo box */
     public JComboBox<String> getEventFilter() { return eventFilter; }
+    /** @return project filter combo box */
     public JComboBox<String> getProjectFilter() { return projectFilter; }
+    /** @return task table */
     public JTable getTaskTable() { return taskTable; }
+    /** @return event table */
     public JTable getEventTable() { return eventTable; }
+    /** @return project table */
     public JTable getProjectTable() { return projectTable; }
 }

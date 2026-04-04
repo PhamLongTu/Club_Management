@@ -74,14 +74,28 @@ public class ProjectService {
         return projectDAO.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    /**
+     * Lấy các dự án public chưa có thành viên tham gia.
+     * @return Danh sách ProjectDTO
+     */
     public List<ProjectDTO> getPublicUnassignedProjects() {
         return projectDAO.findPublicUnassigned().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    /**
+     * Lấy các dự án mà thành viên đang tham gia.
+     * @param memberId ID thành viên
+     * @return Danh sách ProjectDTO
+     */
     public List<ProjectDTO> getProjectsForUser(Integer memberId) {
         return projectDAO.findByMember(memberId).stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    /**
+     * Lấy danh sách dự án có thể xem được của thành viên (public + tham gia).
+     * @param memberId ID thành viên
+     * @return Danh sách ProjectDTO
+     */
     public List<ProjectDTO> getVisibleProjectsForUser(Integer memberId) {
         List<ProjectDTO> result = new java.util.ArrayList<>();
         result.addAll(projectDAO.findPublic().stream().map(this::toDTO).collect(Collectors.toList()));
@@ -175,10 +189,20 @@ public class ProjectService {
         projectDAO.addMember(projectId, memberId);
     }
 
+    /**
+     * Đăng ký thành viên tham gia dự án.
+     * @param projectId ID dự án
+     * @param memberId ID thành viên
+     */
     public void registerForProject(Integer projectId, Integer memberId) {
         projectDAO.addMember(projectId, memberId);
     }
 
+    /**
+     * Hủy đăng ký dự án (chỉ cho phép khi dự án chưa bắt đầu).
+     * @param projectId ID dự án
+     * @param memberId ID thành viên
+     */
     public void unregisterFromProject(Integer projectId, Integer memberId) {
         if (projectId == null || memberId == null) {
             throw new IllegalArgumentException("Thiếu thông tin hủy đăng ký dự án");

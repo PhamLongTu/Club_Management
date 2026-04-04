@@ -29,6 +29,9 @@ import com.clubmanagement.service.FeedbackService;
 import com.clubmanagement.service.ProjectService;
 import com.clubmanagement.view.FeedbackView;
 
+/**
+ * FeedbackController - Điều khiển màn hình Phản hồi.
+ */
 public class FeedbackController {
 
     private final FeedbackView view;
@@ -37,6 +40,11 @@ public class FeedbackController {
     private final EventService eventService = new EventService();
     private final ProjectService projectService = new ProjectService();
 
+    /**
+     * Khởi tạo controller cho màn hình Phản hồi.
+     * @param view View hiển thị
+     * @param currentUser Người dùng hiện tại
+     */
     public FeedbackController(FeedbackView view, MemberDTO currentUser) {
         this.view = view;
         this.currentUser = currentUser;
@@ -44,6 +52,9 @@ public class FeedbackController {
         loadAllFeedbacksInternal();
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> loadAllFeedbacks());
         view.getBtnAdd().addActionListener(e -> handleAdd());
@@ -53,6 +64,9 @@ public class FeedbackController {
         }
     }
 
+    /**
+     * Tải danh sách phản hồi (chạy nền).
+     */
     private void loadAllFeedbacksInternal() {
         view.setStatusMessage("Đang tải danh sách Phản hồi...");
         SwingWorker<List<FeedbackDTO>, Void> worker = new SwingWorker<>() {
@@ -75,10 +89,16 @@ public class FeedbackController {
         worker.execute();
     }
 
+    /**
+     * Refresh danh sách phản hồi.
+     */
     public final void loadAllFeedbacks() {
         loadAllFeedbacksInternal();
     }
 
+    /**
+     * Mở form gửi phản hồi.
+     */
     private void handleAdd() {
         JDialog dialog = new JDialog((Frame) null, "Gửi Feedback / Góp ý", true);
         dialog.setSize(500, 350);
@@ -167,6 +187,9 @@ public class FeedbackController {
         dialog.setVisible(true);
     }
 
+    /**
+     * Xóa phản hồi đang chọn.
+     */
     private void handleDelete() {
         Integer id = view.getSelectedId();
         if (id == null) {

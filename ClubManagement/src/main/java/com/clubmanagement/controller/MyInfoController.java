@@ -22,6 +22,9 @@ import com.clubmanagement.view.DashboardView;
 import com.clubmanagement.view.MemberFormDialog;
 import com.clubmanagement.view.MyInfoView;
 
+/**
+ * MyInfoController - Điều khiển màn hình Thông tin cá nhân.
+ */
 public class MyInfoController {
 
     private static final String FILTER_REGISTERED = "Đã đăng ký";
@@ -44,6 +47,15 @@ public class MyInfoController {
     private final EventController eventController;
     private final ProjectController projectController;
 
+    /**
+     * Khởi tạo controller cho màn hình Thông tin cá nhân.
+     * @param view View hiển thị
+     * @param dashboardView Dashboard để cập nhật thông tin người dùng
+     * @param currentUser Người dùng hiện tại
+     * @param taskController Controller nhiệm vụ
+     * @param eventController Controller sự kiện
+     * @param projectController Controller dự án
+     */
     public MyInfoController(MyInfoView view, DashboardView dashboardView, MemberDTO currentUser,
                             TaskController taskController, EventController eventController,
                             ProjectController projectController) {
@@ -58,6 +70,9 @@ public class MyInfoController {
         reloadAll();
     }
 
+    /**
+     * Đăng ký các sự kiện cho view.
+     */
     private void attachListeners() {
         view.getBtnRefresh().addActionListener(e -> reloadAll());
         view.getTaskFilter().addActionListener(e -> loadTasks());
@@ -88,6 +103,9 @@ public class MyInfoController {
         view.getBtnEditProfile().addActionListener(e -> openEditProfile());
     }
 
+    /**
+     * Tải lại toàn bộ dữ liệu hiển thị.
+     */
     public void reloadAll() {
         refreshProfile();
         loadTasks();
@@ -95,6 +113,9 @@ public class MyInfoController {
         loadProjects();
     }
 
+    /**
+     * Làm mới thông tin cá nhân.
+     */
     private void refreshProfile() {
         Optional<MemberDTO> memberOpt = memberService.getMemberById(currentUser.getMemberId());
         if (memberOpt.isPresent()) {
@@ -105,6 +126,9 @@ public class MyInfoController {
         }
     }
 
+    /**
+     * Tải danh sách nhiệm vụ của người dùng.
+     */
     private void loadTasks() {
         SwingWorker<List<TaskDTO>, Void> worker = new SwingWorker<>() {
             @Override
@@ -135,12 +159,23 @@ public class MyInfoController {
         worker.execute();
     }
 
+    /**
+     * Kiểm tra nhiệm vụ có khớp bộ lọc hay không.
+     * @param task Nhiệm vụ
+     * @param filter Bộ lọc
+     * @return true nếu khớp
+     */
     private boolean matchesTaskFilter(TaskDTO task, String filter) {
         if (filter == null) return true;
         String bucket = classifyTask(task);
         return filter.equals(bucket);
     }
 
+    /**
+     * Phân loại nhiệm vụ theo trạng thái thời gian.
+     * @param task Nhiệm vụ
+     * @return Nhãn phân loại
+     */
     private String classifyTask(TaskDTO task) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = task.getCreatedDate() != null ? task.getCreatedDate() : now;
@@ -152,6 +187,9 @@ public class MyInfoController {
         return (now.isBefore(end) || now.isEqual(end)) ? FILTER_ACTIVE : FILTER_DONE;
     }
 
+    /**
+     * Tải danh sách sự kiện của người dùng.
+     */
     private void loadEvents() {
         SwingWorker<List<EventDTO>, Void> worker = new SwingWorker<>() {
             @Override
@@ -183,12 +221,23 @@ public class MyInfoController {
         worker.execute();
     }
 
+    /**
+     * Kiểm tra sự kiện có khớp bộ lọc hay không.
+     * @param event Sự kiện
+     * @param filter Bộ lọc
+     * @return true nếu khớp
+     */
     private boolean matchesEventFilter(EventDTO event, String filter) {
         if (filter == null) return true;
         String bucket = classifyEvent(event);
         return filter.equals(bucket);
     }
 
+    /**
+     * Phân loại sự kiện theo thời gian.
+     * @param event Sự kiện
+     * @return Nhãn phân loại
+     */
     private String classifyEvent(EventDTO event) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = event.getStartDate();
@@ -200,6 +249,9 @@ public class MyInfoController {
         return (now.isBefore(end) || now.isEqual(end)) ? FILTER_ACTIVE : FILTER_DONE;
     }
 
+    /**
+     * Tải danh sách dự án của người dùng.
+     */
     private void loadProjects() {
         SwingWorker<List<ProjectDTO>, Void> worker = new SwingWorker<>() {
             @Override
@@ -231,12 +283,23 @@ public class MyInfoController {
         worker.execute();
     }
 
+    /**
+     * Kiểm tra dự án có khớp bộ lọc hay không.
+     * @param project Dự án
+     * @param filter Bộ lọc
+     * @return true nếu khớp
+     */
     private boolean matchesProjectFilter(ProjectDTO project, String filter) {
         if (filter == null) return true;
         String bucket = classifyProject(project);
         return filter.equals(bucket);
     }
 
+    /**
+     * Phân loại dự án theo thời gian.
+     * @param project Dự án
+     * @return Nhãn phân loại
+     */
     private String classifyProject(ProjectDTO project) {
         LocalDate now = LocalDate.now();
         LocalDate start = project.getStartDate();
@@ -248,24 +311,36 @@ public class MyInfoController {
         return (now.isBefore(end) || now.isEqual(end)) ? FILTER_ACTIVE : FILTER_DONE;
     }
 
+    /**
+     * Mở dialog chi tiết nhiệm vụ.
+     */
     private void openTaskDetail() {
         Integer id = view.getSelectedTaskId();
         if (id == null) return;
         taskController.openDetailById(id, this::reloadAll);
     }
 
+    /**
+     * Mở dialog chi tiết sự kiện.
+     */
     private void openEventDetail() {
         Integer id = view.getSelectedEventId();
         if (id == null) return;
         eventController.openDetailById(id, this::reloadAll);
     }
 
+    /**
+     * Mở dialog chi tiết dự án.
+     */
     private void openProjectDetail() {
         Integer id = view.getSelectedProjectId();
         if (id == null) return;
         projectController.openDetailById(id, this::reloadAll);
     }
 
+    /**
+     * Mở dialog chỉnh sửa thông tin cá nhân.
+     */
     private void openEditProfile() {
         Optional<MemberDTO> memberOpt = memberService.getMemberById(currentUser.getMemberId());
         if (memberOpt.isEmpty()) return;
@@ -298,6 +373,10 @@ public class MyInfoController {
         }
     }
 
+    /**
+     * Cập nhật dữ liệu người dùng hiện tại.
+     * @param updated Thông tin mới
+     */
     private void applyUpdatedUser(MemberDTO updated) {
         currentUser.setFullName(updated.getFullName());
         currentUser.setEmail(updated.getEmail());

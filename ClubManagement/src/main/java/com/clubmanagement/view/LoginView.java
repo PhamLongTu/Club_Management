@@ -72,6 +72,9 @@ public class LoginView extends JFrame {
     private static final Font FONT_BUTTON = new Font("Segoe UI", Font.BOLD, 15);
     private static final Font FONT_SMALL  = new Font("Segoe UI", Font.PLAIN, 12);
 
+    /**
+     * Creates the login view.
+     */
     public LoginView() {
         initUI();
     }

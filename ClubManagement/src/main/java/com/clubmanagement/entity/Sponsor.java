@@ -53,8 +53,21 @@ public class Sponsor {
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     // ============ CONSTRUCTORS ============
+    /**
+     * Constructor mặc định (bắt buộc cho JPA).
+     */
     public Sponsor() {}
 
+    /**
+     * Constructor khởi tạo nhanh nhà tài trợ.
+     *
+     * @param sponsorName     Tên nhà tài trợ
+     * @param contactPerson   Người liên hệ
+     * @param email           Email liên hệ
+     * @param phone           Số điện thoại
+     * @param sponsorshipType Hình thức tài trợ
+     * @param totalAmount     Tổng giá trị tài trợ
+     */
     public Sponsor(String sponsorName, String contactPerson, String email,
                    String phone, String sponsorshipType, BigDecimal totalAmount) {
         this.sponsorName     = sponsorName;
@@ -66,30 +79,51 @@ public class Sponsor {
     }
 
     // ============ GETTERS & SETTERS ============
+    /** @return ID nhà tài trợ. */
     public Integer getSponsorId()            { return sponsorId; }
+    /** @param v ID nhà tài trợ mới. */
     public void setSponsorId(Integer v)      { this.sponsorId = v; }
 
+    /** @return Tên nhà tài trợ. */
     public String getSponsorName()           { return sponsorName; }
+    /** @param v Tên nhà tài trợ mới. */
     public void setSponsorName(String v)     { this.sponsorName = v; }
 
+    /** @return Người liên hệ. */
     public String getContactPerson()         { return contactPerson; }
+    /** @param v Người liên hệ mới. */
     public void setContactPerson(String v)   { this.contactPerson = v; }
 
+    /** @return Email liên hệ. */
     public String getEmail()                 { return email; }
+    /** @param v Email liên hệ mới. */
     public void setEmail(String v)           { this.email = v; }
 
+    /** @return Số điện thoại. */
     public String getPhone()                 { return phone; }
+    /** @param v Số điện thoại mới. */
     public void setPhone(String v)           { this.phone = v; }
 
+    /** @return Địa chỉ. */
     public String getAddress()               { return address; }
+    /** @param v Địa chỉ mới. */
     public void setAddress(String v)         { this.address = v; }
 
+    /** @return Hình thức tài trợ. */
     public String getSponsorshipType()       { return sponsorshipType; }
+    /** @param v Hình thức tài trợ mới. */
     public void setSponsorshipType(String v) { this.sponsorshipType = v; }
 
+    /** @return Tổng giá trị tài trợ. */
     public BigDecimal getTotalAmount()        { return totalAmount; }
+    /** @param v Tổng giá trị tài trợ mới. */
     public void setTotalAmount(BigDecimal v)  { this.totalAmount = v; }
 
+    /**
+     * Hiển thị tên nhà tài trợ trong UI.
+     *
+     * @return Chuỗi hiển thị
+     */
     @Override
     public String toString() { return sponsorName; }
 }

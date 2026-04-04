@@ -12,10 +12,18 @@ import org.slf4j.LoggerFactory;
 import com.clubmanagement.entity.Task;
 import com.clubmanagement.util.HibernateUtil;
 
+/**
+ * TaskDAO - Lớp truy cập dữ liệu cho thực thể Task (Nhiệm vụ).
+ */
 public class TaskDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskDAO.class);
 
+    /**
+     * Lưu nhiệm vụ mới.
+     * @param task Nhiệm vụ cần lưu
+     * @return Task đã lưu
+     */
     public Task save(Task task) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -29,6 +37,10 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Lấy tất cả nhiệm vụ, sắp theo ngày tạo giảm dần.
+     * @return Danh sách Task
+     */
     public List<Task> findAll() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Task> query = session.createQuery(
@@ -46,6 +58,11 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Tìm nhiệm vụ theo ID.
+     * @param id ID nhiệm vụ
+     * @return Optional<Task>
+     */
     public Optional<Task> findById(Integer id) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Task> query = session.createQuery(
@@ -61,6 +78,10 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Lấy nhiệm vụ public chưa có người nhận.
+     * @return Danh sách Task
+     */
     public List<Task> findPublicUnassigned() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Task> query = session.createQuery(
@@ -79,6 +100,11 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Lấy nhiệm vụ mà thành viên đang tham gia.
+     * @param memberId ID thành viên
+     * @return Danh sách Task
+     */
     public List<Task> findAssignedToMember(Integer memberId) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Task> query = session.createQuery(
@@ -99,6 +125,10 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Lấy nhiệm vụ public đã có người nhận.
+     * @return Danh sách Task
+     */
     public List<Task> findPublicAssigned() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Task> query = session.createQuery(
@@ -117,10 +147,20 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Alias cho findAssignedToMember.
+     * @param memberId ID thành viên
+     * @return Danh sách Task
+     */
     public List<Task> findByMember(Integer memberId) {
         return findAssignedToMember(memberId);
     }
 
+    /**
+     * Thêm thành viên vào nhiệm vụ (có kiểm tra giới hạn).
+     * @param taskId ID nhiệm vụ
+     * @param memberId ID thành viên
+     */
     public void addMemberToTask(Integer taskId, Integer memberId) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -131,7 +171,8 @@ public class TaskDAO {
             }
             org.hibernate.Hibernate.initialize(task.getAssignees());
             long currentCount = task.getAssignees() != null ? task.getAssignees().size() : 0;
-            int maxAssignees = task.getMaxAssignees() != null ? task.getMaxAssignees() : 1;
+            Integer maxAssigneesValue = task.getMaxAssignees();
+            int maxAssignees = maxAssigneesValue != null ? maxAssigneesValue : 1;
             if (maxAssignees > 0 && currentCount >= maxAssignees) {
                 throw new IllegalStateException("Nhiệm vụ đã đủ người tham gia");
             }
@@ -154,6 +195,11 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Xóa thành viên khỏi nhiệm vụ.
+     * @param taskId ID nhiệm vụ
+     * @param memberId ID thành viên
+     */
     public void removeMemberFromTask(Integer taskId, Integer memberId) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -178,6 +224,11 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Cập nhật danh sách người thực hiện của nhiệm vụ.
+     * @param taskId ID nhiệm vụ
+     * @param memberIds Danh sách ID thành viên
+     */
     public void replaceAssignees(Integer taskId, List<Integer> memberIds) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -193,7 +244,8 @@ public class TaskDAO {
                 task.getAssignees().clear();
             }
 
-            int maxAssignees = task.getMaxAssignees() != null ? task.getMaxAssignees() : 1;
+            Integer maxAssigneesValue = task.getMaxAssignees();
+            int maxAssignees = maxAssigneesValue != null ? maxAssigneesValue : 1;
             if (memberIds != null) {
                 int count = 0;
                 for (Integer memberId : memberIds) {
@@ -215,6 +267,11 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Cập nhật nhiệm vụ.
+     * @param task Nhiệm vụ cần cập nhật
+     * @return Task đã cập nhật
+     */
     public Task update(Task task) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -228,6 +285,11 @@ public class TaskDAO {
         }
     }
 
+    /**
+     * Xóa nhiệm vụ theo ID.
+     * @param id ID nhiệm vụ
+     * @return true nếu xóa thành công
+     */
     public boolean deleteById(Integer id) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {

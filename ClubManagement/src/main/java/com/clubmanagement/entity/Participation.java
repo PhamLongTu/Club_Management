@@ -1,7 +1,17 @@
 package com.clubmanagement.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 /**
  * Entity: Participation (Đăng ký tham gia sự kiện)
@@ -44,10 +54,20 @@ public class Participation {
     private String roleInEvent;
 
     // ============ CONSTRUCTORS ============
+    /**
+     * Constructor mặc định (bắt buộc cho JPA).
+     */
     public Participation() {
         this.registrationDate = LocalDateTime.now();
     }
 
+    /**
+     * Constructor khởi tạo nhanh đăng ký tham gia.
+     *
+     * @param member     Thành viên đăng ký
+     * @param event      Sự kiện đăng ký
+     * @param roleInEvent Vai trò trong sự kiện
+     */
     public Participation(Member member, Event event, String roleInEvent) {
         this.member           = member;
         this.event            = event;
@@ -57,21 +77,33 @@ public class Participation {
     }
 
     // ============ GETTERS & SETTERS ============
+    /** @return ID đăng ký. */
     public Integer getParticipationId()        { return participationId; }
+    /** @param v ID đăng ký mới. */
     public void setParticipationId(Integer v)  { this.participationId = v; }
 
+    /** @return Thành viên đăng ký. */
     public Member getMember()          { return member; }
+    /** @param v Thành viên mới. */
     public void setMember(Member v)    { this.member = v; }
 
+    /** @return Sự kiện đăng ký. */
     public Event getEvent()            { return event; }
+    /** @param v Sự kiện mới. */
     public void setEvent(Event v)      { this.event = v; }
 
+    /** @return Ngày giờ đăng ký. */
     public LocalDateTime getRegistrationDate()        { return registrationDate; }
+    /** @param v Ngày giờ đăng ký mới. */
     public void setRegistrationDate(LocalDateTime v)  { this.registrationDate = v; }
 
+    /** @return Trạng thái tham gia. */
     public String getStatus()                  { return status; }
+    /** @param v Trạng thái mới. */
     public void setStatus(String v)            { this.status = v; }
 
+    /** @return Vai trò trong sự kiện. */
     public String getRoleInEvent()             { return roleInEvent; }
+    /** @param v Vai trò trong sự kiện mới. */
     public void setRoleInEvent(String v)       { this.roleInEvent = v; }
 }

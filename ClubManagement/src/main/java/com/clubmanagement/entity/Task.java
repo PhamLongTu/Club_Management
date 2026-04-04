@@ -86,10 +86,22 @@ public class Task {
     private Event event;
 
     // ============ CONSTRUCTORS ============
+    /**
+     * Constructor mặc định (bắt buộc cho JPA).
+     */
     public Task() {
         this.createdDate = LocalDateTime.now();
     }
 
+    /**
+     * Constructor khởi tạo nhanh nhiệm vụ mới.
+     *
+     * @param title       Tiêu đề
+     * @param description Mô tả
+     * @param deadline    Hạn hoàn thành
+     * @param priority    Mức độ ưu tiên
+     * @param assigner    Người giao nhiệm vụ
+     */
     public Task(String title, String description, LocalDateTime deadline,
                 String priority, Member assigner) {
         this.title       = title;
@@ -102,42 +114,71 @@ public class Task {
     }
 
     // ============ GETTERS & SETTERS ============
+    /** @return ID nhiệm vụ. */
     public Integer getTaskId()             { return taskId; }
+    /** @param v ID nhiệm vụ mới. */
     public void setTaskId(Integer v)       { this.taskId = v; }
 
+    /** @return Tiêu đề nhiệm vụ. */
     public String getTitle()               { return title; }
+    /** @param v Tiêu đề mới. */
     public void setTitle(String v)         { this.title = v; }
 
+    /** @return Mô tả nhiệm vụ. */
     public String getDescription()         { return description; }
+    /** @param v Mô tả mới. */
     public void setDescription(String v)   { this.description = v; }
 
+    /** @return Hạn hoàn thành. */
     public LocalDateTime getDeadline()        { return deadline; }
+    /** @param v Hạn hoàn thành mới. */
     public void setDeadline(LocalDateTime v)  { this.deadline = v; }
 
+    /** @return Mức độ ưu tiên. */
     public String getPriority()            { return priority; }
+    /** @param v Mức độ ưu tiên mới. */
     public void setPriority(String v)      { this.priority = v; }
 
+    /** @return Trạng thái nhiệm vụ. */
     public String getStatus()              { return status; }
+    /** @param v Trạng thái mới. */
     public void setStatus(String v)        { this.status = v; }
 
+    /** @return Ngày tạo nhiệm vụ. */
     public LocalDateTime getCreatedDate()        { return createdDate; }
+    /** @param v Ngày tạo mới. */
     public void setCreatedDate(LocalDateTime v)  { this.createdDate = v; }
 
+    /** @return Chế độ hiển thị. */
     public String getVisibility()          { return visibility; }
+    /** @param v Chế độ hiển thị mới. */
     public void setVisibility(String v)    { this.visibility = v; }
 
+    /** @return Số người tối đa tham gia. */
     public Integer getMaxAssignees()       { return maxAssignees; }
+    /** @param v Số người tối đa mới. */
     public void setMaxAssignees(Integer v) { this.maxAssignees = v; }
 
+    /** @return Người giao nhiệm vụ. */
     public Member getAssigner()            { return assigner; }
+    /** @param v Người giao nhiệm vụ mới. */
     public void setAssigner(Member v)      { this.assigner = v; }
 
+    /** @return Danh sách người thực hiện. */
     public List<Member> getAssignees()         { return assignees; }
+    /** @param v Danh sách người thực hiện mới. */
     public void setAssignees(List<Member> v)   { this.assignees = v; }
 
+    /** @return Sự kiện liên quan. */
     public Event getEvent()                { return event; }
+    /** @param v Sự kiện liên quan mới. */
     public void setEvent(Event v)          { this.event = v; }
 
+    /**
+     * Hiển thị tên nhiệm vụ trong UI.
+     *
+     * @return Chuỗi hiển thị
+     */
     @Override
     public String toString() { return title; }
 }

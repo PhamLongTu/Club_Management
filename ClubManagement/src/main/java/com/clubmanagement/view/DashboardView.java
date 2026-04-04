@@ -91,6 +91,11 @@ public class DashboardView extends JFrame {
 
     private final MemberDTO currentUser;
 
+    /**
+     * Creates the dashboard for the current user.
+     *
+     * @param currentUser the logged-in member
+     */
     public DashboardView(MemberDTO currentUser) {
         this.currentUser = currentUser;
         initUI();
@@ -436,14 +441,28 @@ public class DashboardView extends JFrame {
     // PUBLIC API (dùng bởi DashboardController)
     // ===================================================
 
-    /** Hiển thị panel Home. */
+    /** Shows the home panel. */
     public void showHome()          { selectMenu(btnHome);          cardLayout.show(contentArea, "HOME"); }
+
+    /** Shows the announcements panel. */
     public void showAnnouncements() { selectMenu(btnAnnouncements); cardLayout.show(contentArea, "ANNOUNCEMENTS"); }
+
+    /** Shows the tasks panel. */
     public void showTasks()         { selectMenu(btnTasks);         cardLayout.show(contentArea, "TASKS"); }
+
+    /** Shows the profile panel. */
     public void showMyInfo()        { selectMenu(btnMyInfo);        cardLayout.show(contentArea, "MY_INFO"); }
+
+    /** Shows the members panel. */
     public void showMembers()       { selectMenu(btnMembers);       cardLayout.show(contentArea, "MEMBERS"); }
+
+    /** Shows the events panel. */
     public void showEvents()        { selectMenu(btnEvents);        cardLayout.show(contentArea, "EVENTS"); }
+
+    /** Shows the projects panel. */
     public void showProjects()      { selectMenu(btnProjects);      cardLayout.show(contentArea, "PROJECTS"); }
+
+    /** Shows the documents panel. */
     public void showDocuments()     { selectMenu(btnDocuments);     cardLayout.show(contentArea, "DOCUMENTS"); }
 
     /**
@@ -467,29 +486,53 @@ public class DashboardView extends JFrame {
     }
 
     // Getters cho Controller đăng ký sự kiện
+    /** @return home sidebar button */
     public JButton getBtnHome()           { return btnHome; }
+    /** @return announcements sidebar button */
     public JButton getBtnAnnouncements()  { return btnAnnouncements; }
+    /** @return tasks sidebar button */
     public JButton getBtnTasks()          { return btnTasks; }
+    /** @return profile sidebar button */
     public JButton getBtnMyInfo()         { return btnMyInfo; }
+    /** @return members sidebar button */
     public JButton getBtnMembers()        { return btnMembers; }
+    /** @return events sidebar button */
     public JButton getBtnEvents()         { return btnEvents; }
+    /** @return projects sidebar button */
     public JButton getBtnProjects()       { return btnProjects; }
+    /** @return documents sidebar button */
     public JButton getBtnDocuments()      { return btnDocuments; }
+    /** @return logout button */
     public JButton getBtnLogout()         { return btnLogout; }
 
     // Quick action button getters
+    /** @return quick add member button */
     public JButton getBtnQuickAddMember()  { return btnQuickAddMember; }
+    /** @return quick add event button */
     public JButton getBtnQuickAddEvent()   { return btnQuickAddEvent; }
+    /** @return quick add project button */
     public JButton getBtnQuickAddProject() { return btnQuickAddProject; }
 
+    /** @return member view */
     public MemberView        getMemberView()       { return memberView; }
+    /** @return event view */
     public EventView         getEventView()        { return eventView; }
+    /** @return project view */
     public ProjectView       getProjectView()      { return projectView; }
+    /** @return announcement view */
     public AnnouncementView  getAnnouncementView() { return announcementView; }
+    /** @return task view */
     public TaskView          getTaskView()         { return taskView; }
+    /** @return document view */
     public DocumentView      getDocumentView()     { return documentView; }
+    /** @return my info view */
     public MyInfoView        getMyInfoView()       { return myInfoView; }
 
+    /**
+     * Updates displayed user info in the header and sidebar.
+     *
+     * @param user the latest member info
+     */
     public void updateCurrentUserInfo(MemberDTO user) {
         if (user == null) return;
         String initials = ImageUtil.buildInitials(user.getFullName());

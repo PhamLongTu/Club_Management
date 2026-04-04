@@ -210,7 +210,8 @@ public class ProjectDAO {
             Member member = session.get(Member.class, memberId);
             if (project != null && member != null) {
                 org.hibernate.Hibernate.initialize(project.getMembers());
-                int maxMembers = project.getMaxMembers() != null ? project.getMaxMembers() : 0;
+                Integer maxMembersValue = project.getMaxMembers();
+                int maxMembers = maxMembersValue != null ? maxMembersValue : 0;
                 int current = project.getMembers() != null ? project.getMembers().size() : 0;
                 if (maxMembers > 0 && current >= maxMembers) {
                     throw new IllegalStateException("Dự án đã đủ thành viên");
@@ -229,6 +230,10 @@ public class ProjectDAO {
         }
     }
 
+    /**
+     * Lấy dự án public chưa có thành viên tham gia.
+     * @return Danh sách Project
+     */
     public List<Project> findPublicUnassigned() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Project> query = session.createQuery(
@@ -252,6 +257,10 @@ public class ProjectDAO {
         }
     }
 
+    /**
+     * Lấy tất cả dự án public.
+     * @return Danh sách Project
+     */
     public List<Project> findPublic() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Project> query = session.createQuery(
@@ -275,6 +284,11 @@ public class ProjectDAO {
         }
     }
 
+    /**
+     * Lấy danh sách dự án mà thành viên đang tham gia.
+     * @param memberId ID thành viên
+     * @return Danh sách Project
+     */
     public List<Project> findByMember(Integer memberId) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Project> query = session.createQuery(
@@ -325,6 +339,11 @@ public class ProjectDAO {
         }
     }
 
+    /**
+     * Cập nhật danh sách thành viên tham gia dự án.
+     * @param projectId ID dự án
+     * @param memberIds Danh sách ID thành viên
+     */
     public void replaceMembers(Integer projectId, List<Integer> memberIds) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -340,7 +359,8 @@ public class ProjectDAO {
                 project.getMembers().clear();
             }
 
-            int maxMembers = project.getMaxMembers() != null ? project.getMaxMembers() : 0;
+            Integer maxMembersValue = project.getMaxMembers();
+            int maxMembers = maxMembersValue != null ? maxMembersValue : 0;
             if (memberIds != null) {
                 int count = 0;
                 for (Integer memberId : memberIds) {

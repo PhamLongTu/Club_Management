@@ -1,20 +1,29 @@
 package com.clubmanagement.dao;
 
-import com.clubmanagement.entity.Feedback;
-import com.clubmanagement.util.HibernateUtil;
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
+import com.clubmanagement.entity.Feedback;
+import com.clubmanagement.util.HibernateUtil;
 
+/**
+ * FeedbackDAO - Lớp truy cập dữ liệu cho thực thể Feedback (Phản hồi).
+ */
 public class FeedbackDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(FeedbackDAO.class);
 
+    /**
+     * Lưu phản hồi mới.
+     * @param feedback Phản hồi cần lưu
+     * @return Feedback đã lưu
+     */
     public Feedback save(Feedback feedback) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -28,6 +37,10 @@ public class FeedbackDAO {
         }
     }
 
+    /**
+     * Lấy tất cả phản hồi, sắp theo thời gian tạo giảm dần.
+     * @return Danh sách Feedback
+     */
     public List<Feedback> findAll() {
         try (Session session = HibernateUtil.openSession()) {
             Query<Feedback> query = session.createQuery(
@@ -42,6 +55,11 @@ public class FeedbackDAO {
         }
     }
 
+    /**
+     * Tìm phản hồi theo ID.
+     * @param id ID phản hồi
+     * @return Optional<Feedback>
+     */
     public Optional<Feedback> findById(Integer id) {
         try (Session session = HibernateUtil.openSession()) {
             Query<Feedback> query = session.createQuery(
@@ -54,6 +72,11 @@ public class FeedbackDAO {
         }
     }
 
+    /**
+     * Cập nhật phản hồi.
+     * @param feedback Phản hồi cần cập nhật
+     * @return Feedback đã cập nhật
+     */
     public Feedback update(Feedback feedback) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
@@ -67,6 +90,11 @@ public class FeedbackDAO {
         }
     }
 
+    /**
+     * Xóa phản hồi theo ID.
+     * @param id ID phản hồi
+     * @return true nếu xóa thành công
+     */
     public boolean deleteById(Integer id) {
         Transaction tx = null;
         try (Session session = HibernateUtil.openSession()) {
