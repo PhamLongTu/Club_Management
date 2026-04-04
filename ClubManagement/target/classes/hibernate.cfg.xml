@@ -37,9 +37,8 @@
         <mapping class="com.clubmanagement.entity.Task"/>
         <mapping class="com.clubmanagement.entity.Attendance"/>
         <mapping class="com.clubmanagement.entity.Announcement"/>
+        <mapping class="com.clubmanagement.entity.Meeting"/>
         <mapping class="com.clubmanagement.entity.Project"/>
-        <mapping class="com.clubmanagement.entity.Feedback"/>
-        <mapping class="com.clubmanagement.entity.Sponsor"/>
         <mapping class="com.clubmanagement.entity.Document"/>
     </session-factory>
 </hibernate-configuration>

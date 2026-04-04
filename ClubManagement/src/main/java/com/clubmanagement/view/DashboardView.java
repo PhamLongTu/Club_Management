@@ -45,6 +45,7 @@ public class DashboardView extends JFrame {
     private EventView         eventView;
     private ProjectView       projectView;
     private AnnouncementView  announcementView;
+    private MeetingView       meetingView;
     private TaskView          taskView;
     private DocumentView      documentView;
     private MyInfoView        myInfoView;
@@ -71,6 +72,7 @@ public class DashboardView extends JFrame {
     private JButton btnEvents;
     private JButton btnProjects;
     private JButton btnAnnouncements;
+    private JButton btnMeetings;
     private JButton btnTasks;
     private JButton btnMyInfo;
     private JButton btnDocuments;
@@ -224,6 +226,7 @@ public class DashboardView extends JFrame {
         btnHome          = makeSidebarBtn("Tổng quan",    true);
         btnAnnouncements = makeSidebarBtn("Thông báo",   false);
         btnTasks         = makeSidebarBtn("Nhiệm vụ",     false);
+        btnMeetings      = makeSidebarBtn("Cuộc họp",     false);
         btnMyInfo        = makeSidebarBtn("Thông tin của tôi", false);
         btnMembers       = makeSidebarBtn("Thành viên",   false);
         btnEvents        = makeSidebarBtn("Sự kiện",      false);
@@ -236,6 +239,7 @@ public class DashboardView extends JFrame {
         sidebar.add(btnHome);
         sidebar.add(btnAnnouncements);
         sidebar.add(btnTasks);
+        sidebar.add(btnMeetings);
         sidebar.add(btnMembers);
         sidebar.add(btnEvents);
         sidebar.add(btnProjects);
@@ -298,6 +302,7 @@ public class DashboardView extends JFrame {
         // Tạo các sub-views
         homePanel        = buildHomePanel();
         announcementView = new AnnouncementView(currentUser);
+        meetingView      = new MeetingView(currentUser);
         taskView         = new TaskView(currentUser);
         documentView     = new DocumentView(currentUser);
         myInfoView       = new MyInfoView(currentUser);
@@ -307,6 +312,7 @@ public class DashboardView extends JFrame {
 
         contentArea.add(homePanel,                 "HOME");
         contentArea.add(announcementView.getPanel(),"ANNOUNCEMENTS");
+        contentArea.add(meetingView.getPanel(),     "MEETINGS");
         contentArea.add(taskView.getPanel(),        "TASKS");
         contentArea.add(documentView.getPanel(),    "DOCUMENTS");
         contentArea.add(myInfoView.getPanel(),      "MY_INFO");
@@ -450,6 +456,9 @@ public class DashboardView extends JFrame {
     /** Shows the tasks panel. */
     public void showTasks()         { selectMenu(btnTasks);         cardLayout.show(contentArea, "TASKS"); }
 
+    /** Shows the meetings panel. */
+    public void showMeetings()      { selectMenu(btnMeetings);      cardLayout.show(contentArea, "MEETINGS"); }
+
     /** Shows the profile panel. */
     public void showMyInfo()        { selectMenu(btnMyInfo);        cardLayout.show(contentArea, "MY_INFO"); }
 
@@ -471,7 +480,7 @@ public class DashboardView extends JFrame {
      */
     private void selectMenu(JButton selected) {
         for (JButton btn : new JButton[]{btnHome, btnAnnouncements, btnTasks,
-                                         btnMyInfo, btnMembers, btnEvents, btnProjects, btnDocuments}) {
+                                         btnMeetings, btnMyInfo, btnMembers, btnEvents, btnProjects, btnDocuments}) {
             boolean isSelected = btn == selected;
             btn.setBackground(isSelected ? SIDEBAR_SEL : SIDEBAR_BG);
             btn.setForeground(isSelected ? Color.WHITE : new Color(148, 163, 184));
@@ -492,6 +501,8 @@ public class DashboardView extends JFrame {
     public JButton getBtnAnnouncements()  { return btnAnnouncements; }
     /** @return tasks sidebar button */
     public JButton getBtnTasks()          { return btnTasks; }
+    /** @return meetings sidebar button */
+    public JButton getBtnMeetings()       { return btnMeetings; }
     /** @return profile sidebar button */
     public JButton getBtnMyInfo()         { return btnMyInfo; }
     /** @return members sidebar button */
@@ -521,6 +532,8 @@ public class DashboardView extends JFrame {
     public ProjectView       getProjectView()      { return projectView; }
     /** @return announcement view */
     public AnnouncementView  getAnnouncementView() { return announcementView; }
+    /** @return meeting view */
+    public MeetingView       getMeetingView()      { return meetingView; }
     /** @return task view */
     public TaskView          getTaskView()         { return taskView; }
     /** @return document view */

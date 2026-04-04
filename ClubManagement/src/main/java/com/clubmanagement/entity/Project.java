@@ -14,7 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
@@ -84,9 +83,6 @@ public class Project {
     )
     private List<Member> members;
 
-    /** Danh sách phản hồi */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    private List<Feedback> feedbacks;
 
     // ============ CONSTRUCTORS ============
     /**
@@ -177,11 +173,6 @@ public class Project {
     public List<Member> getMembers()       { return members; }
     /** @param v Danh sách thành viên mới. */
     public void setMembers(List<Member> v) { this.members = v; }
-
-    /** @return Danh sách phản hồi. */
-    public List<Feedback> getFeedbacks()         { return feedbacks; }
-    /** @param v Danh sách phản hồi mới. */
-    public void setFeedbacks(List<Feedback> v)   { this.feedbacks = v; }
 
     /**
      * Hiển thị tên dự án trong UI.

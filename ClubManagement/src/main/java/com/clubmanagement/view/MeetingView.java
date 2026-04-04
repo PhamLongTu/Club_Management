@@ -7,9 +7,9 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -24,21 +24,23 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import com.clubmanagement.dto.MeetingDTO;
 import com.clubmanagement.dto.MemberDTO;
-import com.clubmanagement.dto.SponsorDTO;
 
 /**
- * View for listing and managing sponsors.
+ * View for listing and managing meetings.
  */
-public class SponsorView {
+public class MeetingView {
 
     private static final String[] COLUMNS = {
-        "ID", "Tên Nhà tài trợ", "Người liên hệ", "Email", "Hình thức", "Tổng tài trợ"
+        "ID", "Tieu de", "Bat dau", "Ket thuc", "Dia diem", "Chu tri", "Link"
     };
+
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private JPanel mainPanel;
     private JButton btnAdd, btnEdit, btnDelete, btnRefresh;
-    private JTable sponsorTable;
+    private JTable meetingTable;
     private DefaultTableModel tableModel;
     private JLabel countLabel;
     private JLabel statusBar;
@@ -50,6 +52,7 @@ public class SponsorView {
     private static final Color BG          = new Color(241, 245, 249);
     private static final Color TEXT_DARK   = new Color(15,  23,  42);
     private static final Color TEXT_GRAY   = new Color(100, 116, 139);
+    private static final Color OVERDUE_TXT = new Color(107, 114, 128);
 
     private final MemberDTO currentUser;
 
@@ -58,7 +61,7 @@ public class SponsorView {
      *
      * @param currentUser the logged-in member
      */
-    public SponsorView(MemberDTO currentUser) {
+    public MeetingView(MemberDTO currentUser) {
         this.currentUser = currentUser;
         buildUI();
     }
@@ -85,7 +88,7 @@ public class SponsorView {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("Quản lý Nhà Tài Trợ");
+        JLabel title = new JLabel("Quan ly Cuoc hop");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setForeground(TEXT_DARK);
 
@@ -100,10 +103,10 @@ public class SponsorView {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
 
-        btnRefresh = makeBtn("Làm mới",  new Color(100,116,139), Color.WHITE);
-        btnAdd     = makeBtn("Thêm NTT", SUCCESS_CLR, Color.WHITE);
-        btnEdit    = makeBtn("Sửa",       WARNING_CLR, Color.WHITE);
-        btnDelete  = makeBtn("Xóa",      DANGER_CLR, Color.WHITE);
+        btnRefresh = makeBtn("Lam moi",  new Color(100,116,139), Color.WHITE);
+        btnAdd     = makeBtn("Them",     SUCCESS_CLR, Color.WHITE);
+        btnEdit    = makeBtn("Sua",      WARNING_CLR, Color.WHITE);
+        btnDelete  = makeBtn("Xoa",     DANGER_CLR, Color.WHITE);
 
         if (!currentUser.isLeader()) {
             btnAdd.setVisible(false);
@@ -111,7 +114,7 @@ public class SponsorView {
             btnDelete.setVisible(false);
         }
 
-        countLabel = new JLabel("Tổng: 0 Nhà tài trợ");
+        countLabel = new JLabel("Tong: 0 cuoc hop");
         countLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         countLabel.setForeground(TEXT_GRAY);
 
@@ -130,7 +133,7 @@ public class SponsorView {
     }
 
     /**
-     * Builds the table container for sponsors.
+     * Builds the table container for meetings.
      *
      * @return the scroll pane containing the table
      */
@@ -139,20 +142,20 @@ public class SponsorView {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
 
-        sponsorTable = new JTable(tableModel);
-        styleTable(sponsorTable);
+        meetingTable = new JTable(tableModel);
+        styleTable(meetingTable);
 
-        sponsorTable.getColumnModel().getColumn(0).setMinWidth(0);
-        sponsorTable.getColumnModel().getColumn(0).setMaxWidth(0);
-        sponsorTable.getColumnModel().getColumn(0).setWidth(0);
+        meetingTable.getColumnModel().getColumn(0).setMinWidth(0);
+        meetingTable.getColumnModel().getColumn(0).setMaxWidth(0);
+        meetingTable.getColumnModel().getColumn(0).setWidth(0);
 
-        int[] colWidths = {0, 250, 150, 150, 100, 150};
+        int[] colWidths = {0, 230, 140, 140, 150, 140, 220};
         for (int i = 0; i < colWidths.length; i++) {
             if (colWidths[i] > 0)
-                sponsorTable.getColumnModel().getColumn(i).setPreferredWidth(colWidths[i]);
+                meetingTable.getColumnModel().getColumn(i).setPreferredWidth(colWidths[i]);
         }
 
-        JScrollPane sp = new JScrollPane(sponsorTable);
+        JScrollPane sp = new JScrollPane(meetingTable);
         sp.setBorder(BorderFactory.createLineBorder(new Color(226, 232, 240)));
         sp.getViewport().setBackground(Color.WHITE);
         return sp;
@@ -198,14 +201,22 @@ public class SponsorView {
             public Component getTableCellRendererComponent(JTable t, Object v,
                     boolean sel, boolean foc, int row, int col) {
                 super.getTableCellRendererComponent(t, v, sel, foc, row, col);
+                if (v instanceof LocalDateTime dt) {
+                    setText(dt.format(DATE_FMT));
+                }
+
+                boolean overdue = isOverdueRow(row);
                 if (!sel) {
                     setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
                     setForeground(TEXT_DARK);
+                    if (overdue) {
+                        setForeground(OVERDUE_TXT);
+                    }
                 }
-                if (col == 1 || col == 5) {
+
+                if (col == 1) {
                     setFont(new Font("Segoe UI", Font.BOLD, 13));
-                    if(col == 5 && v != null) setForeground(new Color(22, 101, 52));
-                    else setForeground(PRIMARY);
+                    if (!sel && !overdue) setForeground(PRIMARY);
                 } else {
                     setFont(new Font("Segoe UI", Font.PLAIN, 13));
                 }
@@ -215,13 +226,16 @@ public class SponsorView {
         });
     }
 
+    private boolean isOverdueRow(int row) {
+        Object end = tableModel.getValueAt(row, 3);
+        if (end instanceof LocalDateTime dt) {
+            return dt.isBefore(LocalDateTime.now());
+        }
+        return false;
+    }
+
     /**
      * Creates a toolbar button.
-     *
-     * @param text button label
-     * @param bg background color
-     * @param fg foreground color
-     * @return the configured button
      */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
@@ -236,76 +250,57 @@ public class SponsorView {
     }
 
     /**
-     * Loads sponsor rows into the table.
+     * Loads meeting rows into the table.
      *
-     * @param data sponsor data list
+     * @param data meeting data list
      */
-    public void loadData(List<SponsorDTO> data) {
+    public void loadData(List<MeetingDTO> data) {
         tableModel.setRowCount(0);
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-        
-        for (SponsorDTO s : data) {
-            String amountFormatted = s.getTotalAmount() != null ? currencyFormat.format(s.getTotalAmount()) : "0 đ";
+        for (MeetingDTO m : data) {
+            String location = (m.getLocation() == null || m.getLocation().isBlank()) ? "-" : m.getLocation();
+            String hostName = (m.getHostName() == null || m.getHostName().isBlank()) ? "-" : m.getHostName();
+            String link = (m.getMeetLink() == null || m.getMeetLink().isBlank()) ? "-" : m.getMeetLink();
             tableModel.addRow(new Object[]{
-                s.getSponsorId(),
-                s.getSponsorName(),
-                s.getContactPerson(),
-                s.getEmail(),
-                s.getSponsorshipType(),
-                amountFormatted
+                m.getMeetingId(),
+                m.getTitle(),
+                m.getStartTime(),
+                m.getEndTime(),
+                location,
+                hostName,
+                link
             });
         }
-        countLabel.setText("Tổng: " + data.size() + " Nhà tài trợ");
-        statusBar.setText("Đã tải " + data.size() + " mục.");
+        countLabel.setText("Tong: " + data.size() + " cuoc hop");
+        statusBar.setText("Da tai " + data.size() + " muc.");
     }
 
     /**
-     * Gets the selected sponsor id.
+     * Gets the selected meeting id.
      *
      * @return selected id or null
      */
     public Integer getSelectedId() {
-        int row = sponsorTable.getSelectedRow();
+        int row = meetingTable.getSelectedRow();
         if (row < 0) return null;
         return (Integer) tableModel.getValueAt(row, 0);
     }
 
     /**
      * Updates the status bar message.
-     *
-     * @param msg message to display
      */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
 
-    /**
-     * Returns the root panel for this view.
-     *
-     * @return main panel
-     */
+    /** @return main panel */
     public JPanel getPanel() { return mainPanel; }
 
-    /**
-     * @return add button
-     */
+    /** @return add button */
     public JButton getBtnAdd()         { return btnAdd; }
-
-    /**
-     * @return edit button
-     */
+    /** @return edit button */
     public JButton getBtnEdit()        { return btnEdit; }
-
-    /**
-     * @return delete button
-     */
+    /** @return delete button */
     public JButton getBtnDelete()      { return btnDelete; }
-
-    /**
-     * @return refresh button
-     */
+    /** @return refresh button */
     public JButton getBtnRefresh()     { return btnRefresh; }
-
-    /**
-     * @return sponsor table
-     */
-    public JTable  getTable()          { return sponsorTable; }
+    /** @return meeting table */
+    public JTable  getTable()          { return meetingTable; }
 }

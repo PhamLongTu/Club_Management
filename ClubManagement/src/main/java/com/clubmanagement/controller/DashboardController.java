@@ -35,6 +35,7 @@ public class DashboardController {
     private EventController         eventController;
     private ProjectController       projectController;
     private AnnouncementController  announcementController;
+    private MeetingController       meetingController;
     private TaskController          taskController;
     private DocumentController      documentController;
     private MyInfoController        myInfoController;
@@ -57,6 +58,7 @@ public class DashboardController {
      */
     private void initSubControllers() {
         announcementController = new AnnouncementController(view.getAnnouncementView(), currentUser);
+        meetingController      = new MeetingController(view.getMeetingView(), currentUser);
         taskController         = new TaskController(view.getTaskView(), currentUser);
         documentController     = new DocumentController(view.getDocumentView(), currentUser);
         memberController       = new MemberController(view.getMemberView(),  currentUser);
@@ -88,6 +90,12 @@ public class DashboardController {
         view.getBtnTasks().addActionListener(e -> {
             view.showTasks();
             taskController.loadTasksByFilter();
+        });
+
+        // Nút Cuộc họp
+        view.getBtnMeetings().addActionListener(e -> {
+            view.showMeetings();
+            meetingController.loadAllMeetings();
         });
 
         // Nút Thông tin của tôi

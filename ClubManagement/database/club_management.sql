@@ -170,6 +170,23 @@ CREATE TABLE announcements (
 ) ENGINE=InnoDB COMMENT='Bảng thông báo';
 
 -- ============================================================
+-- TABLE: meetings
+-- Cuộc họp nội bộ
+-- ============================================================
+CREATE TABLE meetings (
+    meeting_id   INT AUTO_INCREMENT PRIMARY KEY,
+    title        VARCHAR(200) NOT NULL COMMENT 'Tieu de cuoc hop',
+    content      TEXT COMMENT 'Noi dung',
+    start_time   DATETIME NOT NULL COMMENT 'Thoi gian bat dau',
+    end_time     DATETIME NOT NULL COMMENT 'Thoi gian ket thuc',
+    location     VARCHAR(255) COMMENT 'Dia diem',
+    meet_link    VARCHAR(500) COMMENT 'Link Google Meet (neu online)',
+    created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    host_id      INT NOT NULL COMMENT 'FK -> members (chu tri)',
+    CONSTRAINT fk_meeting_host FOREIGN KEY (host_id) REFERENCES members(member_id)
+) ENGINE=InnoDB COMMENT='Bảng cuộc họp';
+
+-- ============================================================
 -- TABLE: projects
 -- Dự án của CLB
 -- ============================================================
@@ -201,53 +218,6 @@ CREATE TABLE project_members (
     CONSTRAINT fk_pm_project FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE,
     CONSTRAINT fk_pm_member  FOREIGN KEY (member_id)  REFERENCES members(member_id)  ON DELETE CASCADE
 ) ENGINE=InnoDB COMMENT='Bảng thành viên dự án';
-
--- ============================================================
--- TABLE: feedbacks
--- Phản hồi của thành viên
--- ============================================================
-CREATE TABLE feedbacks (
-    feedback_id   INT AUTO_INCREMENT PRIMARY KEY,
-    content       TEXT NOT NULL COMMENT 'Nội dung phản hồi',
-    rating        TINYINT CHECK (rating BETWEEN 1 AND 5) COMMENT 'Đánh giá 1-5 sao',
-    created_date  DATETIME DEFAULT CURRENT_TIMESTAMP,
-    feedback_type VARCHAR(15)  DEFAULT 'Event' COMMENT 'Event/Project/Club/Other',
-    member_id     INT COMMENT 'FK -> members',
-    event_id      INT COMMENT 'FK -> events (nullable)',
-    project_id    INT COMMENT 'FK -> projects (nullable)',
-    CONSTRAINT fk_fb_member  FOREIGN KEY (member_id)  REFERENCES members(member_id),
-    CONSTRAINT fk_fb_event   FOREIGN KEY (event_id)   REFERENCES events(event_id),
-    CONSTRAINT fk_fb_project FOREIGN KEY (project_id) REFERENCES projects(project_id)
-) ENGINE=InnoDB COMMENT='Bảng phản hồi';
-
--- ============================================================
--- TABLE: sponsors
--- Nhà tài trợ
--- ============================================================
-CREATE TABLE sponsors (
-    sponsor_id        INT AUTO_INCREMENT PRIMARY KEY,
-    sponsor_name      VARCHAR(200) NOT NULL COMMENT 'Tên nhà tài trợ',
-    contact_person    VARCHAR(100) COMMENT 'Người liên hệ',
-    email             VARCHAR(100) COMMENT 'Email',
-    phone             VARCHAR(15)  COMMENT 'Số điện thoại',
-    address           VARCHAR(500) COMMENT 'Địa chỉ',
-    sponsorship_type  VARCHAR(15)  DEFAULT 'Cash' COMMENT 'Hình thức tài trợ: Cash/InKind/Media/Other',
-    total_amount      DECIMAL(15,2) DEFAULT 0 COMMENT 'Tổng giá trị tài trợ'
-) ENGINE=InnoDB COMMENT='Bảng nhà tài trợ';
-
--- ============================================================
--- TABLE: event_sponsors (N-N: events <-> sponsors)
--- Tài trợ cho sự kiện cụ thể
--- ============================================================
-CREATE TABLE event_sponsors (
-    event_id    INT NOT NULL,
-    sponsor_id  INT NOT NULL,
-    amount      DECIMAL(15,2) DEFAULT 0 COMMENT 'Số tiền tài trợ cho sự kiện này',
-    note        VARCHAR(500),
-    PRIMARY KEY (event_id, sponsor_id),
-    CONSTRAINT fk_es_event   FOREIGN KEY (event_id)   REFERENCES events(event_id)   ON DELETE CASCADE,
-    CONSTRAINT fk_es_sponsor FOREIGN KEY (sponsor_id) REFERENCES sponsors(sponsor_id) ON DELETE CASCADE
-) ENGINE=InnoDB COMMENT='Bảng liên kết sự kiện - nhà tài trợ';
 
 -- ============================================================
 -- TABLE: documents
@@ -361,6 +331,12 @@ INSERT INTO announcements (title, content, is_pinned, target_audience, target_te
 ('Tuyển thành viên mới học kỳ 2 2024-2025', 'CLB mở đơn tuyển thành viên mới. Hạn nộp: 28/02/2025. Form đăng ký tại link: forms.gle/abc123', TRUE, 'All', NULL, 4),
 ('Kết quả sự kiện Chào Tân Sinh Viên', 'Sự kiện đã thành công tốt đẹp với 487/500 học sinh tham dự. Cảm ơn tất cả thành viên đã cống hiến!', FALSE, 'All', NULL, 3);
 
+-- Meetings
+INSERT INTO meetings (title, content, start_time, end_time, location, meet_link, host_id) VALUES
+('Hop Ban Chap Hanh thang 2', 'Thong nhat ke hoach hoat dong thang 2.', '2025-02-10 18:00:00', '2025-02-10 19:30:00', 'Phong CLB A305', NULL, 5),
+('Hop Online chuan bi su kien', 'Phan cong nhiem vu cho su kien thang 3.', '2025-01-12 20:00:00', '2025-01-12 21:00:00', NULL, 'https://meet.google.com/abc-xyz', 3),
+('Hop tong ket du an', 'Tong ket tien do va rut kinh nghiem.', '2024-12-25 19:00:00', '2024-12-25 20:30:00', 'Phong hop B2', NULL, 4);
+
 -- Projects
 INSERT INTO projects (project_name, description, objective, start_date, end_date, budget, status, visibility, max_members, manager_id) VALUES
 ('Website CLB 2025', 'Xây dựng website chính thức cho CLB', 'Ra mắt website trước tháng 3/2025', '2024-11-01', '2025-02-28', 5000000, 'Active', 'Public', 5, 5),
@@ -370,25 +346,6 @@ INSERT INTO projects (project_name, description, objective, start_date, end_date
 INSERT INTO project_members (project_id, member_id, role_in_project) VALUES
 (1, 5, 'Project Manager'), (1, 1, 'Frontend Dev'), (1, 2, 'Content Manager'),
 (2, 4, 'Project Manager'), (2, 2, 'Editor'), (2, 3, 'Reviewer');
-
--- Sponsors
-INSERT INTO sponsors (sponsor_name, contact_person, email, phone, sponsorship_type, total_amount) VALUES
-('Công ty Công nghệ ABC', 'Anh Minh',  'sponsor@abc.com', '0281234567', 'Cash',  10000000),
-('Cửa hàng In ấn XYZ',   'Chị Lan',   'info@xyz.com',    '0289876543', 'InKind', 3000000),
-('Tạp chí Sinh Viên',    'Anh Hùng',  'ads@tapchi.com',  '0283456789', 'Media',  5000000);
-
--- Event Sponsors
-INSERT INTO event_sponsors (event_id, sponsor_id, amount, note) VALUES
-(1, 1, 8000000, 'Tài trợ chính'),
-(1, 2, 2000000, 'Tài trợ in ấn'),
-(3, 1, 10000000, 'Tài trợ kim cương'),
-(3, 3, 0, 'Tài trợ truyền thông');
-
--- Feedbacks
-INSERT INTO feedbacks (content, rating, feedback_type, member_id, event_id) VALUES
-('Sự kiện rất hay, tổ chức chuyên nghiệp!', 5, 'Event', 1, 1),
-('MC dẫn chương trình tốt nhưng âm thanh chưa rõ', 4, 'Event', 2, 1),
-('Workshop rất bổ ích, mong có thêm buổi tiếp theo', 5, 'Event', 1, 2);
 
 -- Documents
 INSERT INTO documents (title, file_path, file_type, description, is_public, uploader_id, event_id) VALUES

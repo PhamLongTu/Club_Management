@@ -1,4 +1,5 @@
 # 🏫 Club Management System
+
 ## Hệ thống Quản lý Câu lạc bộ Trường học
 
 > **Final Project - Windows Programming Course**  
@@ -23,6 +24,7 @@
 ### 1.1 Lý do xây dựng
 
 Các CLB trường học quản lý thủ công bằng Excel gặp nhiều vấn đề:
+
 - Dữ liệu rời rạc, khó tra cứu
 - Không có lịch sử hoạt động
 - Điểm danh tốn thời gian
@@ -30,16 +32,16 @@ Các CLB trường học quản lý thủ công bằng Excel gặp nhiều vấn
 
 ### 1.2 Tech Stack
 
-| Thành phần | Công nghệ |
-|-----------|-----------|
-| Ngôn ngữ  | Java 17   |
-| UI        | Java Swing (MVC Pattern) |
-| ORM       | Hibernate 6 / JPA |
-| Database  | MySQL 8   |
-| L&F       | FlatLaf (giao diện hiện đại) |
-| Security  | BCrypt (mã hóa mật khẩu) |
-| Build     | Maven     |
-| Logging   | SLF4J + Logback |
+| Thành phần | Công nghệ                    |
+| ---------- | ---------------------------- |
+| Ngôn ngữ   | Java 17                      |
+| UI         | Java Swing (MVC Pattern)     |
+| ORM        | Hibernate 6 / JPA            |
+| Database   | MySQL 8                      |
+| L&F        | FlatLaf (giao diện hiện đại) |
+| Security   | BCrypt (mã hóa mật khẩu)     |
+| Build      | Maven                        |
+| Logging    | SLF4J + Logback              |
 
 ### 1.3 Tính năng chính
 
@@ -48,6 +50,7 @@ Các CLB trường học quản lý thủ công bằng Excel gặp nhiều vấn
 - ✅ Quản lý thành viên (CRUD + tìm kiếm + lọc)
 - ✅ Quản lý sự kiện (CRUD + trạng thái màu sắc)
 - ✅ Quản lý dự án (CRUD + theo dõi tiến độ)
+- ✅ Quản lý cuộc họp (CRUD + lịch họp)
 - ✅ Soft delete (không xóa vật lý)
 - ✅ Background thread (SwingWorker) - UI không bị đóng băng
 
@@ -81,64 +84,64 @@ Các CLB trường học quản lý thủ công bằng Excel gặp nhiều vấn
 └───────────────┘ │ priority   │ │ status     │
                   │ status     │ └────────────┘
                   └────────────┘
-                                    
-┌──────────────┐     ┌──────────────────┐
-│    events    │     │   announcements  │
-├──────────────┤     ├──────────────────┤
-│PK event_id   │     │PK ann_id         │
-│ event_name   │     │  title           │
-│ start_date   │     │  content         │
-│ end_date     │     │  is_pinned       │
-│ status       │     │FK author_id ────►│─► members
-│ budget       │     │  target_audience │
-│FK created_by │     └──────────────────┘
+
+┌──────────────┐     ┌──────────────────┐     ┌──────────────┐
+│    events    │     │   announcements  │     │   meetings   │
+├──────────────┤     ├──────────────────┤     ├──────────────┤
+│PK event_id   │     │PK ann_id         │     │PK meeting_id │
+│ event_name   │     │  title           │     │ title        │
+│ start_date   │     │  content         │     │ start_time   │
+│ end_date     │     │  is_pinned       │     │ end_time     │
+│ status       │     │FK author_id ────►│─► members         │
+│ budget       │     │  target_audience │     │FK host_id ───►│─► members
+│FK created_by │     └──────────────────┘     └──────────────┘
+└──────────────┘
+
+┌──────────────┐
+│   projects   │
+├──────────────┤
+│PK project_id │
+│ project_name │
+│ start_date   │
+│ status       │
+│ budget       │
+│FK manager_id │
 └──────┬───────┘
-       │ N-N (event_sponsors)
-       │
-┌──────▼───────┐     ┌──────────────┐
-│   sponsors   │     │   projects   │
-├──────────────┤     ├──────────────┤
-│PK sponsor_id │     │PK project_id │
-│ sponsor_name │     │ project_name │
-│ email        │     │ start_date   │
-│ sponsorship  │     │ status       │
-│ total_amount │     │ budget       │
-└──────────────┘     │FK manager_id │
-                     └──────┬───────┘
-                            │ N-N (project_members)
-                            │◄─────► members
-                     
-┌──────────────┐     ┌──────────────┐
-│  feedbacks   │     │  documents   │
-├──────────────┤     ├──────────────┤
-│PK fb_id      │     │PK doc_id     │
-│  content     │     │  title       │
-│  rating 1-5  │     │  file_path   │
-│FK member_id  │     │  file_type   │
-│FK event_id   │     │FK uploader   │
-│FK project_id │     │FK event_id   │
-└──────────────┘     │FK project_id │
-                     └──────────────┘
+    │ N-N (project_members)
+    │◄─────► members
+
+┌──────────────┐
+│  documents   │
+├──────────────┤
+│PK doc_id     │
+│  title       │
+│  file_path   │
+│  file_type   │
+│FK uploader   │
+│FK event_id   │
+│FK project_id │
+└──────────────┘
 ```
 
 ### 2.2 Quan hệ chính
 
-| Quan hệ | Loại | Bảng trung gian |
-|---------|------|----------------|
-| Member ↔ Role | N-1 | - |
-| Member ↔ Team | N-N | member_team |
-| Member ↔ Event | N-N | participations |
-| Member ↔ Project | N-N | project_members |
-| Event ↔ Sponsor | N-N | event_sponsors |
-| Task → Member (giao) | N-1 | - |
-| Task → Member (nhận) | N-1 | - |
-| Attendance → Member + Event | N-1 (×2) | - |
+| Quan hệ                     | Loại     | Bảng trung gian |
+| --------------------------- | -------- | --------------- |
+| Member ↔ Role               | N-1      | -               |
+| Member ↔ Team               | N-N      | member_team     |
+| Member ↔ Event              | N-N      | participations  |
+| Member ↔ Project            | N-N      | project_members |
+| Meeting → Member (chủ trì)  | N-1      | -               |
+| Task → Member (giao)        | N-1      | -               |
+| Task → Member (nhận)        | N-1      | -               |
+| Attendance → Member + Event | N-1 (×2) | -               |
 
 ---
 
 ## 3. Cài đặt & Chạy ứng dụng
 
 ### Yêu cầu
+
 - Java JDK 17+
 - MySQL 8.0+
 - Maven 3.8+
@@ -211,22 +214,24 @@ ClubManagement/
         │   ├── Task.java
         │   ├── Attendance.java
         │   ├── Announcement.java
+        │   ├── Meeting.java
         │   ├── Project.java
-        │   ├── Feedback.java
-        │   ├── Sponsor.java
         │   └── Document.java
         ├── dto/                     # Data Transfer Objects
         │   ├── MemberDTO.java
         │   ├── EventDTO.java
+        │   ├── MeetingDTO.java
         │   └── ProjectDTO.java
         ├── dao/                     # Data Access Objects (DB queries)
         │   ├── MemberDAO.java
         │   ├── EventDAO.java
+        │   ├── MeetingDAO.java
         │   ├── ProjectDAO.java
         │   └── AnnouncementDAO.java
         ├── service/                 # Business Logic
         │   ├── MemberService.java
         │   ├── EventService.java
+        │   ├── MeetingService.java
         │   ├── ProjectService.java
         │   └── AnnouncementService.java
         ├── view/                    # Swing UI (View)
@@ -234,6 +239,7 @@ ClubManagement/
         │   ├── DashboardView.java
         │   ├── MemberView.java
         │   ├── EventView.java
+        │   ├── MeetingView.java
         │   ├── ProjectView.java
         │   └── MemberFormDialog.java
         ├── controller/              # MVC Controllers
@@ -241,6 +247,7 @@ ClubManagement/
         │   ├── DashboardController.java
         │   ├── MemberController.java
         │   ├── EventController.java
+        │   ├── MeetingController.java
         │   └── ProjectController.java
         └── util/                    # Utilities
             ├── HibernateUtil.java
@@ -249,16 +256,16 @@ ClubManagement/
 
 ---
 
-mvn exec:java "-Dexec.mainClass=com.clubmanagement.MainApp" 
+mvn exec:java "-Dexec.mainClass=com.clubmanagement.MainApp"
 
 ## 5. Tài khoản mẫu
 
-| Email | Mật khẩu | Vai trò |
-|-------|----------|---------| 
-| em.hoang@email.com | admin123 | Admin |
-| cuong.le@email.com | admin123 | Leader |
-| binh.tran@email.com | admin123 | Member |
-| an.nguyen@email.com | admin123 | Member |
+| Email               | Mật khẩu | Vai trò |
+| ------------------- | -------- | ------- |
+| em.hoang@email.com  | admin123 | Admin   |
+| cuong.le@email.com  | admin123 | Leader  |
+| binh.tran@email.com | admin123 | Member  |
+| an.nguyen@email.com | admin123 | Member  |
 
 > ⚠️ **Quan trọng**: Nếu bạn đã import database trước ngày **30/03/2025**, hãy chạy lại file SQL vì phiên bản cũ dùng **hash giả** (không hoạt động). Phiên bản mới dùng BCrypt hash thật của chuỗi `admin123`.
 >
@@ -267,6 +274,7 @@ mvn exec:java "-Dexec.mainClass=com.clubmanagement.MainApp"
 > ```
 >
 > Hoặc trong MySQL CLI:
+>
 > ```sql
 > DROP DATABASE IF EXISTS club_management;
 > source D:/LapTrinhWindows/ClubManagement/database/club_management.sql
@@ -277,10 +285,12 @@ mvn exec:java "-Dexec.mainClass=com.clubmanagement.MainApp"
 ## 6. Hướng dẫn sử dụng
 
 ### Đăng nhập
+
 1. Nhập email và mật khẩu
 2. Nhấn **ĐĂNG NHẬP** hoặc Enter
 
 ### Quản lý Thành viên
+
 - **Tìm kiếm**: Nhập tên/email/mã SV vào ô tìm kiếm → Enter
 - **Lọc**: Chọn trạng thái trong dropdown
 - **Thêm**: Nhấn ➕ Thêm → điền form → Lưu
@@ -288,15 +298,23 @@ mvn exec:java "-Dexec.mainClass=com.clubmanagement.MainApp"
 - **Xóa**: Chọn dòng → nhấn 🗑 Xóa (soft delete)
 
 ### Quản lý Sự kiện / Dự án
+
 - Tương tự quản lý thành viên
 - Hỗ trợ lọc theo trạng thái (màu sắc phân biệt)
+
+### Quản lý Cuộc họp
+
+- CRUD cuộc họp, đặt thời gian và người chủ trì
+- Cuộc họp quá thời gian sẽ hiển thị màu xám
 
 ---
 
 ## 7. Phân tích 3NF
 
 ### 3NF là gì?
+
 Database đạt 3NF khi:
+
 1. **1NF**: Mỗi ô chứa một giá trị nguyên tử (không lặp nhóm)
 2. **2NF**: Mọi thuộc tính non-key phụ thuộc đầy đủ vào Primary Key
 3. **3NF**: Không có phụ thuộc bắc cầu (A→B→C thì A→C phải loại bỏ bằng cách tách bảng)
@@ -304,27 +322,31 @@ Database đạt 3NF khi:
 ### Phân tích thiết kế đạt 3NF
 
 **Bảng `members`**:
+
 - PK: `member_id`
 - `role_name` KHÔNG lưu trực tiếp trong `members` → tách ra bảng `roles`
 - Điều này loại bỏ phụ thuộc bắc cầu: `member_id → role_id → role_name`
 - ✅ Đạt 3NF
 
 **Bảng `participations`** (N-N Member × Event):
+
 - PK: `participation_id` (hoặc composite `member_id + event_id`)
 - Không có thuộc tính nào phụ thuộc vào chỉ `member_id` hoặc chỉ `event_id`
 - `registration_date`, `status`, `role_in_event` → phụ thuộc vào cả hai
 - ✅ Đạt 3NF
 
 **Bảng `tasks`**:
+
 - PK: `task_id`
 - `assignee_name` KHÔNG lưu → FK `assignee_id → members`
 - ✅ Đạt 3NF
 
 **Tất cả N-N được chuyển thành bảng trung gian**:
-- `member_team`, `project_members`, `event_sponsors`
+
+- `member_team`, `project_members`
 - Tránh việc lưu mảng trong một ô → vi phạm 1NF
 - ✅ Đạt chuẩn
 
 ---
 
-*© 2025 Club Management System - Final Project Windows Programming*
+_© 2025 Club Management System - Final Project Windows Programming_
