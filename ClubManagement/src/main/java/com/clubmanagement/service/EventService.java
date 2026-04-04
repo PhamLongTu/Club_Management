@@ -253,6 +253,10 @@ public class EventService {
             if (event == null || member == null) {
                 throw new IllegalArgumentException("Không tìm thấy sự kiện hoặc thành viên");
             }
+            String status = event.getStatus();
+            if (status != null && ("Cancelled".equalsIgnoreCase(status) || "Completed".equalsIgnoreCase(status))) {
+                throw new IllegalStateException("Sự kiện đã kết thúc hoặc bị hủy, không thể đăng ký");
+            }
             if (event.getRegistrationDeadline() != null
                 && LocalDateTime.now().isAfter(event.getRegistrationDeadline())) {
                 throw new IllegalStateException("Đã hết thời gian đăng ký sự kiện");

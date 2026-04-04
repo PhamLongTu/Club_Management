@@ -30,6 +30,7 @@ import com.clubmanagement.service.ProjectService;
 import com.clubmanagement.service.TaskService;
 import com.clubmanagement.service.TeamService;
 import com.clubmanagement.util.ImageUtil;
+import com.clubmanagement.util.UiFormUtil;
 import com.clubmanagement.view.MemberFormDialog;
 import com.clubmanagement.view.MemberView;
 
@@ -221,6 +222,11 @@ public class MemberController {
      * Xử lý sửa thành viên được chọn trong bảng.
      */
     private void handleEdit() {
+        if (!currentUser.isLeader()) {
+            JOptionPane.showMessageDialog(null, "Bạn không có quyền chỉnh sửa thành viên!",
+                "Không đủ quyền", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         // Lấy ID của dòng đang chọn
         Integer selectedId = view.getSelectedMemberId();
         if (selectedId == null) {
@@ -276,6 +282,11 @@ public class MemberController {
      * Dùng soft delete: chuyển status = Inactive, không xóa DB.
      */
     private void handleDelete() {
+        if (!currentUser.isLeader()) {
+            JOptionPane.showMessageDialog(null, "Bạn không có quyền xóa thành viên!",
+                "Không đủ quyền", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         Integer selectedId = view.getSelectedMemberId();
         if (selectedId == null) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn một thành viên cần xóa!",
@@ -368,10 +379,10 @@ public class MemberController {
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBorder(new javax.swing.border.EmptyBorder(8, 20, 16, 20));
 
-        content.add(makeInfoLabel("Email: " + member.getEmail()));
-        content.add(makeInfoLabel("SĐT: " + (member.getPhone() != null ? member.getPhone() : "")));
-        content.add(makeInfoLabel("Ban/Nhóm: " + (member.getTeamNames() != null ? member.getTeamNames() : "")));
-        content.add(makeInfoLabel("Ngày vào: " + (member.getJoinDate() != null ? member.getJoinDate() : "")));
+        content.add(UiFormUtil.makeInfoLabel("Email: " + member.getEmail()));
+        content.add(UiFormUtil.makeInfoLabel("SĐT: " + (member.getPhone() != null ? member.getPhone() : "")));
+        content.add(UiFormUtil.makeInfoLabel("Ban/Nhóm: " + (member.getTeamNames() != null ? member.getTeamNames() : "")));
+        content.add(UiFormUtil.makeInfoLabel("Ngày vào: " + (member.getJoinDate() != null ? member.getJoinDate() : "")));
         content.add(Box.createVerticalStrut(8));
 
         DefaultListModel<String> taskList = new DefaultListModel<>();
@@ -411,16 +422,4 @@ public class MemberController {
         dialog.setVisible(true);
     }
 
-    /**
-     * Tạo label hiển thị một dòng thông tin.
-     *
-     * @param text Nội dung hiển thị
-     * @return JLabel đã định dạng
-     */
-    private JLabel makeInfoLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        label.setBorder(new javax.swing.border.EmptyBorder(2, 0, 2, 0));
-        return label;
-    }
 }

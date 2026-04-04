@@ -7,13 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -32,7 +27,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
@@ -43,6 +37,7 @@ import com.clubmanagement.dto.TaskDTO;
 import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.service.TaskService;
+import com.clubmanagement.util.UiFormUtil;
 import com.clubmanagement.view.TaskView;
 import com.toedter.calendar.JDateChooser;
 
@@ -207,8 +202,8 @@ public class TaskController {
         if (task != null) txtDesc.setText(task.getDescription());
 
         LocalDateTime defaultDeadline = task != null ? task.getDeadline() : LocalDateTime.now().plusDays(2);
-        JDateChooser dcDeadline = createDateChooser(defaultDeadline);
-        JSpinner spDeadlineTime = createTimeSpinner(defaultDeadline);
+        JDateChooser dcDeadline = UiFormUtil.createDateChooser(defaultDeadline);
+        JSpinner spDeadlineTime = UiFormUtil.createTimeSpinner(defaultDeadline);
 
         JComboBox<String> cbPriority = new JComboBox<>(new String[]{"Low", "Medium", "High", "Critical"});
         cbPriority.setFont(f);
@@ -272,7 +267,7 @@ public class TaskController {
 
         panel.add(new JLabel("Tiêu đề *:"));      panel.add(txtTitle);
         panel.add(new JLabel("Mô tả:"));          panel.add(new JScrollPane(txtDesc));
-        panel.add(new JLabel("Hạn chót:"));       panel.add(buildDateTimePanel(dcDeadline, spDeadlineTime));
+        panel.add(new JLabel("Hạn chót:"));       panel.add(UiFormUtil.buildDateTimePanel(dcDeadline, spDeadlineTime));
         panel.add(new JLabel("Độ ưu tiên:"));     panel.add(cbPriority);
         panel.add(new JLabel("Trạng thái:"));     panel.add(cbStatus);
         panel.add(new JLabel("Hiển thị:"));       panel.add(cbVisibility);
@@ -297,7 +292,7 @@ public class TaskController {
             try {
                 String taskTitle = txtTitle.getText();
                 String desc = txtDesc.getText();
-                LocalDateTime deadline = toLocalDateTime(dcDeadline, spDeadlineTime);
+                LocalDateTime deadline = UiFormUtil.toLocalDateTime(dcDeadline, spDeadlineTime);
                 String prio = (String) cbPriority.getSelectedItem();
                 String status = (String) cbStatus.getSelectedItem();
                 String visibility = (String) cbVisibility.getSelectedItem();
@@ -338,88 +333,10 @@ public class TaskController {
         bottom.add(btnSave);
 
         dialog.setLayout(new BorderLayout());
-        dialog.add(buildDialogHeader(dialogTitle), BorderLayout.NORTH);
+        dialog.add(UiFormUtil.buildDialogHeader(dialogTitle), BorderLayout.NORTH);
         dialog.add(panel, BorderLayout.CENTER);
         dialog.add(bottom, BorderLayout.SOUTH);
         dialog.setVisible(true);
-    }
-
-    /**
-     * Tạo header cho dialog.
-     * @param title Tiêu đề
-     * @return JPanel header
-     */
-    private JPanel buildDialogHeader(String title) {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(248, 250, 252));
-        header.setBorder(new EmptyBorder(12, 16, 12, 16));
-
-        JLabel label = new JLabel(title);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        label.setForeground(new Color(30, 41, 59));
-        header.add(label, BorderLayout.WEST);
-        return header;
-    }
-
-    /**
-     * Tạo bộ chọn ngày.
-     * @param dateTime Ngày giờ mặc định
-     * @return JDateChooser
-     */
-    private JDateChooser createDateChooser(LocalDateTime dateTime) {
-        JDateChooser chooser = new JDateChooser();
-        chooser.setDateFormatString("yyyy-MM-dd");
-        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        if (dateTime != null) {
-            chooser.setDate(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()));
-        }
-        return chooser;
-    }
-
-    /**
-     * Tạo spinner chọn giờ.
-     * @param dateTime Ngày giờ mặc định
-     * @return JSpinner
-     */
-    private JSpinner createTimeSpinner(LocalDateTime dateTime) {
-        LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
-        Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
-        SpinnerDateModel model = new SpinnerDateModel(timeValue, null, null, Calendar.MINUTE);
-        JSpinner spinner = new JSpinner(model);
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "HH:mm");
-        spinner.setEditor(editor);
-        spinner.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        return spinner;
-    }
-
-    /**
-     * Gộp input ngày + giờ thành một panel.
-     * @param dateChooser Bộ chọn ngày
-     * @param timeSpinner Bộ chọn giờ
-     * @return JPanel chứa cả hai input
-     */
-    private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
-        JPanel panel = new JPanel(new BorderLayout(8, 0));
-        panel.setOpaque(false);
-        timeSpinner.setPreferredSize(new java.awt.Dimension(90, 28));
-        panel.add(dateChooser, BorderLayout.CENTER);
-        panel.add(timeSpinner, BorderLayout.EAST);
-        return panel;
-    }
-
-    /**
-     * Chuyển giá trị từ input ngày + giờ sang LocalDateTime.
-     * @param dateChooser Bộ chọn ngày
-     * @param timeSpinner Bộ chọn giờ
-     * @return LocalDateTime hoặc null
-     */
-    private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
-        Date date = dateChooser.getDate();
-        if (date == null) return null;
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        Date time = (Date) timeSpinner.getValue();
-        LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime().withSecond(0).withNano(0);
-        return LocalDateTime.of(localDate, localTime);
     }
 
     /**
@@ -461,10 +378,11 @@ public class TaskController {
      */
     public void openDetailById(Integer id, Runnable afterClose) {
         if (id == null) return;
-        List<TaskDTO> source = currentUser.isLeader()
-            ? taskService.getAllTasks()
-            : taskService.getVisibleTasksForUser(currentUser.getMemberId());
-        Optional<TaskDTO> opt = source.stream().filter(t -> t.getTaskId().equals(id)).findFirst();
+        Optional<TaskDTO> opt = taskService.getTaskByIdForUser(
+            id,
+            currentUser.getMemberId(),
+            currentUser.isLeader()
+        );
         if (opt.isEmpty()) return;
         showDetailDialog(opt.get(), afterClose);
     }
@@ -515,12 +433,12 @@ public class TaskController {
             ? "Chưa có" : String.join(", ", task.getAssigneeNames());
         String deadlineText = task.getDeadline() != null ? task.getDeadline().format(DATE_FMT) : "Không xác định";
 
-        content.add(makeInfoLabel("Trạng thái: " + task.getStatus()));
-        content.add(makeInfoLabel("Độ ưu tiên: " + task.getPriority()));
-        content.add(makeInfoLabel("Hạn chót: " + deadlineText));
-        content.add(makeInfoLabel("Hiển thị: " + task.getVisibility()));
-        content.add(makeInfoLabel("Số người tối đa: " + task.getMaxAssignees()));
-        content.add(makeInfoLabel("Người thực hiện: " + assigneesText));
+        content.add(UiFormUtil.makeInfoLabel("Trạng thái: " + task.getStatus()));
+        content.add(UiFormUtil.makeInfoLabel("Độ ưu tiên: " + task.getPriority()));
+        content.add(UiFormUtil.makeInfoLabel("Hạn chót: " + deadlineText));
+        content.add(UiFormUtil.makeInfoLabel("Hiển thị: " + task.getVisibility()));
+        content.add(UiFormUtil.makeInfoLabel("Số người tối đa: " + task.getMaxAssignees()));
+        content.add(UiFormUtil.makeInfoLabel("Người thực hiện: " + assigneesText));
         content.add(Box.createVerticalStrut(8));
         content.add(new JScrollPane(desc));
 
@@ -622,15 +540,4 @@ public class TaskController {
         }
     }
 
-    /**
-     * Tạo label hiển thị thông tin.
-     * @param text Nội dung
-     * @return JLabel
-     */
-    private JLabel makeInfoLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        label.setBorder(new EmptyBorder(2, 0, 2, 0));
-        return label;
-    }
 }

@@ -6,12 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -24,7 +19,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
@@ -34,6 +28,7 @@ import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.service.AttendanceService;
 import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.MemberService;
+import com.clubmanagement.util.UiFormUtil;
 import com.clubmanagement.view.AttendanceView;
 import com.toedter.calendar.JDateChooser;
 
@@ -129,8 +124,7 @@ public class AttendanceController {
             return;
         }
 
-        List<AttendanceDTO> all = attendanceService.getAllAttendances();
-        Optional<AttendanceDTO> opt = all.stream().filter(a -> a.getAttendanceId().equals(id)).findFirst();
+        Optional<AttendanceDTO> opt = attendanceService.getAttendanceById(id);
         if (opt.isEmpty()) return;
 
         showFormDialog(opt.get());
@@ -161,12 +155,12 @@ public class AttendanceController {
         cbEvent.setFont(f);
 
         LocalDateTime defaultCheckIn = attendance != null ? attendance.getCheckInTime() : LocalDateTime.now();
-        JDateChooser dcCheckIn = createDateChooser(defaultCheckIn);
-        JSpinner spCheckInTime = createTimeSpinner(defaultCheckIn);
+        JDateChooser dcCheckIn = UiFormUtil.createDateChooser(defaultCheckIn);
+        JSpinner spCheckInTime = UiFormUtil.createTimeSpinner(defaultCheckIn);
 
         LocalDateTime defaultCheckOut = attendance != null ? attendance.getCheckOutTime() : null;
-        JDateChooser dcCheckOut = createDateChooser(defaultCheckOut);
-        JSpinner spCheckOutTime = createTimeSpinner(defaultCheckOut != null ? defaultCheckOut : LocalDateTime.now());
+        JDateChooser dcCheckOut = UiFormUtil.createDateChooser(defaultCheckOut);
+        JSpinner spCheckOutTime = UiFormUtil.createTimeSpinner(defaultCheckOut != null ? defaultCheckOut : LocalDateTime.now());
 
         JComboBox<String> cbStatus = new JComboBox<>(new String[]{"Present", "Late", "Absent", "Excused"});
         cbStatus.setFont(f);
@@ -201,8 +195,8 @@ public class AttendanceController {
 
         panel.add(new JLabel("Thành viên *:"));     panel.add(cbMember);
         panel.add(new JLabel("Sự kiện *:"));        panel.add(cbEvent);
-        panel.add(new JLabel("Check-in:"));        panel.add(buildDateTimePanel(dcCheckIn, spCheckInTime));
-        panel.add(new JLabel("Check-out:"));       panel.add(buildDateTimePanel(dcCheckOut, spCheckOutTime));
+        panel.add(new JLabel("Check-in:"));        panel.add(UiFormUtil.buildDateTimePanel(dcCheckIn, spCheckInTime));
+        panel.add(new JLabel("Check-out:"));       panel.add(UiFormUtil.buildDateTimePanel(dcCheckOut, spCheckOutTime));
         panel.add(new JLabel("Trạng thái:"));       panel.add(cbStatus);
         panel.add(new JLabel("Ghi chú:"));          panel.add(txtNote);
 
@@ -220,8 +214,8 @@ public class AttendanceController {
                 MemberDTO mem = (MemberDTO) cbMember.getSelectedItem();
                 EventDTO ext = (EventDTO) cbEvent.getSelectedItem();
                 
-                LocalDateTime checkIn = toLocalDateTime(dcCheckIn, spCheckInTime);
-                LocalDateTime checkOut = toLocalDateTime(dcCheckOut, spCheckOutTime);
+                LocalDateTime checkIn = UiFormUtil.toLocalDateTime(dcCheckIn, spCheckInTime);
+                LocalDateTime checkOut = UiFormUtil.toLocalDateTime(dcCheckOut, spCheckOutTime);
                 
                 String status = (String) cbStatus.getSelectedItem();
                 String note = txtNote.getText();
@@ -245,88 +239,10 @@ public class AttendanceController {
         bottom.add(btnSave);
 
         dialog.setLayout(new BorderLayout());
-        dialog.add(buildDialogHeader(title), BorderLayout.NORTH);
+        dialog.add(UiFormUtil.buildDialogHeader(title), BorderLayout.NORTH);
         dialog.add(panel, BorderLayout.CENTER);
         dialog.add(bottom, BorderLayout.SOUTH);
         dialog.setVisible(true);
-    }
-
-    /**
-     * Tạo header cho dialog.
-     * @param title Tiêu đề hiển thị
-     * @return JPanel header
-     */
-    private JPanel buildDialogHeader(String title) {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(248, 250, 252));
-        header.setBorder(new EmptyBorder(12, 16, 12, 16));
-
-        JLabel label = new JLabel(title);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        label.setForeground(new Color(30, 41, 59));
-        header.add(label, BorderLayout.WEST);
-        return header;
-    }
-
-    /**
-     * Tạo bộ chọn ngày.
-     * @param dateTime Ngày giờ mặc định
-     * @return JDateChooser
-     */
-    private JDateChooser createDateChooser(LocalDateTime dateTime) {
-        JDateChooser chooser = new JDateChooser();
-        chooser.setDateFormatString("yyyy-MM-dd");
-        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        if (dateTime != null) {
-            chooser.setDate(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()));
-        }
-        return chooser;
-    }
-
-    /**
-     * Tạo spinner chọn giờ.
-     * @param dateTime Ngày giờ mặc định
-     * @return JSpinner
-     */
-    private JSpinner createTimeSpinner(LocalDateTime dateTime) {
-        LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
-        Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
-        SpinnerDateModel model = new SpinnerDateModel(timeValue, null, null, Calendar.MINUTE);
-        JSpinner spinner = new JSpinner(model);
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "HH:mm");
-        spinner.setEditor(editor);
-        spinner.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        return spinner;
-    }
-
-    /**
-     * Gộp input ngày + giờ thành một panel.
-     * @param dateChooser Bộ chọn ngày
-     * @param timeSpinner Bộ chọn giờ
-     * @return JPanel chứa cả hai input
-     */
-    private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
-        JPanel panel = new JPanel(new BorderLayout(8, 0));
-        panel.setOpaque(false);
-        timeSpinner.setPreferredSize(new java.awt.Dimension(90, 28));
-        panel.add(dateChooser, BorderLayout.CENTER);
-        panel.add(timeSpinner, BorderLayout.EAST);
-        return panel;
-    }
-
-    /**
-     * Chuyển giá trị từ input ngày + giờ sang LocalDateTime.
-     * @param dateChooser Bộ chọn ngày
-     * @param timeSpinner Bộ chọn giờ
-     * @return LocalDateTime hoặc null
-     */
-    private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
-        Date date = dateChooser.getDate();
-        if (date == null) return null;
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        Date time = (Date) timeSpinner.getValue();
-        LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime().withSecond(0).withNano(0);
-        return LocalDateTime.of(localDate, localTime);
     }
 
     /**

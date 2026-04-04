@@ -37,6 +37,7 @@ import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.ProjectDTO;
 import com.clubmanagement.service.MemberService;
 import com.clubmanagement.service.ProjectService;
+import com.clubmanagement.util.UiFormUtil;
 import com.clubmanagement.view.ProjectView;
 import com.toedter.calendar.JDateChooser;
 
@@ -209,27 +210,10 @@ public class ProjectController {
         dialog.setLocationRelativeTo(null);
         dialog.setLayout(new BorderLayout());
 
-        dialog.add(buildDialogHeader(title), BorderLayout.NORTH);
+        dialog.add(UiFormUtil.buildDialogHeader(title), BorderLayout.NORTH);
         dialog.add(fields.panel, BorderLayout.CENTER);
         dialog.add(buildDialogFooter(dialog, fields, project, isEdit), BorderLayout.SOUTH);
         dialog.setVisible(true);
-    }
-
-    /**
-     * Tạo header cho dialog.
-     * @param title Tiêu đề
-     * @return JPanel header
-     */
-    private JPanel buildDialogHeader(String title) {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(248, 250, 252));
-        header.setBorder(new EmptyBorder(12, 16, 12, 16));
-
-        JLabel label = new JLabel(title);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        label.setForeground(new Color(30, 41, 59));
-        header.add(label, BorderLayout.WEST);
-        return header;
     }
 
     /**
@@ -319,8 +303,8 @@ public class ProjectController {
         fields.tfName = createField(project != null ? project.getProjectName() : "", f);
         fields.tfBudget = createField(project != null && project.getBudget() != null ? project.getBudget().toPlainString() : "0", f);
 
-        fields.startDate = createDateChooser(project != null ? project.getStartDate() : null);
-        fields.endDate = createDateChooser(project != null ? project.getEndDate() : null);
+        fields.startDate = UiFormUtil.createDateChooser(project != null ? project.getStartDate() : null);
+        fields.endDate = UiFormUtil.createDateChooser(project != null ? project.getEndDate() : null);
 
         fields.taDesc = new JTextArea(3, 20);
         fields.taDesc.setFont(f);
@@ -401,20 +385,6 @@ public class ProjectController {
         return d;
     }
 
-    /**
-     * Tạo bộ chọn ngày.
-     * @param date Ngày mặc định
-     * @return JDateChooser
-     */
-    private JDateChooser createDateChooser(LocalDate date) {
-        JDateChooser chooser = new JDateChooser();
-        chooser.setDateFormatString("yyyy-MM-dd");
-        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        if (date != null) {
-            chooser.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        }
-        return chooser;
-    }
 
     /**
      * Tạo TextField với giá trị mặc định.
@@ -559,13 +529,13 @@ public class ProjectController {
             ? maxMembersValue.toString()
             : "Không giới hạn";
 
-        content.add(makeInfoLabel("Trạng thái: " + project.getStatus()));
-        content.add(makeInfoLabel("Hiển thị: " + project.getVisibility()));
-        content.add(makeInfoLabel("Số thành viên tối đa: " + maxText));
-        content.add(makeInfoLabel("Thành viên: " + memberCount));
-        content.add(makeInfoLabel("Ngân sách: " + (project.getBudget() != null ? project.getBudget().toPlainString() : "0") + " VND"));
-        content.add(makeInfoLabel("Bắt đầu: " + (project.getStartDate() != null ? project.getStartDate() : "")));
-        content.add(makeInfoLabel("Kết thúc: " + (project.getEndDate() != null ? project.getEndDate() : "")));
+        content.add(UiFormUtil.makeInfoLabel("Trạng thái: " + project.getStatus()));
+        content.add(UiFormUtil.makeInfoLabel("Hiển thị: " + project.getVisibility()));
+        content.add(UiFormUtil.makeInfoLabel("Số thành viên tối đa: " + maxText));
+        content.add(UiFormUtil.makeInfoLabel("Thành viên: " + memberCount));
+        content.add(UiFormUtil.makeInfoLabel("Ngân sách: " + (project.getBudget() != null ? project.getBudget().toPlainString() : "0") + " VND"));
+        content.add(UiFormUtil.makeInfoLabel("Bắt đầu: " + (project.getStartDate() != null ? project.getStartDate() : "")));
+        content.add(UiFormUtil.makeInfoLabel("Kết thúc: " + (project.getEndDate() != null ? project.getEndDate() : "")));
         content.add(Box.createVerticalStrut(8));
 
         JTextArea desc = new JTextArea(project.getDescription() != null ? project.getDescription() : "");
@@ -690,18 +660,6 @@ public class ProjectController {
                 JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-
-    /**
-     * Tạo label hiển thị thông tin.
-     * @param text Nội dung
-     * @return JLabel
-     */
-    private JLabel makeInfoLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        label.setBorder(new EmptyBorder(2, 0, 2, 0));
-        return label;
     }
 
     /**

@@ -7,13 +7,8 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -30,13 +25,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.service.EventService;
+import com.clubmanagement.util.UiFormUtil;
 import com.clubmanagement.view.EventView;
 import com.toedter.calendar.JDateChooser;
 
@@ -147,6 +142,11 @@ public class EventController {
 
     /** Sửa sự kiện đang được chọn. */
     private void handleEdit() {
+        if (!currentUser.isLeader()) {
+            JOptionPane.showMessageDialog(null, "Bạn không có quyền chỉnh sửa sự kiện!",
+                "Không đủ quyền", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         Integer id = view.getSelectedEventId();
         if (id == null) { JOptionPane.showMessageDialog(null, "Chưa chọn sự kiện!"); return; }
 
@@ -157,6 +157,11 @@ public class EventController {
 
     /** Xóa sự kiện đang được chọn. */
     private void handleDelete() {
+        if (!currentUser.isLeader()) {
+            JOptionPane.showMessageDialog(null, "Bạn không có quyền xóa sự kiện!",
+                "Không đủ quyền", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         Integer id = view.getSelectedEventId();
         if (id == null) { JOptionPane.showMessageDialog(null, "Chưa chọn sự kiện!"); return; }
 
@@ -189,27 +194,10 @@ public class EventController {
         dialog.setLocationRelativeTo(null);
         dialog.setLayout(new BorderLayout());
 
-        dialog.add(buildDialogHeader(title), BorderLayout.NORTH);
+        dialog.add(UiFormUtil.buildDialogHeader(title), BorderLayout.NORTH);
         dialog.add(fields.panel, BorderLayout.CENTER);
         dialog.add(buildDialogFooter(dialog, fields, event, isEdit), BorderLayout.SOUTH);
         dialog.setVisible(true);
-    }
-
-    /**
-     * Tạo header cho dialog.
-     * @param title Tiêu đề
-     * @return JPanel header
-     */
-    private JPanel buildDialogHeader(String title) {
-        JPanel header = new JPanel(new BorderLayout());
-        header.setBackground(new Color(248, 250, 252));
-        header.setBorder(new EmptyBorder(12, 16, 12, 16));
-
-        JLabel label = new JLabel(title);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        label.setForeground(new Color(30, 41, 59));
-        header.add(label, BorderLayout.WEST);
-        return header;
     }
 
     /**
@@ -278,12 +266,12 @@ public class EventController {
         fields.tfBudget = createField(event != null && event.getBudget() != null ? event.getBudget().toPlainString() : "0", f);
         fields.tfMaxP = createField(event != null && event.getMaxParticipants() != null ? String.valueOf(event.getMaxParticipants()) : "100", f);
 
-        fields.startDate = createDateChooser(event != null ? event.getStartDate() : null);
-        fields.startTime = createTimeSpinner(event != null ? event.getStartDate() : null);
-        fields.endDate = createDateChooser(event != null ? event.getEndDate() : null);
-        fields.endTime = createTimeSpinner(event != null ? event.getEndDate() : null);
-        fields.regDate = createDateChooser(event != null ? event.getRegistrationDeadline() : null);
-        fields.regTime = createTimeSpinner(event != null ? event.getRegistrationDeadline() : null);
+        fields.startDate = UiFormUtil.createDateChooser(event != null ? event.getStartDate() : null);
+        fields.startTime = UiFormUtil.createTimeSpinner(event != null ? event.getStartDate() : null);
+        fields.endDate = UiFormUtil.createDateChooser(event != null ? event.getEndDate() : null);
+        fields.endTime = UiFormUtil.createTimeSpinner(event != null ? event.getEndDate() : null);
+        fields.regDate = UiFormUtil.createDateChooser(event != null ? event.getRegistrationDeadline() : null);
+        fields.regTime = UiFormUtil.createTimeSpinner(event != null ? event.getRegistrationDeadline() : null);
 
         fields.taDesc = new JTextArea(3, 20);
         fields.taDesc.setFont(f);
@@ -296,10 +284,10 @@ public class EventController {
         if (event != null) fields.cbStatus.setSelectedItem(event.getStatus());
 
         form.add(makeLabel("Tên sự kiện *:")); form.add(fields.tfName);
-        form.add(makeLabel("Bắt đầu *:")); form.add(buildDateTimePanel(fields.startDate, fields.startTime));
-        form.add(makeLabel("Kết thúc *:")); form.add(buildDateTimePanel(fields.endDate, fields.endTime));
+        form.add(makeLabel("Bắt đầu *:")); form.add(UiFormUtil.buildDateTimePanel(fields.startDate, fields.startTime));
+        form.add(makeLabel("Kết thúc *:")); form.add(UiFormUtil.buildDateTimePanel(fields.endDate, fields.endTime));
         form.add(makeLabel("Địa điểm:")); form.add(fields.tfLocation);
-        form.add(makeLabel("Hạn đăng ký:")); form.add(buildDateTimePanel(fields.regDate, fields.regTime));
+        form.add(makeLabel("Hạn đăng ký:")); form.add(UiFormUtil.buildDateTimePanel(fields.regDate, fields.regTime));
         form.add(makeLabel("Ngân sách (VNĐ):")); form.add(fields.tfBudget);
         form.add(makeLabel("Số lượng tối đa:")); form.add(fields.tfMaxP);
         form.add(makeLabel("Trạng thái:")); form.add(fields.cbStatus);
@@ -314,9 +302,9 @@ public class EventController {
     private EventFormData extractFormData(EventFormFields fields) {
         EventFormData data = new EventFormData();
         data.name = fields.tfName.getText().trim();
-        data.startDate = toLocalDateTime(fields.startDate, fields.startTime);
-        data.endDate = toLocalDateTime(fields.endDate, fields.endTime);
-        data.registrationDeadline = toLocalDateTime(fields.regDate, fields.regTime);
+        data.startDate = UiFormUtil.toLocalDateTime(fields.startDate, fields.startTime);
+        data.endDate = UiFormUtil.toLocalDateTime(fields.endDate, fields.endTime);
+        data.registrationDeadline = UiFormUtil.toLocalDateTime(fields.regDate, fields.regTime);
         data.location = fields.tfLocation.getText().trim();
         data.status = (String) fields.cbStatus.getSelectedItem();
         data.description = fields.taDesc.getText().trim();
@@ -337,70 +325,6 @@ public class EventController {
      * @param dateTime Ngày giờ mặc định
      * @return JDateChooser
      */
-    private JDateChooser createDateChooser(LocalDateTime dateTime) {
-        JDateChooser chooser = new JDateChooser();
-        chooser.setDateFormatString("yyyy-MM-dd");
-        chooser.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        if (dateTime != null) {
-            chooser.setDate(toDate(dateTime));
-        }
-        return chooser;
-    }
-
-    /**
-     * Tạo spinner chọn giờ.
-     * @param dateTime Ngày giờ mặc định
-     * @return JSpinner
-     */
-    private JSpinner createTimeSpinner(LocalDateTime dateTime) {
-        LocalTime time = dateTime != null ? dateTime.toLocalTime() : LocalTime.now().withSecond(0).withNano(0);
-        Date timeValue = Date.from(time.atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
-        SpinnerDateModel model = new SpinnerDateModel(timeValue, null, null, Calendar.MINUTE);
-        JSpinner spinner = new JSpinner(model);
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "HH:mm");
-        spinner.setEditor(editor);
-        spinner.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        return spinner;
-    }
-
-    /**
-     * Gộp input ngày + giờ thành một panel.
-     * @param dateChooser Bộ chọn ngày
-     * @param timeSpinner Bộ chọn giờ
-     * @return JPanel chứa cả hai input
-     */
-    private JPanel buildDateTimePanel(JDateChooser dateChooser, JSpinner timeSpinner) {
-        JPanel panel = new JPanel(new BorderLayout(8, 0));
-        panel.setOpaque(false);
-        timeSpinner.setPreferredSize(new java.awt.Dimension(90, 28));
-        panel.add(dateChooser, BorderLayout.CENTER);
-        panel.add(timeSpinner, BorderLayout.EAST);
-        return panel;
-    }
-
-    /**
-     * Chuyển giá trị từ input ngày + giờ sang LocalDateTime.
-     * @param dateChooser Bộ chọn ngày
-     * @param timeSpinner Bộ chọn giờ
-     * @return LocalDateTime hoặc null
-     */
-    private LocalDateTime toLocalDateTime(JDateChooser dateChooser, JSpinner timeSpinner) {
-        Date date = dateChooser.getDate();
-        if (date == null) return null;
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        Date time = (Date) timeSpinner.getValue();
-        LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime().withSecond(0).withNano(0);
-        return LocalDateTime.of(localDate, localTime);
-    }
-
-    /**
-     * Chuyển LocalDateTime sang Date.
-     * @param dateTime Ngày giờ
-     * @return Date
-     */
-    private Date toDate(LocalDateTime dateTime) {
-        return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-    }
 
     /**
      * Tạo TextField với giá trị mặc định.
@@ -509,12 +433,12 @@ public class EventController {
         String budgetText = event.getBudget() != null ? event.getBudget().toPlainString() + " VND" : "0 VND";
         String regCount = event.getRegisteredCount() + "/" + event.getMaxParticipants();
 
-        content.add(makeInfoLabel("Thời gian: " + startText + " → " + endText));
-        content.add(makeInfoLabel("Hạn đăng ký: " + regText));
-        content.add(makeInfoLabel("Địa điểm: " + (event.getLocation() != null ? event.getLocation() : "")));
-        content.add(makeInfoLabel("Ngân sách: " + budgetText));
-        content.add(makeInfoLabel("Trạng thái: " + event.getStatus()));
-        content.add(makeInfoLabel("Đăng ký: " + regCount));
+        content.add(UiFormUtil.makeInfoLabel("Thời gian: " + startText + " → " + endText));
+        content.add(UiFormUtil.makeInfoLabel("Hạn đăng ký: " + regText));
+        content.add(UiFormUtil.makeInfoLabel("Địa điểm: " + (event.getLocation() != null ? event.getLocation() : "")));
+        content.add(UiFormUtil.makeInfoLabel("Ngân sách: " + budgetText));
+        content.add(UiFormUtil.makeInfoLabel("Trạng thái: " + event.getStatus()));
+        content.add(UiFormUtil.makeInfoLabel("Đăng ký: " + regCount));
         content.add(Box.createVerticalStrut(8));
 
         JTextArea desc = new JTextArea(event.getDescription() != null ? event.getDescription() : "");
@@ -625,18 +549,6 @@ public class EventController {
                 JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-
-    /**
-     * Tạo label hiển thị thông tin.
-     * @param text Nội dung
-     * @return JLabel
-     */
-    private JLabel makeInfoLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        label.setBorder(new EmptyBorder(2, 0, 2, 0));
-        return label;
     }
 
     /**

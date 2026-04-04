@@ -2,6 +2,7 @@ package com.clubmanagement.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.hibernate.Session;
@@ -42,7 +43,8 @@ public class AttendanceService {
                 throw new IllegalArgumentException("Không tìm thấy dữ liệu Thành viên hoặc Sự kiện!");
             }
 
-            Attendance attendance = new Attendance(member, event, time, status);
+            LocalDateTime checkInTime = time != null ? time : LocalDateTime.now();
+            Attendance attendance = new Attendance(member, event, checkInTime, status);
             attendance.setNote(note);
 
             return toDTO(attendanceDAO.save(attendance));
@@ -66,6 +68,16 @@ public class AttendanceService {
      */
     public List<AttendanceDTO> getAttendancesByEvent(Integer eventId) {
         return attendanceDAO.findByEventId(eventId).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    /**
+     * Lấy điểm danh theo ID.
+     * @param attendanceId ID điểm danh
+     * @return Optional<AttendanceDTO>
+     */
+    public Optional<AttendanceDTO> getAttendanceById(Integer attendanceId) {
+        if (attendanceId == null) return Optional.empty();
+        return attendanceDAO.findById(attendanceId).map(this::toDTO);
     }
 
     /**

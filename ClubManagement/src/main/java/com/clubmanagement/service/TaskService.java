@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.hibernate.Session;
@@ -120,6 +121,31 @@ public class TaskService {
             .stream()
             .sorted(java.util.Comparator.comparing(TaskDTO::getCreatedDate, java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())).reversed())
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Lấy nhiệm vụ theo ID và kiểm tra quyền xem.
+     * @param taskId ID nhiệm vụ
+     * @param memberId ID thành viên hiện tại
+     * @param isLeader true nếu user có quyền quản lý
+     * @return Optional<TaskDTO> nếu có quyền xem
+     */
+    public Optional<TaskDTO> getTaskByIdForUser(Integer taskId, Integer memberId, boolean isLeader) {
+        if (taskId == null) return Optional.empty();
+        Optional<Task> opt = taskDAO.findById(taskId);
+        if (opt.isEmpty()) return Optional.empty();
+
+        Task task = opt.get();
+        if (isLeader) return Optional.ofNullable(toDTO(task));
+
+        boolean isPublic = "Public".equalsIgnoreCase(task.getVisibility());
+        boolean isAssignee = memberId != null
+            && task.getAssignees() != null
+            && task.getAssignees().stream().anyMatch(m -> memberId.equals(m.getMemberId()));
+        if (isPublic || isAssignee) {
+            return Optional.ofNullable(toDTO(task));
+        }
+        return Optional.empty();
     }
 
     /**
