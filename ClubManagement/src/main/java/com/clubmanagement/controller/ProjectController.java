@@ -242,12 +242,12 @@ public class ProjectController {
                 if (isEdit) {
                     projectService.updateProject(project.getProjectId(), d.name, d.description, d.objective,
                         d.startDate, d.endDate, d.budget, d.status, d.visibility,
-                        d.maxMembers, currentUser.getMemberId(), d.memberIds);
+                        d.maxMembers, currentUser.getMemberId(), d.memberIds, d.contributionPoints);
                     JOptionPane.showMessageDialog(dialog, "Đã cập nhật!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     projectService.createProject(d.name, d.description, d.objective,
                         d.startDate, d.endDate, d.budget, d.visibility, d.maxMembers,
-                        currentUser.getMemberId(), d.memberIds);
+                        currentUser.getMemberId(), d.memberIds, d.contributionPoints);
                     JOptionPane.showMessageDialog(dialog, "Đã tạo dự án!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 }
                 dialog.dispose();
@@ -329,6 +329,12 @@ public class ProjectController {
         fields.spMaxMembers.setFont(f);
         if (project != null && project.getMaxMembers() != null) fields.spMaxMembers.setValue(project.getMaxMembers());
 
+        fields.spContribution = new JSpinner(new SpinnerNumberModel(0, 0, 200, 1));
+        fields.spContribution.setFont(f);
+        if (project != null && project.getContributionPoints() != null) {
+            fields.spContribution.setValue(project.getContributionPoints());
+        }
+
         List<MemberDTO> allMembers = memberService.getAllMembers();
         fields.listMembers = new JList<>(allMembers.toArray(MemberDTO[]::new));
         fields.listMembers.setFont(f);
@@ -352,6 +358,7 @@ public class ProjectController {
         form.add(makeLabel("Trạng thái:")); form.add(fields.cbStatus);
         form.add(makeLabel("Hiển thị:")); form.add(fields.cbVisibility);
         form.add(makeLabel("Số thành viên tối đa:")); form.add(fields.spMaxMembers);
+        form.add(makeLabel("Điểm đóng góp:")); form.add(fields.spContribution);
         form.add(makeLabel("Thành viên:")); form.add(new JScrollPane(fields.listMembers));
         form.add(makeLabel("Mô tả:")); form.add(new JScrollPane(fields.taDesc));
         form.add(makeLabel("Mục tiêu:")); form.add(new JScrollPane(fields.taObj));
@@ -376,6 +383,7 @@ public class ProjectController {
         d.memberIds = fields.listMembers.getSelectedValuesList().stream()
             .map(MemberDTO::getMemberId)
             .toList();
+        d.contributionPoints = (Integer) fields.spContribution.getValue();
         try { d.budget = new BigDecimal(fields.tfBudget.getText().trim()); }
         catch (NumberFormatException e) { d.budget = BigDecimal.ZERO; }
 
@@ -416,6 +424,7 @@ public class ProjectController {
         BigDecimal budget = BigDecimal.ZERO;
         Integer maxMembers = 0;
         List<Integer> memberIds = java.util.Collections.emptyList();
+        Integer contributionPoints = 0;
     }
 
     private static class ProjectFormFields {
@@ -429,6 +438,7 @@ public class ProjectController {
         JComboBox<String> cbStatus;
         JComboBox<String> cbVisibility;
         JSpinner spMaxMembers;
+        JSpinner spContribution;
         JList<MemberDTO> listMembers;
     }
 
@@ -533,6 +543,7 @@ public class ProjectController {
         content.add(UiFormUtil.makeInfoLabel("Hiển thị: " + project.getVisibility()));
         content.add(UiFormUtil.makeInfoLabel("Số thành viên tối đa: " + maxText));
         content.add(UiFormUtil.makeInfoLabel("Thành viên: " + memberCount));
+        content.add(UiFormUtil.makeInfoLabel("Điểm đóng góp: " + safeInt(project.getContributionPoints())));
         content.add(UiFormUtil.makeInfoLabel("Ngân sách: " + (project.getBudget() != null ? project.getBudget().toPlainString() : "0") + " VND"));
         content.add(UiFormUtil.makeInfoLabel("Bắt đầu: " + (project.getStartDate() != null ? project.getStartDate() : "")));
         content.add(UiFormUtil.makeInfoLabel("Kết thúc: " + (project.getEndDate() != null ? project.getEndDate() : "")));

@@ -33,6 +33,7 @@ public class DashboardController {
     // Sub-controllers
     private MemberController        memberController;
     private EventController         eventController;
+    private EventAttendanceController eventAttendanceController;
     private ProjectController       projectController;
     private AnnouncementController  announcementController;
     private MeetingController       meetingController;
@@ -62,12 +63,23 @@ public class DashboardController {
         taskController         = new TaskController(view.getTaskView(), currentUser);
         documentController     = new DocumentController(view.getDocumentView(), currentUser);
         memberController       = new MemberController(view.getMemberView(),  currentUser);
-        eventController        = new EventController(view.getEventView(),    currentUser);
+        eventAttendanceController = new EventAttendanceController(view.getEventAttendanceView(), view, currentUser);
+        eventController        = new EventController(view.getEventView(),    currentUser,
+            eventId -> {
+                view.showEventAttendance();
+                eventAttendanceController.openForEvent(eventId);
+            }
+        );
         projectController      = new ProjectController(view.getProjectView(), currentUser);
         myInfoController       = new MyInfoController(
             view.getMyInfoView(), view, currentUser,
             taskController, eventController, projectController
         );
+
+        eventAttendanceController.setOnBack(() -> {
+            view.showEvents();
+            eventController.loadAllEvents();
+        });
     }
 
     /**

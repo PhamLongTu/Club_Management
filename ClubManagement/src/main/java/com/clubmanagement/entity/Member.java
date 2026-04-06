@@ -73,6 +73,18 @@ public class Member {
     @Column(name = "password_hash", nullable = false, length = 255)
     private String passwordHash;
 
+    /** Điểm rèn luyện */
+    @Column(name = "drl_points")
+    private Integer drlPoints = 0;
+
+    /** Điểm công tác xã hội */
+    @Column(name = "ctxh_points")
+    private Integer ctxhPoints = 0;
+
+    /** Điểm đóng góp */
+    @Column(name = "contribution_points")
+    private Integer contributionPoints = 0;
+
     // ============ RELATIONSHIPS ============
     /** Quan hệ N-1 với Role: Mỗi thành viên có 1 vai trò */
     @ManyToOne(fetch = FetchType.EAGER)
@@ -185,6 +197,21 @@ public class Member {
     public String getPasswordHash()       { return passwordHash; }
     /** @param v Mật khẩu đã hash mới. */
     public void setPasswordHash(String v) { this.passwordHash = v; }
+
+    /** @return Điểm rèn luyện. */
+    public Integer getDrlPoints()         { return drlPoints; }
+    /** @param v Điểm rèn luyện mới. */
+    public void setDrlPoints(Integer v)   { this.drlPoints = v; }
+
+    /** @return Điểm công tác xã hội. */
+    public Integer getCtxhPoints()        { return ctxhPoints; }
+    /** @param v Điểm công tác xã hội mới. */
+    public void setCtxhPoints(Integer v)  { this.ctxhPoints = v; }
+
+    /** @return Điểm đóng góp. */
+    public Integer getContributionPoints()       { return contributionPoints; }
+    /** @param v Điểm đóng góp mới. */
+    public void setContributionPoints(Integer v) { this.contributionPoints = v; }
 
     /** @return Vai trò hiện tại. */
     public Role getRole()                 { return role; }

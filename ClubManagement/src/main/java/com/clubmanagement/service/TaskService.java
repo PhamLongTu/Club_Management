@@ -22,6 +22,7 @@ import com.clubmanagement.util.HibernateUtil;
 public class TaskService {
 
     private final TaskDAO taskDAO = new TaskDAO();
+    private final MemberService memberService = new MemberService();
 
     /**
      * Tạo nhiệm vụ mới.
@@ -39,7 +40,7 @@ public class TaskService {
     public TaskDTO createTask(String title, String description, LocalDateTime deadline,
                               String priority, String visibility, Integer maxAssignees,
                               Integer assignerId, Integer eventId,
-                              List<Integer> assigneeIds) {
+                              List<Integer> assigneeIds, Integer contributionPoints) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Tiêu đề không được để trống!");
         }
@@ -52,10 +53,15 @@ public class TaskService {
             task.setEvent(event);
             task.setVisibility(visibility != null ? visibility : "Public");
             task.setMaxAssignees(maxAssignees != null ? maxAssignees : 1);
+            task.setContributionPoints(contributionPoints != null ? contributionPoints : 0);
             Task saved = taskDAO.save(task);
             if (assigneeIds != null && !assigneeIds.isEmpty()) {
                 taskDAO.replaceAssignees(saved.getTaskId(), assigneeIds);
                 saved = taskDAO.findById(saved.getTaskId()).orElse(saved);
+                List<Integer> assignedIds = saved.getAssignees() != null
+                    ? saved.getAssignees().stream().map(Member::getMemberId).collect(Collectors.toList())
+                    : java.util.Collections.emptyList();
+                applyContributionPoints(assignedIds, 0, task.getContributionPoints());
             }
             return toDTO(saved);
         } catch (Exception e) {
@@ -164,7 +170,7 @@ public class TaskService {
      */
     public TaskDTO updateTask(Integer taskId, String title, String description, LocalDateTime deadline,
                               String priority, String status, String visibility, Integer maxAssignees,
-                              Integer eventId, List<Integer> assigneeIds) {
+                              Integer eventId, List<Integer> assigneeIds, Integer contributionPoints) {
         Task task = taskDAO.findById(taskId)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin Nhiệm vụ!"));
 
@@ -174,6 +180,12 @@ public class TaskService {
 
         try (Session session = HibernateUtil.openSession()) {
             Event event = eventId != null ? session.get(Event.class, eventId) : null;
+            int oldPoints = safePoints(task.getContributionPoints());
+            int newPoints = contributionPoints != null ? contributionPoints : oldPoints;
+            List<Integer> oldAssignees = task.getAssignees() != null
+                ? task.getAssignees().stream().map(Member::getMemberId).collect(Collectors.toList())
+                : java.util.Collections.emptyList();
+            List<Integer> newAssignees = assigneeIds != null ? assigneeIds : oldAssignees;
 
             task.setTitle(title.trim());
             task.setDescription(description);
@@ -183,12 +195,14 @@ public class TaskService {
             task.setVisibility(visibility != null ? visibility : task.getVisibility());
             task.setMaxAssignees(maxAssignees != null ? maxAssignees : task.getMaxAssignees());
             task.setEvent(event);
+            task.setContributionPoints(newPoints);
 
             Task updated = taskDAO.update(task);
             if (assigneeIds != null) {
                 taskDAO.replaceAssignees(taskId, assigneeIds);
                 updated = taskDAO.findById(taskId).orElse(updated);
             }
+            applyContributionDiff(oldAssignees, newAssignees, oldPoints, newPoints);
             return toDTO(updated);
         } catch (Exception e) {
             throw new RuntimeException("Lỗi cập nhật task: " + e.getMessage(), e);
@@ -206,7 +220,13 @@ public class TaskService {
         if (!"Public".equalsIgnoreCase(task.getVisibility())) {
             throw new IllegalStateException("Nhiệm vụ này là private");
         }
+        boolean alreadyAssigned = task.getAssignees() != null
+            && task.getAssignees().stream().anyMatch(m -> m.getMemberId().equals(memberId));
+        if (alreadyAssigned) {
+            throw new IllegalStateException("Bạn đã đăng ký nhiệm vụ này rồi");
+        }
         taskDAO.addMemberToTask(taskId, memberId);
+        applyContributionPoints(java.util.List.of(memberId), 0, safePoints(task.getContributionPoints()));
     }
 
     /**
@@ -222,6 +242,7 @@ public class TaskService {
             throw new IllegalStateException("Bạn chưa đăng ký nhiệm vụ này");
         }
         taskDAO.removeMemberFromTask(taskId, memberId);
+        applyContributionPoints(java.util.List.of(memberId), safePoints(task.getContributionPoints()), 0);
     }
 
     /**
@@ -259,6 +280,7 @@ public class TaskService {
             t.getCreatedDate(),
             t.getVisibility(),
             t.getMaxAssignees(),
+            t.getContributionPoints(),
             assigneeName,
             t.getAssigner() != null ? t.getAssigner().getFullName() : "Hệ thống",
             t.getEvent() != null ? t.getEvent().getEventName() : "Không có",
@@ -268,5 +290,44 @@ public class TaskService {
             assigneeIds,
             assigneeNames
         );
+    }
+
+    private void applyContributionPoints(List<Integer> memberIds, int oldPoints, int newPoints) {
+        if (memberIds == null || memberIds.isEmpty()) return;
+        int delta = newPoints - oldPoints;
+        if (delta == 0) return;
+        java.util.Set<Integer> uniqueIds = new java.util.HashSet<>(memberIds);
+        for (Integer memberId : uniqueIds) {
+            memberService.adjustPoints(memberId, 0, 0, delta);
+        }
+    }
+
+    private void applyContributionDiff(List<Integer> oldIds, List<Integer> newIds, int oldPoints, int newPoints) {
+        java.util.Set<Integer> oldSet = new java.util.HashSet<>(oldIds != null ? oldIds : java.util.Collections.emptyList());
+        java.util.Set<Integer> newSet = new java.util.HashSet<>(newIds != null ? newIds : java.util.Collections.emptyList());
+
+        java.util.Set<Integer> added = new java.util.HashSet<>(newSet);
+        added.removeAll(oldSet);
+
+        java.util.Set<Integer> removed = new java.util.HashSet<>(oldSet);
+        removed.removeAll(newSet);
+
+        java.util.Set<Integer> stayed = new java.util.HashSet<>(newSet);
+        stayed.retainAll(oldSet);
+
+        if (!added.isEmpty() && newPoints != 0) {
+            applyContributionPoints(new java.util.ArrayList<>(added), 0, newPoints);
+        }
+        if (!removed.isEmpty() && oldPoints != 0) {
+            applyContributionPoints(new java.util.ArrayList<>(removed), oldPoints, 0);
+        }
+        int delta = newPoints - oldPoints;
+        if (!stayed.isEmpty() && delta != 0) {
+            applyContributionPoints(new java.util.ArrayList<>(stayed), 0, delta);
+        }
+    }
+
+    private int safePoints(Integer value) {
+        return value != null ? value : 0;
     }
 }

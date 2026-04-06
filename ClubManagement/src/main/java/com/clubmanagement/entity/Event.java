@@ -67,6 +67,14 @@ public class Event {
     @Column(name = "max_participants")
     private Integer maxParticipants = 100;
 
+    /** Loại điểm áp dụng: None / DRL / CTXH */
+    @Column(name = "point_type", length = 10)
+    private String pointType = "None";
+
+    /** Điểm áp dụng cho sự kiện */
+    @Column(name = "point_value")
+    private Integer pointValue = 0;
+
     /** Người tạo sự kiện */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by")
@@ -162,6 +170,16 @@ public class Event {
     public Integer getMaxParticipants()      { return maxParticipants; }
     /** @param v Số lượng tham gia tối đa mới. */
     public void setMaxParticipants(Integer v){ this.maxParticipants = v; }
+
+    /** @return Loại điểm áp dụng. */
+    public String getPointType()             { return pointType; }
+    /** @param v Loại điểm áp dụng mới. */
+    public void setPointType(String v)       { this.pointType = v; }
+
+    /** @return Điểm áp dụng. */
+    public Integer getPointValue()           { return pointValue; }
+    /** @param v Điểm áp dụng mới. */
+    public void setPointValue(Integer v)     { this.pointValue = v; }
 
     /** @return Người tạo sự kiện. */
     public Member getCreatedBy()             { return createdBy; }

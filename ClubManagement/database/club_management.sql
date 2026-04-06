@@ -36,6 +36,9 @@ CREATE TABLE members (
     status      VARCHAR(20)  DEFAULT 'Active' COMMENT 'Trạng thái: Active/Inactive/Suspended',
     avatar_url  VARCHAR(500) COMMENT 'Ảnh đại diện',
     password_hash VARCHAR(255) NOT NULL COMMENT 'Mật khẩu đã mã hóa',
+    drl_points  INT DEFAULT 0 COMMENT 'Điểm rèn luyện',
+    ctxh_points INT DEFAULT 0 COMMENT 'Điểm công tác xã hội',
+    contribution_points INT DEFAULT 0 COMMENT 'Điểm đóng góp',
     role_id     INT NOT NULL COMMENT 'FK -> roles',
     CONSTRAINT fk_member_role FOREIGN KEY (role_id) REFERENCES roles(role_id)
 ) ENGINE=InnoDB COMMENT='Bảng thành viên';
@@ -82,6 +85,8 @@ CREATE TABLE events (
     status           VARCHAR(20)  DEFAULT 'Upcoming' COMMENT 'Upcoming/Ongoing/Completed/Cancelled',
     budget           DECIMAL(15,2) DEFAULT 0 COMMENT 'Ngân sách (VNĐ)',
     max_participants INT DEFAULT 100 COMMENT 'Số lượng tối đa',
+    point_type       VARCHAR(10) DEFAULT 'None' COMMENT 'None/DRL/CTXH',
+    point_value      INT DEFAULT 0 COMMENT 'Điểm áp dụng',
     created_by       INT COMMENT 'FK -> members (người tạo)',
     CONSTRAINT fk_event_creator FOREIGN KEY (created_by) REFERENCES members(member_id)
 ) ENGINE=InnoDB COMMENT='Bảng sự kiện';
@@ -115,6 +120,7 @@ CREATE TABLE tasks (
     status       VARCHAR(15)  DEFAULT 'Todo'   COMMENT 'Todo/InProgress/Done/Overdue',
     visibility   VARCHAR(10)  DEFAULT 'Public' COMMENT 'Public/Private',
     max_assignees INT DEFAULT 1 COMMENT 'Số người tối đa',
+    contribution_points INT DEFAULT 0 COMMENT 'Điểm đóng góp',
     created_date DATETIME     DEFAULT CURRENT_TIMESTAMP,
     assigner_id  INT COMMENT 'FK -> members (người giao)',
     event_id     INT COMMENT 'FK -> events (nhiệm vụ thuộc sự kiện nào, nullable)',
@@ -201,6 +207,7 @@ CREATE TABLE projects (
     status        VARCHAR(20)  DEFAULT 'Planning' COMMENT 'Planning/Active/OnHold/Completed/Cancelled',
     visibility    VARCHAR(10)  DEFAULT 'Public' COMMENT 'Public/Private',
     max_members   INT DEFAULT 0 COMMENT '0=Khong gioi han',
+    contribution_points INT DEFAULT 0 COMMENT 'Điểm đóng góp',
     manager_id    INT COMMENT 'FK -> members (quản lý dự án)',
     CONSTRAINT fk_proj_manager FOREIGN KEY (manager_id) REFERENCES members(member_id)
 ) ENGINE=InnoDB COMMENT='Bảng dự án';

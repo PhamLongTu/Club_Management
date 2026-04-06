@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -45,6 +46,7 @@ public class EventController {
     private final EventView    view;
     private final MemberDTO    currentUser;
     private final EventService eventService = new EventService();
+    private final Consumer<Integer> adminDetailOpener;
 
     private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -53,9 +55,10 @@ public class EventController {
      * @param view View hiển thị
      * @param currentUser Người dùng hiện tại
      */
-    public EventController(EventView view, MemberDTO currentUser) {
-        this.view        = view;
+    public EventController(EventView view, MemberDTO currentUser, Consumer<Integer> adminDetailOpener) {
+        this.view = view;
         this.currentUser = currentUser;
+        this.adminDetailOpener = adminDetailOpener;
         attachListeners();
     }
 
@@ -226,13 +229,15 @@ public class EventController {
                 if (isEdit) {
                     eventService.updateEvent(event.getEventId(), data.name, data.description,
                         data.startDate, data.endDate, data.registrationDeadline,
-                        data.location, data.budget, data.status);
+                        data.location, data.budget, data.status,
+                        data.pointType, data.pointValue);
                     JOptionPane.showMessageDialog(dialog, "Đã cập nhật sự kiện!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     eventService.createEvent(
                         data.name, data.description, data.startDate, data.endDate,
                         data.registrationDeadline, data.location, data.budget,
-                        data.maxParticipants, currentUser.getMemberId()
+                        data.maxParticipants, currentUser.getMemberId(),
+                        data.pointType, data.pointValue
                     );
                     JOptionPane.showMessageDialog(dialog, "Đã tạo sự kiện thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -283,6 +288,16 @@ public class EventController {
         fields.cbStatus.setFont(f);
         if (event != null) fields.cbStatus.setSelectedItem(event.getStatus());
 
+        fields.cbPointType = new JComboBox<>(new String[]{"None", "DRL", "CTXH"});
+        fields.cbPointType.setFont(f);
+        String pointType = event != null ? event.getPointType() : null;
+        fields.cbPointType.setSelectedItem(pointType != null ? pointType : "None");
+
+        Integer pointValue = event != null ? event.getPointValue() : null;
+        int defaultPointValue = pointValue != null ? pointValue : 0;
+        fields.spPointValue = new JSpinner(new javax.swing.SpinnerNumberModel(defaultPointValue, 0, 200, 1));
+        fields.spPointValue.setFont(f);
+
         form.add(makeLabel("Tên sự kiện *:")); form.add(fields.tfName);
         form.add(makeLabel("Bắt đầu *:")); form.add(UiFormUtil.buildDateTimePanel(fields.startDate, fields.startTime));
         form.add(makeLabel("Kết thúc *:")); form.add(UiFormUtil.buildDateTimePanel(fields.endDate, fields.endTime));
@@ -290,6 +305,8 @@ public class EventController {
         form.add(makeLabel("Hạn đăng ký:")); form.add(UiFormUtil.buildDateTimePanel(fields.regDate, fields.regTime));
         form.add(makeLabel("Ngân sách (VNĐ):")); form.add(fields.tfBudget);
         form.add(makeLabel("Số lượng tối đa:")); form.add(fields.tfMaxP);
+        form.add(makeLabel("Loại điểm:")); form.add(fields.cbPointType);
+        form.add(makeLabel("Điểm áp dụng:")); form.add(fields.spPointValue);
         form.add(makeLabel("Trạng thái:")); form.add(fields.cbStatus);
         form.add(makeLabel("Mô tả:")); form.add(new JScrollPane(fields.taDesc));
 
@@ -308,6 +325,8 @@ public class EventController {
         data.location = fields.tfLocation.getText().trim();
         data.status = (String) fields.cbStatus.getSelectedItem();
         data.description = fields.taDesc.getText().trim();
+        data.pointType = (String) fields.cbPointType.getSelectedItem();
+        data.pointValue = (Integer) fields.spPointValue.getValue();
         try { data.budget = new BigDecimal(fields.tfBudget.getText().trim()); } catch (NumberFormatException e) { data.budget = BigDecimal.ZERO; }
         data.maxParticipants = parseIntOrDefault(fields.tfMaxP.getText(), 100);
 
@@ -317,6 +336,8 @@ public class EventController {
             throw new IllegalArgumentException("Ngày bắt đầu và kết thúc không được để trống!");
         if (data.endDate.isBefore(data.startDate))
             throw new IllegalArgumentException("Ngày kết thúc phải sau ngày bắt đầu!");
+        if (!"None".equalsIgnoreCase(data.pointType) && (data.pointValue == null || data.pointValue <= 0))
+            throw new IllegalArgumentException("Điểm áp dụng phải lớn hơn 0!");
         return data;
     }
 
@@ -356,6 +377,8 @@ public class EventController {
         LocalDateTime registrationDeadline;
         BigDecimal budget = BigDecimal.ZERO;
         Integer maxParticipants = 100;
+        String pointType = "None";
+        Integer pointValue = 0;
     }
 
     private static class EventFormFields {
@@ -372,13 +395,21 @@ public class EventController {
         JSpinner regTime;
         JTextArea taDesc;
         JComboBox<String> cbStatus;
+        JComboBox<String> cbPointType;
+        JSpinner spPointValue;
     }
 
     /**
      * Mở dialog chi tiết sự kiện từ dòng đang chọn.
      */
     private void handleViewDetail() {
-        openDetailById(view.getSelectedEventId(), null);
+        Integer id = view.getSelectedEventId();
+        if (id == null) return;
+        if (currentUser.isLeader() && adminDetailOpener != null) {
+            adminDetailOpener.accept(id);
+            return;
+        }
+        openDetailById(id, null);
     }
 
     /**
@@ -438,6 +469,11 @@ public class EventController {
         content.add(UiFormUtil.makeInfoLabel("Địa điểm: " + (event.getLocation() != null ? event.getLocation() : "")));
         content.add(UiFormUtil.makeInfoLabel("Ngân sách: " + budgetText));
         content.add(UiFormUtil.makeInfoLabel("Trạng thái: " + event.getStatus()));
+        String pointText = (event.getPointType() == null || "None".equalsIgnoreCase(event.getPointType())
+            || event.getPointValue() == null || event.getPointValue() <= 0)
+            ? "Không áp dụng"
+            : event.getPointType() + " +" + event.getPointValue();
+        content.add(UiFormUtil.makeInfoLabel("Điểm sự kiện: " + pointText));
         content.add(UiFormUtil.makeInfoLabel("Đăng ký: " + regCount));
         content.add(Box.createVerticalStrut(8));
 

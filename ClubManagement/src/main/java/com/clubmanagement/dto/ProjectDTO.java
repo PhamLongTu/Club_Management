@@ -20,6 +20,7 @@ public class ProjectDTO {
     private Integer    maxMembers;
     private String     managerName;   // Tên quản lý dự án
     private Integer    memberCount;   // Số thành viên tham gia (computed)
+    private Integer    contributionPoints;
 
     // ============ CONSTRUCTORS ============
     /** Constructor mặc định. */
@@ -31,7 +32,8 @@ public class ProjectDTO {
     public ProjectDTO(Integer projectId, String projectName, String description,
                       String objective, LocalDate startDate, LocalDate endDate,
                       BigDecimal budget, String status, String visibility,
-                      Integer maxMembers, String managerName, Integer memberCount) {
+                      Integer maxMembers, String managerName, Integer memberCount,
+                      Integer contributionPoints) {
         this.projectId   = projectId;
         this.projectName = projectName;
         this.description = description;
@@ -44,6 +46,7 @@ public class ProjectDTO {
         this.maxMembers  = maxMembers;
         this.managerName = managerName;
         this.memberCount = memberCount;
+        this.contributionPoints = contributionPoints;
     }
 
     // ============ GETTERS & SETTERS ============
@@ -106,6 +109,11 @@ public class ProjectDTO {
     public Integer getMemberCount()        { return memberCount; }
     /** @param v Số thành viên mới. */
     public void setMemberCount(Integer v)  { this.memberCount = v; }
+
+    /** @return Điểm đóng góp. */
+    public Integer getContributionPoints() { return contributionPoints; }
+    /** @param v Điểm đóng góp mới. */
+    public void setContributionPoints(Integer v) { this.contributionPoints = v; }
 
     /**
      * Hiển thị tên dự án trong UI.

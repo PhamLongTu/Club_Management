@@ -21,6 +21,8 @@ public class EventDTO {
     private LocalDateTime registrationDeadline;
     private String        createdByName;    // Tên người tạo (từ Member)
     private Integer       registeredCount;  // Số lượng đã đăng ký (computed)
+    private String        pointType;
+    private Integer       pointValue;
 
     // ============ CONSTRUCTORS ============
     /** Constructor mặc định. */
@@ -33,7 +35,8 @@ public class EventDTO {
                     LocalDateTime startDate, LocalDateTime endDate, String location,
                     String status, BigDecimal budget, Integer maxParticipants,
                     LocalDateTime registrationDeadline,
-                    String createdByName, Integer registeredCount) {
+                    String createdByName, Integer registeredCount,
+                    String pointType, Integer pointValue) {
         this.eventId          = eventId;
         this.eventName        = eventName;
         this.description      = description;
@@ -46,6 +49,8 @@ public class EventDTO {
         this.registrationDeadline = registrationDeadline;
         this.createdByName    = createdByName;
         this.registeredCount  = registeredCount;
+        this.pointType        = pointType;
+        this.pointValue       = pointValue;
     }
 
     // ============ GETTERS & SETTERS ============
@@ -108,6 +113,16 @@ public class EventDTO {
     public Integer getRegisteredCount()      { return registeredCount; }
     /** @param v Số lượng đã đăng ký mới. */
     public void setRegisteredCount(Integer v){ this.registeredCount = v; }
+
+    /** @return Loại điểm áp dụng. */
+    public String getPointType()             { return pointType; }
+    /** @param v Loại điểm áp dụng mới. */
+    public void setPointType(String v)       { this.pointType = v; }
+
+    /** @return Điểm áp dụng. */
+    public Integer getPointValue()           { return pointValue; }
+    /** @param v Điểm áp dụng mới. */
+    public void setPointValue(Integer v)     { this.pointValue = v; }
 
     /**
      * Hiển thị tên sự kiện trong UI.

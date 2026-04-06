@@ -43,6 +43,7 @@ public class DashboardView extends JFrame {
     // ====== Sub-panels (content area) ======
     private MemberView        memberView;
     private EventView         eventView;
+    private EventAttendanceView eventAttendanceView;
     private ProjectView       projectView;
     private AnnouncementView  announcementView;
     private MeetingView       meetingView;
@@ -308,6 +309,7 @@ public class DashboardView extends JFrame {
         myInfoView       = new MyInfoView(currentUser);
         memberView       = new MemberView(currentUser);
         eventView        = new EventView(currentUser);
+        eventAttendanceView = new EventAttendanceView(currentUser);
         projectView      = new ProjectView(currentUser);
 
         contentArea.add(homePanel,                 "HOME");
@@ -318,6 +320,7 @@ public class DashboardView extends JFrame {
         contentArea.add(myInfoView.getPanel(),      "MY_INFO");
         contentArea.add(memberView.getPanel(),      "MEMBERS");
         contentArea.add(eventView.getPanel(),       "EVENTS");
+        contentArea.add(eventAttendanceView.getPanel(), "EVENT_ATTENDANCE");
         contentArea.add(projectView.getPanel(),     "PROJECTS");
 
         return contentArea;
@@ -468,6 +471,9 @@ public class DashboardView extends JFrame {
     /** Shows the events panel. */
     public void showEvents()        { selectMenu(btnEvents);        cardLayout.show(contentArea, "EVENTS"); }
 
+    /** Shows the event attendance panel. */
+    public void showEventAttendance() { cardLayout.show(contentArea, "EVENT_ATTENDANCE"); }
+
     /** Shows the projects panel. */
     public void showProjects()      { selectMenu(btnProjects);      cardLayout.show(contentArea, "PROJECTS"); }
 
@@ -528,6 +534,7 @@ public class DashboardView extends JFrame {
     public MemberView        getMemberView()       { return memberView; }
     /** @return event view */
     public EventView         getEventView()        { return eventView; }
+    public EventAttendanceView getEventAttendanceView() { return eventAttendanceView; }
     /** @return project view */
     public ProjectView       getProjectView()      { return projectView; }
     /** @return announcement view */

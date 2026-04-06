@@ -73,6 +73,28 @@ public class AttendanceDAO {
     }
 
     /**
+     * Tìm điểm danh theo sự kiện và thành viên.
+     * @param eventId ID sự kiện
+     * @param memberId ID thành viên
+     * @return Optional<Attendance>
+     */
+    public Optional<Attendance> findByEventAndMember(Integer eventId, Integer memberId) {
+        try (Session session = HibernateUtil.openSession()) {
+            Query<Attendance> query = session.createQuery(
+                "FROM Attendance a LEFT JOIN FETCH a.member LEFT JOIN FETCH a.event " +
+                "WHERE a.event.eventId = :eid AND a.member.memberId = :mid",
+                Attendance.class
+            );
+            query.setParameter("eid", eventId);
+            query.setParameter("mid", memberId);
+            return query.uniqueResultOptional();
+        } catch (Exception e) {
+            logger.error("Lỗi khi tìm điểm danh theo sự kiện & thành viên: {}", e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Lấy điểm danh theo sự kiện.
      * @param eventId ID sự kiện
      * @return Danh sách Attendance

@@ -16,6 +16,7 @@ public class TaskDTO {
     private LocalDateTime createdDate;
     private String visibility;
     private Integer maxAssignees;
+    private Integer contributionPoints;
 
     // Tên người dùng liên quan
     private String assigneeName;
@@ -38,7 +39,7 @@ public class TaskDTO {
      */
     public TaskDTO(Integer taskId, String title, String description, LocalDateTime deadline,
                    String priority, String status, LocalDateTime createdDate,
-                   String visibility, Integer maxAssignees,
+                   String visibility, Integer maxAssignees, Integer contributionPoints,
                    String assigneeName, String assignerName, String eventName,
                    Integer assigneeId, Integer assignerId, Integer eventId,
                    java.util.List<Integer> assigneeIds, java.util.List<String> assigneeNames) {
@@ -51,6 +52,7 @@ public class TaskDTO {
         this.createdDate = createdDate;
         this.visibility = visibility;
         this.maxAssignees = maxAssignees;
+        this.contributionPoints = contributionPoints;
         this.assigneeName = assigneeName;
         this.assignerName = assignerName;
         this.eventName = eventName;
@@ -105,6 +107,11 @@ public class TaskDTO {
     public Integer getMaxAssignees() { return maxAssignees; }
     /** @param maxAssignees Số người tối đa mới. */
     public void setMaxAssignees(Integer maxAssignees) { this.maxAssignees = maxAssignees; }
+
+    /** @return Điểm đóng góp. */
+    public Integer getContributionPoints() { return contributionPoints; }
+    /** @param contributionPoints Điểm đóng góp mới. */
+    public void setContributionPoints(Integer contributionPoints) { this.contributionPoints = contributionPoints; }
 
     /** @return Tên người thực hiện. */
     public String getAssigneeName() { return assigneeName; }

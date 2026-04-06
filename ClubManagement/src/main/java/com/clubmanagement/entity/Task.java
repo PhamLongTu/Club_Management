@@ -66,6 +66,10 @@ public class Task {
     @Column(name = "max_assignees")
     private Integer maxAssignees = 1;
 
+    /** Điểm đóng góp cho nhiệm vụ */
+    @Column(name = "contribution_points")
+    private Integer contributionPoints = 0;
+
     /** Người giao nhiệm vụ (N-1 với Member) */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "assigner_id")
@@ -158,6 +162,11 @@ public class Task {
     public Integer getMaxAssignees()       { return maxAssignees; }
     /** @param v Số người tối đa mới. */
     public void setMaxAssignees(Integer v) { this.maxAssignees = v; }
+
+    /** @return Điểm đóng góp. */
+    public Integer getContributionPoints()       { return contributionPoints; }
+    /** @param v Điểm đóng góp mới. */
+    public void setContributionPoints(Integer v) { this.contributionPoints = v; }
 
     /** @return Người giao nhiệm vụ. */
     public Member getAssigner()            { return assigner; }

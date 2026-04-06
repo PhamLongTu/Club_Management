@@ -24,6 +24,9 @@ public class MemberDTO {
     private String  roleName;       // Lấy từ Role entity
     private Integer permissionLevel; // Cấp quyền để phân biệt Admin/Leader/Member
     private String  teamNames;      // Danh sách ban (dạng chuỗi)
+    private Integer drlPoints;
+    private Integer ctxhPoints;
+    private Integer contributionPoints;
 
     // ============ CONSTRUCTORS ============
     /** Constructor mặc định. */
@@ -118,6 +121,21 @@ public class MemberDTO {
     public String getTeamNames()              { return teamNames; }
     /** @param v Danh sách ban/nhóm mới. */
     public void setTeamNames(String v)        { this.teamNames = v; }
+
+    /** @return Điểm rèn luyện. */
+    public Integer getDrlPoints()             { return drlPoints; }
+    /** @param v Điểm rèn luyện mới. */
+    public void setDrlPoints(Integer v)       { this.drlPoints = v; }
+
+    /** @return Điểm công tác xã hội. */
+    public Integer getCtxhPoints()            { return ctxhPoints; }
+    /** @param v Điểm công tác xã hội mới. */
+    public void setCtxhPoints(Integer v)      { this.ctxhPoints = v; }
+
+    /** @return Điểm đóng góp. */
+    public Integer getContributionPoints()           { return contributionPoints; }
+    /** @param v Điểm đóng góp mới. */
+    public void setContributionPoints(Integer v)     { this.contributionPoints = v; }
 
     /** Kiểm tra có phải Admin không */
     public boolean isAdmin()  { return permissionLevel != null && permissionLevel >= 3; }

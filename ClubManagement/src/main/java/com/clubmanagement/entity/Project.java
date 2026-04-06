@@ -69,6 +69,10 @@ public class Project {
     @Column(name = "max_members")
     private Integer maxMembers = 0;
 
+    /** Điểm đóng góp cho dự án */
+    @Column(name = "contribution_points")
+    private Integer contributionPoints = 0;
+
     /** Quản lý dự án (N-1 với Member) */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "manager_id")
@@ -163,6 +167,11 @@ public class Project {
     public Integer getMaxMembers()         { return maxMembers; }
     /** @param v Số thành viên tối đa mới. */
     public void setMaxMembers(Integer v)   { this.maxMembers = v; }
+
+    /** @return Điểm đóng góp. */
+    public Integer getContributionPoints()       { return contributionPoints; }
+    /** @param v Điểm đóng góp mới. */
+    public void setContributionPoints(Integer v) { this.contributionPoints = v; }
 
     /** @return Quản lý dự án. */
     public Member getManager()             { return manager; }

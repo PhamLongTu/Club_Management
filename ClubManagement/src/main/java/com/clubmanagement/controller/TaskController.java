@@ -186,7 +186,7 @@ public class TaskController {
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
 
-        JPanel panel = new JPanel(new GridLayout(9, 2, 8, 12));
+        JPanel panel = new JPanel(new GridLayout(10, 2, 8, 12));
         panel.setBackground(Color.WHITE);
         panel.setBorder(new EmptyBorder(20, 20, 20, 20));
         Font f = new Font("Segoe UI", Font.PLAIN, 13);
@@ -220,6 +220,12 @@ public class TaskController {
         JSpinner spMax = new JSpinner(new SpinnerNumberModel(1, 1, 50, 1));
         spMax.setFont(f);
         if (task != null && task.getMaxAssignees() != null) spMax.setValue(task.getMaxAssignees());
+
+        JSpinner spContribution = new JSpinner(new SpinnerNumberModel(0, 0, 200, 1));
+        spContribution.setFont(f);
+        if (task != null && task.getContributionPoints() != null) {
+            spContribution.setValue(task.getContributionPoints());
+        }
 
         List<MemberDTO> allMembers = memberService.getAllMembers();
         JList<MemberDTO> listAssignees = new JList<>(allMembers.toArray(MemberDTO[]::new));
@@ -258,6 +264,7 @@ public class TaskController {
             cbPriority.setEnabled(false);
             cbVisibility.setEnabled(false);
             spMax.setEnabled(false);
+            spContribution.setEnabled(false);
             listAssignees.setEnabled(false);
             cbEvent.setEnabled(false);
         }
@@ -272,6 +279,7 @@ public class TaskController {
         panel.add(new JLabel("Trạng thái:"));     panel.add(cbStatus);
         panel.add(new JLabel("Hiển thị:"));       panel.add(cbVisibility);
         panel.add(new JLabel("Số người tối đa:")); panel.add(spMax);
+        panel.add(new JLabel("Điểm đóng góp:")); panel.add(spContribution);
         panel.add(new JLabel("Người thực hiện:")); panel.add(assigneeScroll);
         
         JPanel comboPanel = new JPanel(new GridLayout(1, 2, 4, 0));
@@ -297,6 +305,7 @@ public class TaskController {
                 String status = (String) cbStatus.getSelectedItem();
                 String visibility = (String) cbVisibility.getSelectedItem();
                 Integer maxAssignees = (Integer) spMax.getValue();
+                Integer contributionPoints = (Integer) spContribution.getValue();
                 
                 java.util.List<Integer> assigneeIds = new java.util.ArrayList<>();
                 for (MemberDTO m : listAssignees.getSelectedValuesList()) {
@@ -313,12 +322,13 @@ public class TaskController {
 
                 if (task == null) {
                     taskService.createTask(taskTitle, desc, deadline, prio, visibility, maxAssignees,
-                        currentUser.getMemberId(), evtId, assigneeIds);
+                        currentUser.getMemberId(), evtId, assigneeIds, contributionPoints);
                     JOptionPane.showMessageDialog(dialog, "Đã giao việc thành công!");
                 } else {
                     taskService.updateTask(task.getTaskId(), taskTitle, desc, deadline, prio, status,
                         visibility, maxAssignees, evtId,
-                        currentUser.isLeader() ? assigneeIds : null);
+                        currentUser.isLeader() ? assigneeIds : null,
+                        currentUser.isLeader() ? contributionPoints : null);
                     JOptionPane.showMessageDialog(dialog, "Đã cập nhật Nhiệm vụ!");
                 }
                 dialog.dispose();
@@ -438,6 +448,7 @@ public class TaskController {
         content.add(UiFormUtil.makeInfoLabel("Hạn chót: " + deadlineText));
         content.add(UiFormUtil.makeInfoLabel("Hiển thị: " + task.getVisibility()));
         content.add(UiFormUtil.makeInfoLabel("Số người tối đa: " + task.getMaxAssignees()));
+        content.add(UiFormUtil.makeInfoLabel("Điểm đóng góp: " + safeInt(task.getContributionPoints())));
         content.add(UiFormUtil.makeInfoLabel("Người thực hiện: " + assigneesText));
         content.add(Box.createVerticalStrut(8));
         content.add(new JScrollPane(desc));
@@ -538,6 +549,10 @@ public class TaskController {
                 JOptionPane.showMessageDialog(dialog, "Lỗi: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private int safeInt(Integer value) {
+        return value != null ? value : 0;
     }
 
 }

@@ -354,7 +354,7 @@ public class MemberService {
         }
         Integer permValue = member.getRole() != null ? member.getRole().getPermissionLevel() : null;
         int permissionLevel = permValue != null ? permValue : 1;
-        return new MemberDTO(
+        MemberDTO dto = new MemberDTO(
             member.getMemberId(),
             member.getFullName(),
             member.getStudentId(),
@@ -369,6 +369,42 @@ public class MemberService {
             permissionLevel,
             teamNames
         );
+        dto.setDrlPoints(member.getDrlPoints());
+        dto.setCtxhPoints(member.getCtxhPoints());
+        dto.setContributionPoints(member.getContributionPoints());
+        return dto;
+    }
+
+    /**
+     * Điều chỉnh điểm của thành viên theo delta.
+     * @param memberId ID thành viên
+     * @param drlDelta điểm rèn luyện cộng/trừ
+     * @param ctxhDelta điểm CTXH cộng/trừ
+     * @param contributionDelta điểm đóng góp cộng/trừ
+     */
+    public void adjustPoints(Integer memberId, int drlDelta, int ctxhDelta, int contributionDelta) {
+        if (memberId == null) return;
+        try (Session session = HibernateUtil.openSession()) {
+            org.hibernate.Transaction tx = session.beginTransaction();
+            Member member = session.get(Member.class, memberId);
+            if (member == null) {
+                tx.rollback();
+                return;
+            }
+            member.setDrlPoints(safeAdjust(member.getDrlPoints(), drlDelta));
+            member.setCtxhPoints(safeAdjust(member.getCtxhPoints(), ctxhDelta));
+            member.setContributionPoints(safeAdjust(member.getContributionPoints(), contributionDelta));
+            session.merge(member);
+            tx.commit();
+        } catch (Exception e) {
+            logger.error("Lỗi cập nhật điểm cho thành viên {}: {}", memberId, e.getMessage());
+        }
+    }
+
+    private Integer safeAdjust(Integer current, int delta) {
+        int base = current != null ? current : 0;
+        int updated = base + delta;
+        return Math.max(0, updated);
     }
 
     /**

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.clubmanagement.dao.EventDAO;
 import com.clubmanagement.dto.EventDTO;
+import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.entity.Event;
 import com.clubmanagement.entity.Member;
 import com.clubmanagement.util.HibernateUtil;
@@ -46,7 +47,7 @@ public class EventService {
                                 LocalDateTime startDate, LocalDateTime endDate,
                                 LocalDateTime registrationDeadline, String location,
                                 BigDecimal budget, Integer maxParticipants,
-                                Integer createdById) {
+                                Integer createdById, String pointType, Integer pointValue) {
         // --- Validate ---
         if (eventName == null || eventName.isBlank())
             throw new IllegalArgumentException("Tên sự kiện không được để trống!");
@@ -60,6 +61,8 @@ public class EventService {
             throw new IllegalArgumentException("Ngân sách không được âm!");
         if (maxParticipants != null && maxParticipants <= 0)
             throw new IllegalArgumentException("Số lượng tối đa phải lớn hơn 0!");
+        if (pointValue != null && pointValue < 0)
+            throw new IllegalArgumentException("Điểm sự kiện không được âm!");
 
         // --- Tìm người tạo ---
         Member creator = findMemberById(createdById);
@@ -71,6 +74,13 @@ public class EventService {
         );
         if (maxParticipants != null) event.setMaxParticipants(maxParticipants);
         event.setRegistrationDeadline(registrationDeadline);
+        String normalizedPointType = normalizePointType(pointType);
+        event.setPointType(normalizedPointType);
+        if ("None".equalsIgnoreCase(normalizedPointType)) {
+            event.setPointValue(0);
+        } else {
+            event.setPointValue(pointValue != null ? pointValue : 0);
+        }
 
         Event saved = eventDAO.save(event);
         return toDTO(saved);
@@ -143,6 +153,38 @@ public class EventService {
     }
 
     /**
+     * Lấy danh sách thành viên đã đăng ký sự kiện.
+     * @param eventId ID sự kiện
+     * @return List<MemberDTO>
+     */
+    public List<MemberDTO> getRegisteredMembersForEvent(Integer eventId) {
+        if (eventId == null) return java.util.Collections.emptyList();
+        try (Session session = HibernateUtil.openSession()) {
+            List<Object[]> rows = session.createQuery(
+                "SELECT m.memberId, m.fullName, m.studentId, m.email " +
+                "FROM Participation p JOIN p.member m " +
+                "WHERE p.event.eventId = :eid " +
+                "ORDER BY m.fullName",
+                Object[].class
+            ).setParameter("eid", eventId).getResultList();
+
+            List<MemberDTO> results = new java.util.ArrayList<>();
+            for (Object[] row : rows) {
+                MemberDTO dto = new MemberDTO();
+                dto.setMemberId((Integer) row[0]);
+                dto.setFullName((String) row[1]);
+                dto.setStudentId((String) row[2]);
+                dto.setEmail((String) row[3]);
+                results.add(dto);
+            }
+            return results;
+        } catch (Exception e) {
+            logger.error("Lỗi khi lấy danh sách đăng ký sự kiện: {}", e.getMessage());
+            return java.util.Collections.emptyList();
+        }
+    }
+
+    /**
      * Cập nhật thông tin sự kiện.
      *
      * @param eventId    ID sự kiện
@@ -158,7 +200,8 @@ public class EventService {
     public EventDTO updateEvent(Integer eventId, String eventName, String description,
                                 LocalDateTime startDate, LocalDateTime endDate,
                                 LocalDateTime registrationDeadline, String location,
-                                BigDecimal budget, String status) {
+                                BigDecimal budget, String status,
+                                String pointType, Integer pointValue) {
         Event event = eventDAO.findById(eventId)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sự kiện ID: " + eventId));
 
@@ -168,6 +211,8 @@ public class EventService {
             throw new IllegalArgumentException("Ngày kết thúc phải sau ngày bắt đầu!");
         if (registrationDeadline != null && startDate != null && registrationDeadline.isAfter(startDate))
             throw new IllegalArgumentException("Hạn đăng ký phải trước ngày bắt đầu!");
+        if (pointValue != null && pointValue < 0)
+            throw new IllegalArgumentException("Điểm sự kiện không được âm!");
 
         event.setEventName(eventName.trim());
         event.setDescription(description);
@@ -177,6 +222,13 @@ public class EventService {
         event.setLocation(location);
         event.setBudget(budget);
         event.setStatus(status);
+        String normalizedPointType = normalizePointType(pointType);
+        event.setPointType(normalizedPointType);
+        if ("None".equalsIgnoreCase(normalizedPointType)) {
+            event.setPointValue(0);
+        } else {
+            event.setPointValue(pointValue != null ? pointValue : event.getPointValue());
+        }
 
         return toDTO(eventDAO.update(event));
     }
@@ -221,8 +273,18 @@ public class EventService {
             event.getMaxParticipants(),
             event.getRegistrationDeadline(),
             event.getCreatedBy() != null ? event.getCreatedBy().getFullName() : "N/A",
-            regCount
+            regCount,
+            event.getPointType(),
+            event.getPointValue()
         );
+    }
+
+    private String normalizePointType(String pointType) {
+        if (pointType == null || pointType.isBlank()) return "None";
+        String normalized = pointType.trim();
+        if ("DRL".equalsIgnoreCase(normalized)) return "DRL";
+        if ("CTXH".equalsIgnoreCase(normalized)) return "CTXH";
+        return "None";
     }
 
     /** Tìm Member entity theo ID. */
