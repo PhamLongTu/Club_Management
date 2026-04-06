@@ -6,6 +6,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,12 +21,15 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.entity.Role;
@@ -334,7 +343,7 @@ public class MemberController {
 
         List<com.clubmanagement.dto.TaskDTO> tasks = taskService.getTasksForUser(selectedId);
         List<com.clubmanagement.dto.ProjectDTO> projects = projectService.getProjectsForUser(selectedId);
-        List<com.clubmanagement.dto.EventDTO> events = eventService.getEventsForMember(selectedId);
+        List<com.clubmanagement.dto.EventDTO> events = eventService.getAttendedEventsForMember(selectedId);
 
         JDialog dialog = new JDialog((Frame) null, "Chi tiết thành viên", true);
         dialog.setSize(760, 560);
@@ -412,6 +421,11 @@ public class MemberController {
         content.add(new JScrollPane(eventJList));
 
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        if (currentUser.isLeader()) {
+            JButton btnPoints = new JButton("Xem bảng điểm");
+            btnPoints.addActionListener(e -> showPointsPreview(member, events, tasks, projects));
+            footer.add(btnPoints);
+        }
         JButton btnClose = new JButton("Đóng");
         btnClose.addActionListener(e -> dialog.dispose());
         footer.add(btnClose);
@@ -420,6 +434,246 @@ public class MemberController {
         dialog.add(new JScrollPane(content), BorderLayout.CENTER);
         dialog.add(footer, BorderLayout.SOUTH);
         dialog.setVisible(true);
+    }
+
+    /**
+     * Xuất bảng điểm của thành viên ra file.
+     */
+    private void showPointsPreview(MemberDTO member,
+                                   List<com.clubmanagement.dto.EventDTO> events,
+                                   List<com.clubmanagement.dto.TaskDTO> tasks,
+                                   List<com.clubmanagement.dto.ProjectDTO> projects) {
+        if (member == null) return;
+        JDialog dialog = new JDialog((Frame) null, "Bảng điểm - " + member.getFullName(), true);
+        dialog.setSize(760, 560);
+        dialog.setLocationRelativeTo(null);
+        dialog.setLayout(new BorderLayout());
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBorder(new javax.swing.border.EmptyBorder(16, 20, 16, 20));
+        JLabel title = new JLabel("Bảng điểm hoạt động");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        JLabel meta = new JLabel(member.getFullName() + " | " + (member.getStudentId() != null ? member.getStudentId() : ""));
+        meta.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        meta.setForeground(new Color(100, 116, 139));
+
+        JPanel headerText = new JPanel();
+        headerText.setLayout(new BoxLayout(headerText, BoxLayout.Y_AXIS));
+        headerText.setOpaque(false);
+        headerText.add(title);
+        headerText.add(Box.createVerticalStrut(4));
+        headerText.add(meta);
+        header.add(headerText, BorderLayout.CENTER);
+
+        DefaultTableModel model = new DefaultTableModel(new String[]{"Hoạt động", "Điểm số"}, 0) {
+            @Override public boolean isCellEditable(int row, int col) { return false; }
+        };
+
+        int eventCount = events != null ? events.size() : 0;
+        int taskCount = tasks != null ? tasks.size() : 0;
+        int projectCount = projects != null ? projects.size() : 0;
+
+        int drlTotal = 0;
+        int ctxhTotal = 0;
+        int contributionTotal = 0;
+
+        if (events != null) {
+            for (var e : events) {
+                String type = e.getPointType() != null ? e.getPointType() : "None";
+                Integer pointValue = e.getPointValue();
+                int value = pointValue != null ? pointValue : 0;
+                String pointsText = buildEventPointText(type, value);
+                if ("DRL".equalsIgnoreCase(type)) drlTotal += value;
+                if ("CTXH".equalsIgnoreCase(type)) ctxhTotal += value;
+                model.addRow(new Object[]{"Sự kiện: " + safeText(e.getEventName()), pointsText});
+            }
+        }
+
+        if (tasks != null) {
+            for (var t : tasks) {
+                int value = safeInt(t.getContributionPoints());
+                contributionTotal += value;
+                model.addRow(new Object[]{"Nhiệm vụ: " + safeText(t.getTitle()), "Đóng góp +" + value});
+            }
+        }
+
+        if (projects != null) {
+            for (var p : projects) {
+                int value = safeInt(p.getContributionPoints());
+                contributionTotal += value;
+                model.addRow(new Object[]{"Dự án: " + safeText(p.getProjectName()), "Đóng góp +" + value});
+            }
+        }
+
+        String summaryActivity = "Tổng hoạt động: " + (eventCount + taskCount + projectCount)
+            + " (SK: " + eventCount + ", Nhiệm vụ: " + taskCount + ", Dự án: " + projectCount + ")";
+        String summaryPoints = "DRL=" + drlTotal + " | CTXH=" + ctxhTotal + " | Đóng góp=" + contributionTotal;
+        model.addRow(new Object[]{summaryActivity, summaryPoints});
+
+        javax.swing.JTable table = new javax.swing.JTable(model);
+        table.setRowHeight(32);
+        table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(226, 232, 240), 1));
+
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnExport = new JButton("Xuất file");
+        btnExport.addActionListener(e -> exportPointsToFile(member, events, tasks, projects));
+        JButton btnClose = new JButton("Đóng");
+        btnClose.addActionListener(e -> dialog.dispose());
+        footer.add(btnExport);
+        footer.add(btnClose);
+
+        dialog.add(header, BorderLayout.NORTH);
+        dialog.add(scrollPane, BorderLayout.CENTER);
+        dialog.add(footer, BorderLayout.SOUTH);
+        dialog.setVisible(true);
+    }
+
+    private void exportPointsToFile(MemberDTO member,
+                                    List<com.clubmanagement.dto.EventDTO> events,
+                                    List<com.clubmanagement.dto.TaskDTO> tasks,
+                                    List<com.clubmanagement.dto.ProjectDTO> projects) {
+        if (!currentUser.isLeader()) {
+            JOptionPane.showMessageDialog(null, "Bạn không có quyền xuất điểm!",
+                "Không đủ quyền", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String defaultName = buildDefaultFileName(member);
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Xuất bảng điểm thành viên");
+        chooser.setSelectedFile(new File(defaultName));
+        chooser.setFileFilter(new FileNameExtensionFilter("Text Files (*.txt)", "txt"));
+
+        int result = chooser.showSaveDialog(view.getPanel());
+        if (result != JFileChooser.APPROVE_OPTION) return;
+
+        Path filePath = chooser.getSelectedFile().toPath();
+        if (!filePath.toString().toLowerCase().endsWith(".txt")) {
+            filePath = Path.of(filePath.toString() + ".txt");
+        }
+
+        try {
+            String content = buildPointsReport(member, events, tasks, projects);
+            Files.writeString(filePath, content, StandardCharsets.UTF_8);
+            JOptionPane.showMessageDialog(null, "Đã xuất điểm ra file:\n" + filePath,
+                "Thành công", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Lỗi xuất file: " + ex.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String buildDefaultFileName(MemberDTO member) {
+        String studentId = member.getStudentId() != null ? member.getStudentId().trim() : "member" + member.getMemberId();
+        String date = java.time.LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+        return "points_" + studentId + "_" + date + ".txt";
+    }
+
+    private String buildPointsReport(MemberDTO member,
+                                     List<com.clubmanagement.dto.EventDTO> events,
+                                     List<com.clubmanagement.dto.TaskDTO> tasks,
+                                     List<com.clubmanagement.dto.ProjectDTO> projects) {
+        String nl = System.lineSeparator();
+        String line = "-".repeat(90) + nl;
+
+        int eventCount = events != null ? events.size() : 0;
+        int taskCount = tasks != null ? tasks.size() : 0;
+        int projectCount = projects != null ? projects.size() : 0;
+
+        int drlTotal = 0;
+        int ctxhTotal = 0;
+        int contributionTotal = 0;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("CLB Manager - Bang Tong Ket Diem").append(nl);
+        sb.append("Ngay xuat: ")
+            .append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+            .append(nl);
+        sb.append(line);
+        sb.append("Ho va ten: ").append(member.getFullName()).append(nl);
+        sb.append("Ma SV: ").append(member.getStudentId() != null ? member.getStudentId() : "").append(nl);
+        sb.append("Email: ").append(member.getEmail() != null ? member.getEmail() : "").append(nl);
+        sb.append("SDT: ").append(member.getPhone() != null ? member.getPhone() : "").append(nl);
+        sb.append("Vai tro: ").append(member.getRoleName() != null ? member.getRoleName() : "").append(nl);
+        sb.append("Trang thai: ").append(member.getStatus() != null ? member.getStatus() : "").append(nl);
+        sb.append(line);
+        sb.append("Bang hoat dong:").append(nl);
+        sb.append(String.format("%-60s | %-20s%s", "Hoat dong", "Diem so", nl));
+        sb.append(line);
+
+        if (events != null) {
+            for (var e : events) {
+                String type = e.getPointType() != null ? e.getPointType() : "None";
+                Integer pointValue = e.getPointValue();
+                int value = pointValue != null ? pointValue : 0;
+                String pointsText = buildEventPointText(type, value);
+                if ("DRL".equalsIgnoreCase(type)) drlTotal += value;
+                if ("CTXH".equalsIgnoreCase(type)) ctxhTotal += value;
+                String activity = "Su kien: " + safeText(e.getEventName());
+                sb.append(formatRow(activity, pointsText)).append(nl);
+            }
+        }
+
+        if (tasks != null) {
+            for (var t : tasks) {
+                int value = safeInt(t.getContributionPoints());
+                contributionTotal += value;
+                String activity = "Nhiem vu: " + safeText(t.getTitle());
+                sb.append(formatRow(activity, "Dong gop +" + value)).append(nl);
+            }
+        }
+
+        if (projects != null) {
+            for (var p : projects) {
+                int value = safeInt(p.getContributionPoints());
+                contributionTotal += value;
+                String activity = "Du an: " + safeText(p.getProjectName());
+                sb.append(formatRow(activity, "Dong gop +" + value)).append(nl);
+            }
+        }
+
+        sb.append(line);
+        sb.append("Tong hoat dong: ")
+            .append(eventCount + taskCount + projectCount)
+            .append(" (Su kien: ").append(eventCount)
+            .append(", Nhiem vu: ").append(taskCount)
+            .append(", Du an: ").append(projectCount).append(")").append(nl);
+        sb.append("Tong diem: DRL=").append(drlTotal)
+            .append(" | CTXH=").append(ctxhTotal)
+            .append(" | Dong gop=").append(contributionTotal)
+            .append(nl);
+        sb.append(line);
+        return sb.toString();
+    }
+
+    private String buildEventPointText(String type, int value) {
+        if ("DRL".equalsIgnoreCase(type)) return "DRL +" + value;
+        if ("CTXH".equalsIgnoreCase(type)) return "CTXH +" + value;
+        return "Khong ap dung (0)";
+    }
+
+    private String formatRow(String activity, String points) {
+        String activityText = trimToLength(activity, 60);
+        return String.format("%-60s | %-20s", activityText, points);
+    }
+
+    private String trimToLength(String value, int max) {
+        if (value == null) return "";
+        if (value.length() <= max) return value;
+        return value.substring(0, Math.max(0, max - 3)) + "...";
+    }
+
+    private String safeText(String value) {
+        return value != null ? value : "";
+    }
+
+    private int safeInt(Integer value) {
+        return value != null ? value : 0;
     }
 
 }

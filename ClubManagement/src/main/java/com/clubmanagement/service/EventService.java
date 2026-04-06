@@ -153,6 +153,29 @@ public class EventService {
     }
 
     /**
+     * Lấy danh sách sự kiện đã điểm danh (không tính Absent).
+     * @param memberId ID thành viên
+     * @return List<EventDTO>
+     */
+    public List<EventDTO> getAttendedEventsForMember(Integer memberId) {
+        if (memberId == null) return java.util.Collections.emptyList();
+        try (Session session = HibernateUtil.openSession()) {
+            List<Event> events = session.createQuery(
+                "SELECT DISTINCT e FROM Attendance a " +
+                "JOIN a.event e " +
+                "LEFT JOIN FETCH e.createdBy " +
+                "LEFT JOIN FETCH e.participations " +
+                "WHERE a.member.memberId = :mid AND a.status <> 'Absent'",
+                Event.class
+            ).setParameter("mid", memberId).getResultList();
+            return events.stream().map(this::toDTO).collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Lỗi khi lấy sự kiện đã điểm danh: {}", e.getMessage());
+            return java.util.Collections.emptyList();
+        }
+    }
+
+    /**
      * Lấy danh sách thành viên đã đăng ký sự kiện.
      * @param eventId ID sự kiện
      * @return List<MemberDTO>
