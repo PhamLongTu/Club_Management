@@ -1,125 +1,433 @@
-2026-04-02 21:39:37.601 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
-2026-04-02 21:39:37.611 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
-2026-04-02 21:39:37.617 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
-2026-04-02 21:39:38.153 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
-2026-04-02 21:39:38.582 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-02 21:39:40.385 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
-2026-04-02 21:39:40.385 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
-2026-04-02 21:39:40.390 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
-2026-04-02 21:39:40.875 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
-2026-04-02 21:39:40.877 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
-2026-04-02 21:39:53.413 [SwingWorker-pool-2-thread-1] WARN  c.clubmanagement.service.MemberService - Tài khoản an.nguyen@email.com đang bị khóa/vô hiệu
-2026-04-02 21:40:03.369 [SwingWorker-pool-2-thread-2] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
-2026-04-02 21:40:32.077 [SwingWorker-pool-2-thread-7] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn D [Member]
-2026-04-02 21:47:35.465 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
-2026-04-02 21:47:35.467 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
-2026-04-02 21:47:35.469 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
-2026-04-02 21:47:35.944 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
-2026-04-02 21:47:36.198 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-02 21:47:37.162 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
-2026-04-02 21:47:37.164 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
-2026-04-02 21:47:37.172 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
-2026-04-02 21:47:37.175 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
-2026-04-02 21:47:38.012 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
-2026-04-02 21:47:38.012 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
-2026-04-02 21:47:38.017 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
-2026-04-02 21:47:38.390 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
-2026-04-02 21:47:38.392 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
-2026-04-02 21:47:49.034 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
-2026-04-02 21:48:35.984 [SwingWorker-pool-1-thread-5] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn D [Member]
-2026-04-02 21:52:00.451 [SwingWorker-pool-1-thread-7] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
-2026-04-02 21:54:07.440 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
-2026-04-02 21:54:07.443 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
-2026-04-02 21:54:07.460 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
-2026-04-02 21:54:07.461 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
-2026-04-02 21:55:50.476 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
-2026-04-02 21:55:50.478 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
-2026-04-02 21:55:50.478 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
-2026-04-02 21:55:51.008 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
-2026-04-02 21:55:51.306 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-02 21:55:52.784 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
-2026-04-02 21:55:52.785 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
-2026-04-02 21:55:52.789 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
-2026-04-02 21:55:53.260 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
-2026-04-02 21:55:53.260 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
-2026-04-02 21:56:12.836 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
-2026-04-02 21:56:42.850 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
-2026-04-02 21:56:42.850 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
-2026-04-02 21:56:42.858 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
-2026-04-02 21:56:42.858 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
-2026-04-02 22:00:51.810 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
-2026-04-02 22:00:51.812 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
-2026-04-02 22:00:51.813 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
-2026-04-02 22:00:52.253 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
-2026-04-02 22:00:52.504 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-02 22:00:53.817 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
-2026-04-02 22:00:53.817 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
-2026-04-02 22:00:53.820 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
-2026-04-02 22:00:54.122 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
-2026-04-02 22:00:54.122 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
-2026-04-02 22:01:00.262 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
-2026-04-02 22:01:18.933 [AWT-EventQueue-0] INFO  com.clubmanagement.dao.ProjectDAO - Đã thêm thành viên ID: 1 vào dự án ID: 2
-2026-04-02 22:02:13.519 [AWT-EventQueue-0] INFO  com.clubmanagement.dao.ProjectDAO - Đã thêm thành viên ID: 7 vào dự án ID: 1
-2026-04-02 22:25:09.471 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
-2026-04-02 22:25:09.473 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
-2026-04-02 22:25:09.494 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
-2026-04-02 22:25:09.498 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
-2026-04-02 22:25:19.690 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
-2026-04-02 22:25:19.698 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
-2026-04-02 22:25:19.698 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
-2026-04-02 22:25:20.272 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
-2026-04-02 22:25:20.546 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-02 22:25:21.984 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
-2026-04-02 22:25:21.984 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
-2026-04-02 22:25:21.985 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
-2026-04-02 22:25:22.403 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
-2026-04-02 22:25:22.405 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
-2026-04-02 22:25:28.257 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
-2026-04-02 22:39:53.101 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
-2026-04-02 22:39:53.102 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
-2026-04-02 22:39:53.113 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
-2026-04-02 22:39:53.113 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
-2026-04-02 22:51:21.500 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
-2026-04-02 22:51:21.502 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
-2026-04-02 22:51:21.503 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
-2026-04-02 22:51:21.945 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
-2026-04-02 22:51:22.241 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-02 22:51:23.697 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
-2026-04-02 22:51:23.697 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
-2026-04-02 22:51:23.699 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
-2026-04-02 22:51:24.022 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
-2026-04-02 22:51:24.022 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
-2026-04-02 22:51:25.474 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
-2026-04-02 22:51:25.475 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
-2026-04-02 22:51:25.488 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
-2026-04-02 22:51:25.490 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
-2026-04-02 22:53:58.997 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
-2026-04-02 22:53:59.000 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
-2026-04-02 22:53:59.000 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
-2026-04-02 22:53:59.440 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
-2026-04-02 22:53:59.693 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-02 22:54:01.033 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
-2026-04-02 22:54:01.033 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
-2026-04-02 22:54:01.036 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
-2026-04-02 22:54:01.336 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
-2026-04-02 22:54:01.336 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
-2026-04-02 22:54:16.468 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
-2026-04-02 22:54:40.002 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
-2026-04-02 22:54:40.002 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
-2026-04-02 22:54:40.013 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
-2026-04-02 22:54:40.015 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
-2026-04-02 22:54:52.777 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
-2026-04-02 22:54:52.779 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
-2026-04-02 22:54:52.780 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
-2026-04-02 22:54:53.258 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
-2026-04-02 22:54:53.554 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-04-02 22:54:55.011 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
-2026-04-02 22:54:55.012 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
-2026-04-02 22:54:55.015 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
-2026-04-02 22:54:55.343 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
-2026-04-02 22:54:55.344 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
-2026-04-02 22:54:59.640 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
-2026-04-02 22:57:52.194 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
-2026-04-02 22:57:52.194 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
-2026-04-02 22:57:52.203 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
-2026-04-02 22:57:52.203 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-05 20:40:54.669 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-05 20:40:54.675 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-05 20:40:54.679 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-05 20:40:55.941 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-05 20:40:56.361 [main] WARN  o.h.e.j.e.i.JdbcEnvironmentInitiator - HHH000342: Could not obtain connection to query metadata
+java.lang.IllegalStateException: Cannot get a connection as the driver manager is not properly initialized
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:259)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:428)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:276)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.internal.JdbcServicesImpl.configure(JdbcServicesImpl.java:52)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.convertSqlException(BasicConnectionCreator.java:132)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:43)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:499)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:372)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:550)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:102)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:82)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:395)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:262)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build(MetadataBuildingProcess.java:129)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:449)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:101)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:910)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:960)
+	at com.clubmanagement.util.HibernateUtil.<clinit>(HibernateUtil.java:32)
+	at com.clubmanagement.MainApp.main(MainApp.java:93)
+2026-04-05 20:40:56.393 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 20:40:56.422 [main] WARN  o.h.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1045, SQLState: 28000
+2026-04-05 20:40:56.422 [main] ERROR o.h.engine.jdbc.spi.SqlExceptionHelper - Access denied for user 'root'@'localhost' (using password: YES)
+2026-04-05 20:40:56.424 [main] ERROR com.clubmanagement.util.HibernateUtil - Không thể khởi tạo Hibernate SessionFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build(MetadataBuildingProcess.java:129)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:449)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:101)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:910)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:960)
+	at com.clubmanagement.util.HibernateUtil.<clinit>(HibernateUtil.java:32)
+	at com.clubmanagement.MainApp.main(MainApp.java:93)
+Caused by: org.hibernate.exception.GenericJDBCException: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:63)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.convertSqlException(BasicConnectionCreator.java:134)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:43)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:499)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:372)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:550)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:102)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:82)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:395)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:262)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	... 13 common frames omitted
+Caused by: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:815)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:438)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:241)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:189)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:40)
+	... 28 common frames omitted
+2026-04-05 20:40:56.445 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-05 20:41:12.049 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-05 20:41:12.052 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-05 20:41:12.054 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-05 20:42:02.105 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-05 20:42:02.131 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-05 20:42:02.135 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-05 20:42:03.271 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-05 20:42:03.689 [main] WARN  o.h.e.j.e.i.JdbcEnvironmentInitiator - HHH000342: Could not obtain connection to query metadata
+java.lang.IllegalStateException: Cannot get a connection as the driver manager is not properly initialized
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:259)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:428)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:276)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.internal.JdbcServicesImpl.configure(JdbcServicesImpl.java:52)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.convertSqlException(BasicConnectionCreator.java:132)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:43)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:499)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:372)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:550)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:102)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:82)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:395)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:262)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build(MetadataBuildingProcess.java:129)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:449)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:101)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:910)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:960)
+	at com.clubmanagement.util.HibernateUtil.<clinit>(HibernateUtil.java:32)
+	at com.clubmanagement.MainApp.main(MainApp.java:93)
+2026-04-05 20:42:03.728 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 20:42:03.754 [main] WARN  o.h.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1045, SQLState: 28000
+2026-04-05 20:42:03.755 [main] ERROR o.h.engine.jdbc.spi.SqlExceptionHelper - Access denied for user 'root'@'localhost' (using password: YES)
+2026-04-05 20:42:03.760 [main] ERROR com.clubmanagement.util.HibernateUtil - Không thể khởi tạo Hibernate SessionFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build(MetadataBuildingProcess.java:129)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:449)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:101)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:910)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:960)
+	at com.clubmanagement.util.HibernateUtil.<clinit>(HibernateUtil.java:32)
+	at com.clubmanagement.MainApp.main(MainApp.java:93)
+Caused by: org.hibernate.exception.GenericJDBCException: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:63)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.convertSqlException(BasicConnectionCreator.java:134)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:43)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:499)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:372)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:550)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:102)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:82)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:395)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:262)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	... 13 common frames omitted
+Caused by: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:815)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:438)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:241)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:189)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:40)
+	... 28 common frames omitted
+2026-04-05 20:42:03.790 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-05 20:43:30.485 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-05 20:43:30.494 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-05 20:43:30.494 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-05 20:43:31.111 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-05 20:43:31.477 [main] WARN  o.h.e.j.e.i.JdbcEnvironmentInitiator - HHH000342: Could not obtain connection to query metadata
+java.lang.IllegalStateException: Cannot get a connection as the driver manager is not properly initialized
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:259)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:428)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:276)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.internal.JdbcServicesImpl.configure(JdbcServicesImpl.java:52)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.convertSqlException(BasicConnectionCreator.java:132)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:43)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:499)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:372)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:550)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:102)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:82)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:395)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:262)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build(MetadataBuildingProcess.java:129)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:449)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:101)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:910)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:960)
+	at com.clubmanagement.util.HibernateUtil.<clinit>(HibernateUtil.java:32)
+	at com.clubmanagement.MainApp.main(MainApp.java:93)
+2026-04-05 20:43:31.507 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 20:43:31.532 [main] WARN  o.h.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1045, SQLState: 28000
+2026-04-05 20:43:31.532 [main] ERROR o.h.engine.jdbc.spi.SqlExceptionHelper - Access denied for user 'root'@'localhost' (using password: YES)
+2026-04-05 20:43:31.537 [main] ERROR com.clubmanagement.util.HibernateUtil - Không thể khởi tạo Hibernate SessionFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build(MetadataBuildingProcess.java:129)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:449)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:101)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:910)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:960)
+	at com.clubmanagement.util.HibernateUtil.<clinit>(HibernateUtil.java:32)
+	at com.clubmanagement.MainApp.main(MainApp.java:93)
+Caused by: org.hibernate.exception.GenericJDBCException: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:63)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.convertSqlException(BasicConnectionCreator.java:134)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:43)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:499)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:372)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:550)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:102)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:82)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:395)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:262)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	... 13 common frames omitted
+Caused by: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:815)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:438)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:241)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:189)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:40)
+	... 28 common frames omitted
+2026-04-05 20:43:31.554 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-05 20:44:57.423 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-05 20:44:57.425 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-05 20:44:57.427 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-05 20:44:58.047 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-05 20:44:58.500 [main] WARN  o.h.e.j.e.i.JdbcEnvironmentInitiator - HHH000342: Could not obtain connection to query metadata
+java.lang.IllegalStateException: Cannot get a connection as the driver manager is not properly initialized
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.getConnection(DriverManagerConnectionProviderImpl.java:259)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:428)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:276)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.internal.JdbcServicesImpl.configure(JdbcServicesImpl.java:52)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.convertSqlException(BasicConnectionCreator.java:132)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:43)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:499)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:372)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:550)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:102)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:82)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:395)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:262)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build(MetadataBuildingProcess.java:129)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:449)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:101)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:910)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:960)
+	at com.clubmanagement.util.HibernateUtil.<clinit>(HibernateUtil.java:32)
+	at com.clubmanagement.MainApp.main(MainApp.java:93)
+2026-04-05 20:44:58.555 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 20:44:58.600 [main] WARN  o.h.engine.jdbc.spi.SqlExceptionHelper - SQL Error: 1045, SQLState: 28000
+2026-04-05 20:44:58.603 [main] ERROR o.h.engine.jdbc.spi.SqlExceptionHelper - Access denied for user 'root'@'localhost' (using password: YES)
+2026-04-05 20:44:58.610 [main] ERROR com.clubmanagement.util.HibernateUtil - Không thể khởi tạo Hibernate SessionFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:276)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:223)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:191)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:170)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.build(MetadataBuildingProcess.java:129)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:449)
+	at org.hibernate.boot.internal.MetadataBuilderImpl.build(MetadataBuilderImpl.java:101)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:910)
+	at org.hibernate.cfg.Configuration.buildSessionFactory(Configuration.java:960)
+	at com.clubmanagement.util.HibernateUtil.<clinit>(HibernateUtil.java:32)
+	at com.clubmanagement.MainApp.main(MainApp.java:93)
+Caused by: org.hibernate.exception.GenericJDBCException: Error calling Driver#connect [Access denied for user 'root'@'localhost' (using password: YES)] [null]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:63)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.convertSqlException(BasicConnectionCreator.java:134)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:43)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:499)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:372)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:550)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:102)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:82)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:136)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:395)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:262)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:107)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:130)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	... 13 common frames omitted
+Caused by: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:815)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:438)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:241)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:189)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:40)
+	... 28 common frames omitted
+2026-04-05 20:44:58.637 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-05 20:47:14.208 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-05 20:47:14.214 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-05 20:47:14.216 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-05 20:47:14.860 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-05 20:47:15.224 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 20:47:17.282 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-05 20:47:17.285 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-05 20:47:17.290 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-05 20:47:17.771 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-05 20:47:17.771 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-05 20:47:36.774 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyß╗àn V─ân A [Admin]
+2026-04-05 21:05:31.610 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-05 21:05:31.611 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
+2026-04-05 21:05:31.658 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
+2026-04-05 21:05:31.660 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!
+2026-04-05 21:05:41.085 [main] INFO  com.clubmanagement.MainApp - FlatLaf Look & Feel đã được cài đặt.
+2026-04-05 21:05:41.090 [main] INFO  com.clubmanagement.MainApp - Đang kết nối tới MySQL database...
+2026-04-05 21:05:41.092 [main] INFO  com.clubmanagement.util.HibernateUtil - Đang khởi tạo Hibernate SessionFactory...
+2026-04-05 21:05:41.799 [main] WARN  org.hibernate.orm.connections.pooling - HHH10001002: Using built-in connection pool (not intended for production use)
+2026-04-05 21:05:42.210 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 21:05:44.615 [main] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã khởi tạo thành công!
+2026-04-05 21:05:44.615 [main] INFO  com.clubmanagement.MainApp - Kết nối database thành công!
+2026-04-05 21:05:44.624 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đang khởi chạy giao diện ứng dụng...
+2026-04-05 21:05:45.110 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Ứng dụng Club Management System đã khởi động!
+2026-04-05 21:05:45.110 [AWT-EventQueue-0] INFO  com.clubmanagement.MainApp - Đăng nhập với: admin@email.com / admin123
+2026-04-05 21:06:25.341 [SwingWorker-pool-1-thread-1] INFO  c.clubmanagement.service.MemberService - Đăng nhập thành công: Nguyễn Văn A [Admin]
+2026-04-05 23:51:50.124 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Ứng dụng đang tắt, đóng Hibernate...
+2026-04-05 23:51:50.144 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Đang đóng Hibernate SessionFactory...
+2026-04-05 23:51:50.292 [ShutdownHook-Hibernate] INFO  com.clubmanagement.util.HibernateUtil - Hibernate SessionFactory đã đóng.
+2026-04-05 23:51:50.293 [ShutdownHook-Hibernate] INFO  com.clubmanagement.MainApp - Hibernate đã đóng. Tạm biệt!

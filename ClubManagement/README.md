@@ -51,6 +51,11 @@ Các CLB trường học quản lý thủ công bằng Excel gặp nhiều vấn
 - ✅ Quản lý sự kiện (CRUD + trạng thái màu sắc)
 - ✅ Quản lý dự án (CRUD + theo dõi tiến độ)
 - ✅ Quản lý cuộc họp (CRUD + lịch họp)
+- ✅ Quản lý phân công nhiệm vụ (Giao việc, theo dõi deadline)
+- ✅ Quản lý thông báo nội bộ (CRUD bảng tin)
+- ✅ Điểm danh tham gia sự kiện của thành viên
+- ✅ Quản lý tài liệu (Lưu trữ và chia sẻ file)
+- ✅ Quản lý ban/nhóm chuyên môn
 - ✅ Soft delete (không xóa vật lý)
 - ✅ Background thread (SwingWorker) - UI không bị đóng băng
 
@@ -192,7 +197,7 @@ java -jar target/ClubManagement-1.0-SNAPSHOT.jar
 
 ## 4. Cấu trúc dự án
 
-```
+```text
 ClubManagement/
 ├── pom.xml                          # Cấu hình Maven
 ├── database/
@@ -206,57 +211,38 @@ ClubManagement/
     └── java/com/clubmanagement/
         ├── MainApp.java             # ← ENTRY POINT
         ├── entity/                  # JPA Entity classes
-        │   ├── Role.java
-        │   ├── Member.java
-        │   ├── Team.java
-        │   ├── Event.java
-        │   ├── Participation.java
-        │   ├── Task.java
-        │   ├── Attendance.java
-        │   ├── Announcement.java
-        │   ├── Meeting.java
-        │   ├── Project.java
-        │   └── Document.java
+        │   ├── Announcement.java, Attendance.java, Document.java, Event.java,
+        │   ├── Meeting.java, Member.java, Participation.java, Project.java,
+        │   └── Role.java, Task.java, Team.java
         ├── dto/                     # Data Transfer Objects
-        │   ├── MemberDTO.java
-        │   ├── EventDTO.java
-        │   ├── MeetingDTO.java
-        │   └── ProjectDTO.java
+        │   └── (Tương ứng với các Entity)
         ├── dao/                     # Data Access Objects (DB queries)
-        │   ├── MemberDAO.java
-        │   ├── EventDAO.java
-        │   ├── MeetingDAO.java
-        │   ├── ProjectDAO.java
-        │   └── AnnouncementDAO.java
+        │   └── (Tương ứng với các chức năng)
         ├── service/                 # Business Logic
-        │   ├── MemberService.java
-        │   ├── EventService.java
-        │   ├── MeetingService.java
-        │   ├── ProjectService.java
-        │   └── AnnouncementService.java
+        │   └── (Tương ứng với các chức năng)
         ├── view/                    # Swing UI (View)
         │   ├── LoginView.java
         │   ├── DashboardView.java
-        │   ├── MemberView.java
+        │   ├── MemberView.java, MemberFormDialog.java
+        │   ├── TeamView.java
         │   ├── EventView.java
+        │   ├── TaskView.java
+        │   ├── AttendanceView.java
+        │   ├── AnnouncementView.java
         │   ├── MeetingView.java
         │   ├── ProjectView.java
-        │   └── MemberFormDialog.java
+        │   ├── DocumentView.java
+        │   └── MyInfoView.java
         ├── controller/              # MVC Controllers
-        │   ├── LoginController.java
-        │   ├── DashboardController.java
-        │   ├── MemberController.java
-        │   ├── EventController.java
-        │   ├── MeetingController.java
-        │   └── ProjectController.java
+        │   └── (Tương ứng với các chức năng quản lý)
         └── util/                    # Utilities
             ├── HibernateUtil.java
-            └── PasswordUtil.java
+            ├── ImageUtil.java
+            ├── PasswordUtil.java
+            └── UiFormUtil.java
 ```
 
 ---
-
-mvn exec:java "-Dexec.mainClass=com.clubmanagement.MainApp"
 
 ## 5. Tài khoản mẫu
 
