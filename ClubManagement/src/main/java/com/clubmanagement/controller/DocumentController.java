@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,7 +20,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import com.clubmanagement.dto.DocumentDTO;
@@ -31,6 +29,7 @@ import com.clubmanagement.dto.ProjectDTO;
 import com.clubmanagement.service.DocumentService;
 import com.clubmanagement.service.EventService;
 import com.clubmanagement.service.ProjectService;
+import com.clubmanagement.util.UiAsyncUtil;
 import com.clubmanagement.view.DocumentView;
 
 /**
@@ -88,25 +87,12 @@ public class DocumentController {
      * Tải danh sách tài liệu (chạy nền).
      */
     private void loadAllDocumentsInternal() {
-        view.setStatusMessage("Đang tải danh sách Tài liệu...");
-        SwingWorker<List<DocumentDTO>, Void> worker = new SwingWorker<>() {
-            @Override
-            protected List<DocumentDTO> doInBackground() {
-                return documentService.getAllDocuments();
-            }
-            @Override
-            protected void done() {
-                try {
-                    view.loadData(get());
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    view.setStatusMessage("Lỗi: " + ex.getMessage());
-                } catch (ExecutionException ex) {
-                    view.setStatusMessage("Lỗi: " + ex.getMessage());
-                }
-            }
-        };
-        worker.execute();
+        UiAsyncUtil.runWithStatus(
+            "Đang tải danh sách Tài liệu...",
+            view::setStatusMessage,
+            documentService::getAllDocuments,
+            view::loadData
+        );
     }
 
     /**

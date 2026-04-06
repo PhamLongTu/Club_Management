@@ -15,6 +15,7 @@ import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.entity.Event;
 import com.clubmanagement.entity.Member;
+import com.clubmanagement.util.EntityFinderUtil;
 import com.clubmanagement.util.HibernateUtil;
 
 /**
@@ -65,7 +66,7 @@ public class EventService {
             throw new IllegalArgumentException("Điểm sự kiện không được âm!");
 
         // --- Tìm người tạo ---
-        Member creator = findMemberById(createdById);
+        Member creator = EntityFinderUtil.findById(Member.class, createdById, logger, "Lỗi khi tìm Member");
 
         // --- Tạo entity ---
         Event event = new Event(
@@ -315,16 +316,7 @@ public class EventService {
         return "None";
     }
 
-    /** Tìm Member entity theo ID. */
-    private Member findMemberById(Integer memberId) {
-        if (memberId == null) return null;
-        try (Session session = HibernateUtil.openSession()) {
-            return session.get(Member.class, memberId);
-        } catch (Exception e) {
-            logger.error("Lỗi khi tìm Member ID={}: {}", memberId, e.getMessage());
-            return null;
-        }
-    }
+    // findMemberById đã được gom vào EntityFinderUtil.
 
     /**
      * Đăng ký thành viên tham gia sự kiện.

@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.hibernate.Session;
-
 import com.clubmanagement.dao.MeetingDAO;
 import com.clubmanagement.dto.MeetingDTO;
 import com.clubmanagement.entity.Meeting;
 import com.clubmanagement.entity.Member;
-import com.clubmanagement.util.HibernateUtil;
+import com.clubmanagement.util.EntityFinderUtil;
 
 /**
  * MeetingService - Tang nghiep vu cho Cuoc hop.
@@ -28,7 +26,7 @@ public class MeetingService {
                                     String location, String meetLink, Integer hostId) {
         validate(title, startTime, endTime, location, meetLink, hostId);
 
-        Member host = findMemberById(hostId);
+        Member host = EntityFinderUtil.findById(Member.class, hostId, null, null);
         if (host == null) {
             throw new IllegalArgumentException("Khong tim thay nguoi chu tri");
         }
@@ -70,7 +68,7 @@ public class MeetingService {
         Meeting meeting = meetingDAO.findById(meetingId)
             .orElseThrow(() -> new IllegalArgumentException("Khong tim thay cuoc hop"));
 
-        Member host = findMemberById(hostId);
+        Member host = EntityFinderUtil.findById(Member.class, hostId, null, null);
         if (host == null) {
             throw new IllegalArgumentException("Khong tim thay nguoi chu tri");
         }
@@ -136,10 +134,5 @@ public class MeetingService {
         );
     }
 
-    private Member findMemberById(Integer memberId) {
-        if (memberId == null) return null;
-        try (Session session = HibernateUtil.openSession()) {
-            return session.get(Member.class, memberId);
-        }
-    }
+    // findMemberById đã được gom vào EntityFinderUtil.
 }

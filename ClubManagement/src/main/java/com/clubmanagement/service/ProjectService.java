@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,7 @@ import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.ProjectDTO;
 import com.clubmanagement.entity.Member;
 import com.clubmanagement.entity.Project;
-import com.clubmanagement.util.HibernateUtil;
+import com.clubmanagement.util.EntityFinderUtil;
 
 /**
  * ProjectService - Tầng nghiệp vụ cho Dự án.
@@ -52,7 +51,7 @@ public class ProjectService {
         if (budget != null && budget.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("Ngân sách không được âm!");
 
-        Member manager = findMemberById(managerId);
+        Member manager = EntityFinderUtil.findById(Member.class, managerId, logger, "Lỗi khi tìm Member");
 
         Project project = new Project(
             projectName.trim(), description, objective,
@@ -165,7 +164,7 @@ public class ProjectService {
         project.setStatus(status);
         project.setVisibility(visibility != null ? visibility : project.getVisibility());
         project.setMaxMembers(maxMembers != null ? maxMembers : project.getMaxMembers());
-        project.setManager(findMemberById(managerId));
+        project.setManager(EntityFinderUtil.findById(Member.class, managerId, logger, "Lỗi khi tìm Member"));
         project.setContributionPoints(newPoints);
 
         Project updated = projectDAO.update(project);
@@ -336,14 +335,5 @@ public class ProjectService {
         return value != null ? value : 0;
     }
 
-    /** Tìm Member entity theo ID. */
-    private Member findMemberById(Integer memberId) {
-        if (memberId == null) return null;
-        try (Session session = HibernateUtil.openSession()) {
-            return session.get(Member.class, memberId);
-        } catch (Exception e) {
-            logger.error("Lỗi khi tìm Member ID={}: {}", memberId, e.getMessage());
-            return null;
-        }
-    }
+    // findMemberById đã được gom vào EntityFinderUtil.
 }

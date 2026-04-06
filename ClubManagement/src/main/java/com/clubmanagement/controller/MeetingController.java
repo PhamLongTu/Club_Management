@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,13 +20,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import com.clubmanagement.dto.MeetingDTO;
 import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.service.MeetingService;
 import com.clubmanagement.service.MemberService;
+import com.clubmanagement.util.UiAsyncUtil;
 import com.clubmanagement.util.UiFormUtil;
 import com.clubmanagement.view.MeetingView;
 import com.toedter.calendar.JDateChooser;
@@ -74,25 +73,12 @@ public class MeetingController {
     }
 
     private void loadAllMeetingsInternal() {
-        view.setStatusMessage("Dang tai danh sach cuoc hop...");
-        SwingWorker<List<MeetingDTO>, Void> worker = new SwingWorker<>() {
-            @Override
-            protected List<MeetingDTO> doInBackground() {
-                return meetingService.getAllMeetings();
-            }
-            @Override
-            protected void done() {
-                try {
-                    view.loadData(get());
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    view.setStatusMessage("Loi: " + ex.getMessage());
-                } catch (ExecutionException ex) {
-                    view.setStatusMessage("Loi: " + ex.getMessage());
-                }
-            }
-        };
-        worker.execute();
+        UiAsyncUtil.runWithStatus(
+            "Dang tai danh sach cuoc hop...",
+            view::setStatusMessage,
+            meetingService::getAllMeetings,
+            view::loadData
+        );
     }
 
     /** Refresh danh sach. */

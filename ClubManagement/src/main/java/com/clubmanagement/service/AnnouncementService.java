@@ -3,7 +3,6 @@ package com.clubmanagement.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +12,7 @@ import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.entity.Announcement;
 import com.clubmanagement.entity.Member;
 import com.clubmanagement.entity.Team;
-import com.clubmanagement.util.HibernateUtil;
+import com.clubmanagement.util.EntityFinderUtil;
 
 /**
  * AnnouncementService - Tầng nghiệp vụ cho Thông báo.
@@ -41,8 +40,8 @@ public class AnnouncementService {
         if (content == null || content.isBlank())
             throw new IllegalArgumentException("Nội dung thông báo không được để trống!");
 
-        Member author = findMemberById(authorId);
-        Team targetTeam = findTeamById(targetTeamId);
+        Member author = EntityFinderUtil.findById(Member.class, authorId, logger, "Lỗi khi tìm Member");
+        Team targetTeam = EntityFinderUtil.findById(Team.class, targetTeamId, logger, "Lỗi khi tìm Team");
         Announcement ann = new Announcement(title.trim(), content, isPinned, targetAudience, author, targetTeam);
         return toDTO(announcementDAO.save(ann));
     }
@@ -87,7 +86,7 @@ public class AnnouncementService {
         ann.setContent(content);
         ann.setIsPinned(isPinned);
         ann.setTargetAudience(targetAudience);
-        ann.setTargetTeam(findTeamById(targetTeamId));
+        ann.setTargetTeam(EntityFinderUtil.findById(Team.class, targetTeamId, logger, "Lỗi khi tìm Team"));
         return toDTO(announcementDAO.update(ann));
     }
 
@@ -117,29 +116,5 @@ public class AnnouncementService {
         );
     }
 
-    /** Tìm Member theo ID. */
-    private Member findMemberById(Integer memberId) {
-        if (memberId == null) return null;
-        try (Session session = HibernateUtil.openSession()) {
-            return session.get(Member.class, memberId);
-        } catch (Exception e) {
-            logger.error("Lỗi khi tìm Member: {}", e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Tìm Team theo ID.
-     * @param teamId ID ban/nhóm
-     * @return Team entity hoặc null
-     */
-    private Team findTeamById(Integer teamId) {
-        if (teamId == null) return null;
-        try (Session session = HibernateUtil.openSession()) {
-            return session.get(Team.class, teamId);
-        } catch (Exception e) {
-            logger.error("Lỗi khi tìm Team: {}", e.getMessage());
-            return null;
-        }
-    }
+    // findMemberById/findTeamById đã được gom vào EntityFinderUtil.
 }

@@ -3,7 +3,6 @@ package com.clubmanagement.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +10,7 @@ import com.clubmanagement.dao.TeamDAO;
 import com.clubmanagement.dto.TeamDTO;
 import com.clubmanagement.entity.Member;
 import com.clubmanagement.entity.Team;
-import com.clubmanagement.util.HibernateUtil;
+import com.clubmanagement.util.EntityFinderUtil;
 
 /**
  * TeamService - Tầng nghiệp vụ cho Nhóm/Ban.
@@ -33,7 +32,7 @@ public class TeamService {
             throw new IllegalArgumentException("Tên ban không được để trống!");
         }
 
-        Member leader = findMemberById(leaderId);
+        Member leader = EntityFinderUtil.findById(Member.class, leaderId, logger, "Lỗi khi tìm Member làm trưởng ban");
         Team team = new Team(teamName.trim(), description, leader);
         return toDTO(teamDAO.save(team));
     }
@@ -77,7 +76,7 @@ public class TeamService {
 
         team.setTeamName(teamName.trim());
         team.setDescription(description);
-        team.setLeader(findMemberById(leaderId));
+        team.setLeader(EntityFinderUtil.findById(Member.class, leaderId, logger, "Lỗi khi tìm Member làm trưởng ban"));
         
         return toDTO(teamDAO.update(team));
     }
@@ -92,20 +91,7 @@ public class TeamService {
         }
     }
 
-    /**
-     * Tìm Member theo ID.
-     * @param memberId ID thành viên
-     * @return Member entity hoặc null
-     */
-    private Member findMemberById(Integer memberId) {
-        if (memberId == null) return null;
-        try (Session session = HibernateUtil.openSession()) {
-            return session.get(Member.class, memberId);
-        } catch (Exception e) {
-            logger.error("Lỗi khi tìm Member làm trưởng ban: {}", e.getMessage());
-            return null;
-        }
-    }
+    // findMemberById đã được gom vào EntityFinderUtil.
 
     /**
      * Map Team entity -> TeamDTO.
