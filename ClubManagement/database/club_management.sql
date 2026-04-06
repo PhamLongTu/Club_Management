@@ -253,11 +253,11 @@ INSERT INTO roles (role_name, description, permission_level) VALUES
 -- Hash: $2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e
 -- Đây là BCrypt hash thật của "admin123" (cost=10), tương thích Spring Security BCryptPasswordEncoder
 INSERT INTO members (full_name, student_id, email, phone, gender, birth_date, join_date, status, password_hash, role_id) VALUES
-('Nguyễn Văn E',    'SV001', 'an.nguyen@email.com',    '0901234567', 'Male',   '2002-05-15', '2023-09-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 3),
-('Nguyễn Văn D',    'SV002', 'binh.tran@email.com',    '0912345678', 'Female', '2002-08-20', '2023-09-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 2),
-('Nguyễn Văn C',     'SV003', 'cuong.le@email.com',     '0923456789', 'Male',   '2001-12-10', '2022-10-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 2),
-('Nguyễn Văn B',    'SV004', 'dung.pham@email.com',    '0934567890', 'Female', '2002-03-25', '2022-10-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 2),
-('Nguyễn Văn A',     'SV005', 'em.hoang@email.com',     '0945678901', 'Male',   '2001-07-08', '2021-09-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 1);
+('Nguyễn Văn E',    'SV001', 'member@gmail.com',    '0901234567', 'Male',   '2002-05-15', '2023-09-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 3),
+('Nguyễn Văn D',    'SV002', 'leader@gmail.com',    '0912345678', 'Female', '2002-08-20', '2023-09-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 2),
+('Nguyễn Văn C',     'SV003', 'leader1@gmail.com',     '0923456789', 'Male',   '2001-12-10', '2022-10-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 2),
+('Nguyễn Văn B',    'SV004', 'leader2@gmail.com',    '0934567890', 'Female', '2002-03-25', '2022-10-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 2),
+('Nguyễn Văn A',     'SV005', 'admin@gmail.com',     '0945678901', 'Male',   '2001-07-08', '2021-09-01', 'Active', '$2b$10$RKtAfxS8ATaDMDSqMfBTYuGxrHITnVmqdYSwMZxZ2t38HCPljrQ5e', 1);
 
 -- Update admin (member_id=5 has Admin role)
 UPDATE members SET role_id = 1 WHERE member_id = 5;

@@ -47,7 +47,11 @@ public class LoginController {
         // Listener cho nút Đăng nhập
         view.addLoginListener(e -> handleLogin());
 
-        // Có thể thêm: nhấn Enter trong ô email chuyển sang ô mật khẩu
+        // Nhấn Enter trong ô email → chuyển sang ô mật khẩu
+        view.addEmailEnterListener(e -> view.focusPasswordField());
+
+        // Nhấn Enter trong ô mật khẩu → đăng nhập
+        view.addPasswordEnterListener(e -> handleLogin());
     }
 
     /**

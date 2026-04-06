@@ -371,6 +371,21 @@ public class LoginView extends JFrame {
         loginButton.addActionListener(listener);
     }
 
+    /** Đăng ký sự kiện nhấn Enter ở ô email. */
+    public void addEmailEnterListener(ActionListener listener) {
+        emailField.addActionListener(listener);
+    }
+
+    /** Đăng ký sự kiện nhấn Enter ở ô mật khẩu. */
+    public void addPasswordEnterListener(ActionListener listener) {
+        passwordField.addActionListener(listener);
+    }
+
+    /** Đặt focus vào ô mật khẩu. */
+    public void focusPasswordField() {
+        passwordField.requestFocusInWindow();
+    }
+
     /** Đặt focus vào ô email khi hiển thị form. */
     @Override
     public void setVisible(boolean b) {

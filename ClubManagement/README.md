@@ -246,12 +246,13 @@ ClubManagement/
 
 ## 5. Tài khoản mẫu
 
-| Email               | Mật khẩu | Vai trò |
-| ------------------- | -------- | ------- |
-| em.hoang@email.com  | admin123 | Admin   |
-| cuong.le@email.com  | admin123 | Leader  |
-| binh.tran@email.com | admin123 | Member  |
-| an.nguyen@email.com | admin123 | Member  |
+| Email             | Mật khẩu | Vai trò |
+| ----------------- | -------- | ------- |
+| admin@gmail.com   | admin123 | Admin   |
+| leader@gmail.com  | admin123 | Leader  |
+| leader1@gmail.com | admin123 | Leader  |
+| leader2@gmail.com | admin123 | Leader  |
+| member@gmail.com  | admin123 | Member  |
 
 > ⚠️ **Quan trọng**: Nếu bạn đã import database trước ngày **30/03/2025**, hãy chạy lại file SQL vì phiên bản cũ dùng **hash giả** (không hoạt động). Phiên bản mới dùng BCrypt hash thật của chuỗi `admin123`.
 >
@@ -273,7 +274,8 @@ ClubManagement/
 ### Đăng nhập
 
 1. Nhập email và mật khẩu
-2. Nhấn **ĐĂNG NHẬP** hoặc Enter
+2. Enter ở ô email → chuyển sang ô mật khẩu
+3. Enter ở ô mật khẩu → đăng nhập
 
 ### Quản lý Thành viên
 

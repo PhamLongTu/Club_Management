@@ -138,7 +138,7 @@ public class MainApp {
             loginView.setVisible(true);
 
             logger.info("Ứng dụng Club Management System đã khởi động!");
-            logger.info("Đăng nhập với: admin@email.com / admin123");
+            logger.info("Đăng nhập với: admin@gmail.com / admin123");
         });
     }
 }
