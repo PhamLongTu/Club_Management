@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +14,13 @@ import com.clubmanagement.util.HibernateUtil;
 /**
  * MeetingDAO - Lop truy cap du lieu cho thuc the Meeting (Cuoc hop).
  */
-public class MeetingDAO {
+public class MeetingDAO extends AbstractDAO<Meeting, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(MeetingDAO.class);
+
+    public MeetingDAO() {
+        super(Meeting.class);
+    }
 
     /**
      * Luu cuoc hop moi.
@@ -25,17 +28,7 @@ public class MeetingDAO {
      * @return Meeting da luu
      */
     public Meeting save(Meeting meeting) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(meeting);
-            tx.commit();
-            return meeting;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Loi khi luu cuoc hop: {}", e.getMessage(), e);
-            throw new RuntimeException("Khong the luu cuoc hop: " + e.getMessage(), e);
-        }
+        return saveEntity(meeting, "Khong the luu cuoc hop");
     }
 
     /**
@@ -44,17 +37,7 @@ public class MeetingDAO {
      * @return Meeting da cap nhat
      */
     public Meeting update(Meeting meeting) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Meeting updated = session.merge(meeting);
-            tx.commit();
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Loi khi cap nhat cuoc hop: {}", e.getMessage(), e);
-            throw new RuntimeException("Khong the cap nhat cuoc hop: " + e.getMessage(), e);
-        }
+        return updateEntity(meeting, "Khong the cap nhat cuoc hop");
     }
 
     /**
@@ -99,21 +82,6 @@ public class MeetingDAO {
      * @return true neu xoa thanh cong
      */
     public boolean deleteById(Integer id) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Meeting meeting = session.get(Meeting.class, id);
-            if (meeting != null) {
-                session.remove(meeting);
-                tx.commit();
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Loi khi xoa cuoc hop ID={}: {}", id, e.getMessage(), e);
-            throw new RuntimeException("Khong the xoa cuoc hop: " + e.getMessage(), e);
-        }
+        return deleteEntityById(id, "Khong the xoa cuoc hop");
     }
 }

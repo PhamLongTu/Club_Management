@@ -1,22 +1,26 @@
 package com.clubmanagement.dao;
 
-import com.clubmanagement.entity.Event;
-import com.clubmanagement.util.HibernateUtil;
+import java.util.List;
+import java.util.Optional;
+
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
+import com.clubmanagement.entity.Event;
+import com.clubmanagement.util.HibernateUtil;
 
 /**
  * EventDAO - Lớp truy cập dữ liệu cho thực thể Event (Sự kiện).
  */
-public class EventDAO {
+public class EventDAO extends AbstractDAO<Event, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(EventDAO.class);
+
+    public EventDAO() {
+        super(Event.class);
+    }
 
     /**
      * Lưu sự kiện mới vào database.
@@ -24,18 +28,9 @@ public class EventDAO {
      * @return Event đã lưu (có ID)
      */
     public Event save(Event event) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(event);
-            tx.commit();
-            logger.info("Đã lưu sự kiện: {}", event.getEventName());
-            return event;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi lưu sự kiện: {}", e.getMessage(), e);
-            throw new RuntimeException("Không thể lưu sự kiện: " + e.getMessage(), e);
-        }
+        Event saved = saveEntity(event, "Không thể lưu sự kiện");
+        logger.info("Đã lưu sự kiện: {}", event.getEventName());
+        return saved;
     }
 
     /**
@@ -157,18 +152,9 @@ public class EventDAO {
      * @return Event sau khi cập nhật
      */
     public Event update(Event event) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Event updated = session.merge(event);
-            tx.commit();
-            logger.info("Đã cập nhật sự kiện: {}", event.getEventName());
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi cập nhật sự kiện: {}", e.getMessage(), e);
-            throw new RuntimeException("Không thể cập nhật sự kiện: " + e.getMessage(), e);
-        }
+        Event updated = updateEntity(event, "Không thể cập nhật sự kiện");
+        logger.info("Đã cập nhật sự kiện: {}", event.getEventName());
+        return updated;
     }
 
     /**
@@ -177,22 +163,10 @@ public class EventDAO {
      * @return true nếu thành công
      */
     public boolean deleteById(Integer eventId) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Event event = session.get(Event.class, eventId);
-            if (event != null) {
-                session.remove(event);
-                tx.commit();
-                logger.info("Đã xóa sự kiện ID: {}", eventId);
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi xóa sự kiện: {}", e.getMessage(), e);
-            throw new RuntimeException("Không thể xóa sự kiện: " + e.getMessage(), e);
+        boolean deleted = deleteEntityById(eventId, "Không thể xóa sự kiện");
+        if (deleted) {
+            logger.info("Đã xóa sự kiện ID: {}", eventId);
         }
+        return deleted;
     }
 }

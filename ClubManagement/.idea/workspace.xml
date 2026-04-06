@@ -5,50 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2d158b33-f916-4b68-9ce4-10b4dea95247" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/material_theme_project_new.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/ClubManagement.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/ClubManagement.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/hibernate.cfg.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/MainApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/MainApp.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/DashboardController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/DashboardController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/DashboardController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/DashboardController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/LoginController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/LoginController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/LoginController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/LoginController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/MemberController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/MemberController$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/MemberController$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/MemberController$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/MemberController$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/MemberController$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/MemberController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/controller/MemberController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/dao/AnnouncementDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/dao/AnnouncementDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/dao/EventDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/dao/EventDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/dao/MemberDAO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/dao/MemberDAO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/dto/EventDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/dto/EventDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/dto/MemberDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/dto/MemberDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/dto/ProjectDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/dto/ProjectDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Announcement.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Announcement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Attendance.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Attendance.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Document.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Document.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Event.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Event.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Feedback.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Feedback.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Member.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Member.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Participation.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Participation.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Project.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Project.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Role.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Role.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Sponsor.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Sponsor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Task.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Task.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Team.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/entity/Team.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/service/AnnouncementService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/service/AnnouncementService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/service/EventService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/service/EventService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/service/MemberService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/service/MemberService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/service/ProjectService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/service/ProjectService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/util/HibernateUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/util/HibernateUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/util/PasswordUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/util/PasswordUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/LoginView$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/LoginView$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/LoginView$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/LoginView$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/LoginView$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/LoginView$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/LoginView.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/LoginView.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/MemberFormDialog.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/clubmanagement/view/MemberFormDialog.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/hibernate.cfg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/hibernate.cfg.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +35,36 @@
     &quot;last_opened_file_path&quot;: &quot;C:/IT/LTrình Win/Club_Management/ClubManagement&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="ClubManagement" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="ClubManagement" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="2d158b33-f916-4b68-9ce4-10b4dea95247" name="Changes" comment="" />

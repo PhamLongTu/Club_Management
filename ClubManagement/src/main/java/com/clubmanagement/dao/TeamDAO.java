@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +14,13 @@ import com.clubmanagement.util.HibernateUtil;
 /**
  * TeamDAO - Lớp truy cập dữ liệu cho thực thể Team (Nhóm/Ban).
  */
-public class TeamDAO {
+public class TeamDAO extends AbstractDAO<Team, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(TeamDAO.class);
+
+    public TeamDAO() {
+        super(Team.class);
+    }
 
     /**
      * Lưu nhóm/ban mới.
@@ -25,16 +28,7 @@ public class TeamDAO {
      * @return Team đã lưu
      */
     public Team save(Team team) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(team);
-            tx.commit();
-            return team;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể lưu thông tin Ban: " + e.getMessage(), e);
-        }
+        return saveEntity(team, "Không thể lưu thông tin Ban");
     }
 
     /**
@@ -76,16 +70,7 @@ public class TeamDAO {
      * @return Team đã cập nhật
      */
     public Team update(Team team) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Team updated = session.merge(team);
-            tx.commit();
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể cập nhật Ban: " + e.getMessage(), e);
-        }
+        return updateEntity(team, "Không thể cập nhật Ban");
     }
 
     /**
@@ -94,20 +79,6 @@ public class TeamDAO {
      * @return true nếu xóa thành công
      */
     public boolean deleteById(Integer id) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Team team = session.get(Team.class, id);
-            if (team != null) {
-                session.remove(team);
-                tx.commit();
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể xóa Ban: " + e.getMessage(), e);
-        }
+        return deleteEntityById(id, "Không thể xóa Ban");
     }
 }

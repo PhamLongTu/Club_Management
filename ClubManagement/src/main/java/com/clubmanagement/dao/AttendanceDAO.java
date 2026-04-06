@@ -3,7 +3,6 @@ package com.clubmanagement.dao;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.clubmanagement.entity.Attendance;
@@ -12,7 +11,11 @@ import com.clubmanagement.util.HibernateUtil;
 /**
  * AttendanceDAO - Lớp truy cập dữ liệu cho thực thể Attendance (Điểm danh).
  */
-public class AttendanceDAO {
+public class AttendanceDAO extends AbstractDAO<Attendance, Integer> {
+
+    public AttendanceDAO() {
+        super(Attendance.class);
+    }
 
 
     /**
@@ -21,16 +24,7 @@ public class AttendanceDAO {
      * @return Attendance đã lưu
      */
     public Attendance save(Attendance attendance) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(attendance);
-            tx.commit();
-            return attendance;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Lỗi lưu điểm danh (Thành viên này có thể đã được điểm danh trong sự kiện): " + e.getMessage(), e);
-        }
+        return saveEntity(attendance, "Lỗi lưu điểm danh (Thành viên này có thể đã được điểm danh trong sự kiện)");
     }
 
 

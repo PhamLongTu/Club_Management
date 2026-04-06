@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,25 +17,21 @@ import com.clubmanagement.util.HibernateUtil;
 /**
  * AnnouncementDAO - Lớp truy cập dữ liệu cho thực thể Announcement (Thông báo).
  */
-public class AnnouncementDAO {
+public class AnnouncementDAO extends AbstractDAO<Announcement, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnouncementDAO.class);
+
+    public AnnouncementDAO() {
+        super(Announcement.class);
+    }
 
     /**
      * Lưu thông báo mới vào database.
      */
     public Announcement save(Announcement announcement) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(announcement);
-            tx.commit();
-            logger.info("Đã lưu thông báo: {}", announcement.getTitle());
-            return announcement;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể lưu thông báo: " + e.getMessage(), e);
-        }
+        Announcement saved = saveEntity(announcement, "Không thể lưu thông báo");
+        logger.info("Đã lưu thông báo: {}", announcement.getTitle());
+        return saved;
     }
 
     /**
@@ -61,11 +56,7 @@ public class AnnouncementDAO {
      * Tìm thông báo theo ID.
      */
     public Optional<Announcement> findById(Integer id) {
-        try (Session session = HibernateUtil.openSession()) {
-            return Optional.ofNullable(session.get(Announcement.class, id));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+        return findByIdSimple(id, null);
     }
 
     /**
@@ -91,37 +82,14 @@ public class AnnouncementDAO {
      * Cập nhật thông báo.
      */
     public Announcement update(Announcement announcement) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Announcement updated = session.merge(announcement);
-            tx.commit();
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể cập nhật thông báo: " + e.getMessage(), e);
-        }
+        return updateEntity(announcement, "Không thể cập nhật thông báo");
     }
 
     /**
      * Xóa thông báo theo ID.
      */
     public boolean deleteById(Integer id) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Announcement ann = session.get(Announcement.class, id);
-            if (ann != null) {
-                session.remove(ann);
-                tx.commit();
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể xóa thông báo: " + e.getMessage(), e);
-        }
+        return deleteEntityById(id, "Không thể xóa thông báo");
     }
 
     /**

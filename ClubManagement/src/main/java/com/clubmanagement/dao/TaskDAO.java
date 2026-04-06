@@ -15,9 +15,13 @@ import com.clubmanagement.util.HibernateUtil;
 /**
  * TaskDAO - Lớp truy cập dữ liệu cho thực thể Task (Nhiệm vụ).
  */
-public class TaskDAO {
+public class TaskDAO extends AbstractDAO<Task, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskDAO.class);
+
+    public TaskDAO() {
+        super(Task.class);
+    }
 
     /**
      * Lưu nhiệm vụ mới.
@@ -25,16 +29,7 @@ public class TaskDAO {
      * @return Task đã lưu
      */
     public Task save(Task task) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(task);
-            tx.commit();
-            return task;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể lưu thông tin Nhiệm vụ: " + e.getMessage(), e);
-        }
+        return saveEntity(task, "Không thể lưu thông tin Nhiệm vụ");
     }
 
     /**
@@ -273,16 +268,7 @@ public class TaskDAO {
      * @return Task đã cập nhật
      */
     public Task update(Task task) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Task updated = session.merge(task);
-            tx.commit();
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể cập nhật nhiệm vụ: " + e.getMessage(), e);
-        }
+        return updateEntity(task, "Không thể cập nhật nhiệm vụ");
     }
 
     /**
@@ -291,20 +277,6 @@ public class TaskDAO {
      * @return true nếu xóa thành công
      */
     public boolean deleteById(Integer id) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Task task = session.get(Task.class, id);
-            if (task != null) {
-                session.remove(task);
-                tx.commit();
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể xóa nhiệm vụ: " + e.getMessage(), e);
-        }
+        return deleteEntityById(id, "Không thể xóa nhiệm vụ");
     }
 }

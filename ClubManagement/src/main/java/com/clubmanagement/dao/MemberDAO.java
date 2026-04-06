@@ -20,9 +20,13 @@ import com.clubmanagement.util.HibernateUtil;
  *
  * Tất cả các thao tác đọc/ghi database đều thực hiện tại đây.
  */
-public class MemberDAO {
+public class MemberDAO extends AbstractDAO<Member, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(MemberDAO.class);
+
+    public MemberDAO() {
+        super(Member.class);
+    }
 
     // ===========================================================
     // CREATE
@@ -36,19 +40,9 @@ public class MemberDAO {
      * @throws RuntimeException nếu có lỗi khi lưu
      */
     public Member save(Member member) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(member);   // persist() = INSERT INTO members ...
-            tx.commit();
-            logger.info("Đã lưu thành viên: {}", member.getFullName());
-            return member;
-        } catch (Exception e) {
-            // Rollback nếu có lỗi để tránh dữ liệu không nhất quán
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi lưu thành viên: {}", e.getMessage(), e);
-            throw new RuntimeException("Không thể lưu thành viên: " + e.getMessage(), e);
-        }
+        Member saved = saveEntity(member, "Không thể lưu thành viên");
+        logger.info("Đã lưu thành viên: {}", member.getFullName());
+        return saved;
     }
 
     // ===========================================================
@@ -190,19 +184,9 @@ public class MemberDAO {
      * @return Member sau khi cập nhật
      */
     public Member update(Member member) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            // merge() = UPDATE nếu entity đã có ID, INSERT nếu chưa
-            Member updated = session.merge(member);
-            tx.commit();
-            logger.info("Đã cập nhật thành viên: {}", member.getFullName());
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi cập nhật thành viên: {}", e.getMessage(), e);
-            throw new RuntimeException("Không thể cập nhật thành viên: " + e.getMessage(), e);
-        }
+        Member updated = updateEntity(member, "Không thể cập nhật thành viên");
+        logger.info("Đã cập nhật thành viên: {}", member.getFullName());
+        return updated;
     }
 
     // ===========================================================
@@ -218,23 +202,11 @@ public class MemberDAO {
      * @return true nếu xóa thành công
      */
     public boolean deleteById(Integer memberId) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Member member = session.get(Member.class, memberId);
-            if (member != null) {
-                session.remove(member);  // DELETE FROM members WHERE member_id = ?
-                tx.commit();
-                logger.info("Đã xóa thành viên ID: {}", memberId);
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi xóa thành viên ID={}: {}", memberId, e.getMessage(), e);
-            throw new RuntimeException("Không thể xóa thành viên: " + e.getMessage(), e);
+        boolean deleted = deleteEntityById(memberId, "Không thể xóa thành viên");
+        if (deleted) {
+            logger.info("Đã xóa thành viên ID: {}", memberId);
         }
+        return deleted;
     }
 
     /**

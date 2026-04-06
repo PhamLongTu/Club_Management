@@ -16,9 +16,13 @@ import com.clubmanagement.util.HibernateUtil;
 /**
  * ProjectDAO - Lớp truy cập dữ liệu cho thực thể Project (Dự án).
  */
-public class ProjectDAO {
+public class ProjectDAO extends AbstractDAO<Project, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectDAO.class);
+
+    public ProjectDAO() {
+        super(Project.class);
+    }
 
     /**
      * Lưu dự án mới vào database.
@@ -26,18 +30,9 @@ public class ProjectDAO {
      * @return Project đã lưu (có ID)
      */
     public Project save(Project project) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(project);
-            tx.commit();
-            logger.info("Đã lưu dự án: {}", project.getProjectName());
-            return project;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi lưu dự án: {}", e.getMessage(), e);
-            throw new RuntimeException("Không thể lưu dự án: " + e.getMessage(), e);
-        }
+        Project saved = saveEntity(project, "Không thể lưu dự án");
+        logger.info("Đã lưu dự án: {}", project.getProjectName());
+        return saved;
     }
 
     /**
@@ -160,18 +155,9 @@ public class ProjectDAO {
      * @return Project sau khi cập nhật
      */
     public Project update(Project project) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Project updated = session.merge(project);
-            tx.commit();
-            logger.info("Đã cập nhật dự án: {}", project.getProjectName());
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi cập nhật dự án: {}", e.getMessage(), e);
-            throw new RuntimeException("Không thể cập nhật dự án: " + e.getMessage(), e);
-        }
+        Project updated = updateEntity(project, "Không thể cập nhật dự án");
+        logger.info("Đã cập nhật dự án: {}", project.getProjectName());
+        return updated;
     }
 
     /**
@@ -180,23 +166,11 @@ public class ProjectDAO {
      * @return true nếu thành công
      */
     public boolean deleteById(Integer projectId) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Project project = session.get(Project.class, projectId);
-            if (project != null) {
-                session.remove(project);
-                tx.commit();
-                logger.info("Đã xóa dự án ID: {}", projectId);
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            logger.error("Lỗi khi xóa dự án: {}", e.getMessage(), e);
-            throw new RuntimeException("Không thể xóa dự án: " + e.getMessage(), e);
+        boolean deleted = deleteEntityById(projectId, "Không thể xóa dự án");
+        if (deleted) {
+            logger.info("Đã xóa dự án ID: {}", projectId);
         }
+        return deleted;
     }
 
     /**

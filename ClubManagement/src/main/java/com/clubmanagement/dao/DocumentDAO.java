@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +14,13 @@ import com.clubmanagement.util.HibernateUtil;
 /**
  * DocumentDAO - Lớp truy cập dữ liệu cho thực thể Document (Tài liệu).
  */
-public class DocumentDAO {
+public class DocumentDAO extends AbstractDAO<Document, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentDAO.class);
+
+    public DocumentDAO() {
+        super(Document.class);
+    }
 
     /**
      * Lưu tài liệu mới.
@@ -25,16 +28,7 @@ public class DocumentDAO {
      * @return Document đã lưu
      */
     public Document save(Document document) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            session.persist(document);
-            tx.commit();
-            return document;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Không thể lưu Tài liệu: " + e.getMessage(), e);
-        }
+        return saveEntity(document, "Không thể lưu Tài liệu");
     }
 
     /**
@@ -78,16 +72,7 @@ public class DocumentDAO {
      * @return Document đã cập nhật
      */
     public Document update(Document document) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Document updated = session.merge(document);
-            tx.commit();
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Cập nhật Tài liệu thất bại: " + e.getMessage(), e);
-        }
+        return updateEntity(document, "Cập nhật Tài liệu thất bại");
     }
 
     /**
@@ -96,20 +81,6 @@ public class DocumentDAO {
      * @return true nếu xóa thành công
      */
     public boolean deleteById(Integer id) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Document doc = session.get(Document.class, id);
-            if (doc != null) {
-                session.remove(doc);
-                tx.commit();
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Xóa Tài liệu thất bại: " + e.getMessage(), e);
-        }
+        return deleteEntityById(id, "Xóa Tài liệu thất bại");
     }
 }
