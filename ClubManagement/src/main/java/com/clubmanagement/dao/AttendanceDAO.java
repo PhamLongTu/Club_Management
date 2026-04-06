@@ -1,13 +1,10 @@
 package com.clubmanagement.dao;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.clubmanagement.entity.Attendance;
 import com.clubmanagement.util.HibernateUtil;
@@ -17,7 +14,6 @@ import com.clubmanagement.util.HibernateUtil;
  */
 public class AttendanceDAO {
 
-    private static final Logger logger = LoggerFactory.getLogger(AttendanceDAO.class);
 
     /**
      * Lưu bản ghi điểm danh mới.
@@ -37,62 +33,6 @@ public class AttendanceDAO {
         }
     }
 
-    /**
-     * Lấy tất cả điểm danh, sắp theo thời gian check-in giảm dần.
-     * @return Danh sách Attendance
-     */
-    public List<Attendance> findAll() {
-        try (Session session = HibernateUtil.openSession()) {
-            Query<Attendance> query = session.createQuery(
-                "FROM Attendance a LEFT JOIN FETCH a.member LEFT JOIN FETCH a.event " +
-                "ORDER BY a.checkInTime DESC",
-                Attendance.class
-            );
-            return query.getResultList();
-        } catch (Exception e) {
-            logger.error("Lỗi lấy danh sách điểm danh: {}", e.getMessage());
-            throw new RuntimeException("Không thể lấy danh sách điểm danh", e);
-        }
-    }
-
-    /**
-     * Tìm điểm danh theo ID.
-     * @param id ID điểm danh
-     * @return Optional<Attendance>
-     */
-    public Optional<Attendance> findById(Integer id) {
-        try (Session session = HibernateUtil.openSession()) {
-            Query<Attendance> query = session.createQuery(
-                "FROM Attendance a LEFT JOIN FETCH a.member LEFT JOIN FETCH a.event " +
-                "WHERE a.attendanceId = :id",
-                Attendance.class
-            );
-            query.setParameter("id", id);
-            return query.uniqueResultOptional();
-        }
-    }
-
-    /**
-     * Tìm điểm danh theo sự kiện và thành viên.
-     * @param eventId ID sự kiện
-     * @param memberId ID thành viên
-     * @return Optional<Attendance>
-     */
-    public Optional<Attendance> findByEventAndMember(Integer eventId, Integer memberId) {
-        try (Session session = HibernateUtil.openSession()) {
-            Query<Attendance> query = session.createQuery(
-                "FROM Attendance a LEFT JOIN FETCH a.member LEFT JOIN FETCH a.event " +
-                "WHERE a.event.eventId = :eid AND a.member.memberId = :mid",
-                Attendance.class
-            );
-            query.setParameter("eid", eventId);
-            query.setParameter("mid", memberId);
-            return query.uniqueResultOptional();
-        } catch (Exception e) {
-            logger.error("Lỗi khi tìm điểm danh theo sự kiện & thành viên: {}", e.getMessage());
-            return Optional.empty();
-        }
-    }
 
     /**
      * Lấy điểm danh theo sự kiện.
@@ -103,7 +43,7 @@ public class AttendanceDAO {
         try (Session session = HibernateUtil.openSession()) {
             Query<Attendance> query = session.createQuery(
                 "FROM Attendance a LEFT JOIN FETCH a.member LEFT JOIN FETCH a.event " +
-                "WHERE a.event.eventId = :eid ORDER BY a.checkInTime DESC",
+                "WHERE a.event.eventId = :eid ORDER BY a.attendanceId DESC",
                 Attendance.class
             );
             query.setParameter("eid", eventId);
@@ -111,44 +51,4 @@ public class AttendanceDAO {
         }
     }
 
-    /**
-     * Cập nhật bản ghi điểm danh.
-     * @param attendance Đối tượng điểm danh
-     * @return Attendance đã cập nhật
-     */
-    public Attendance update(Attendance attendance) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Attendance updated = session.merge(attendance);
-            tx.commit();
-            return updated;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Cập nhật điểm danh thất bại: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Xóa điểm danh theo ID.
-     * @param id ID điểm danh
-     * @return true nếu xóa thành công
-     */
-    public boolean deleteById(Integer id) {
-        Transaction tx = null;
-        try (Session session = HibernateUtil.openSession()) {
-            tx = session.beginTransaction();
-            Attendance attendance = session.get(Attendance.class, id);
-            if (attendance != null) {
-                session.remove(attendance);
-                tx.commit();
-                return true;
-            }
-            tx.rollback();
-            return false;
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            throw new RuntimeException("Xóa điểm danh thất bại: " + e.getMessage(), e);
-        }
-    }
 }

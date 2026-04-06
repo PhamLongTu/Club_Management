@@ -7,6 +7,10 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -14,10 +18,13 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -28,7 +35,10 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
 import com.clubmanagement.dto.EventAttendanceRowDTO;
+import com.clubmanagement.dto.EventDTO;
 import com.clubmanagement.dto.MemberDTO;
+import com.clubmanagement.util.UiFormUtil;
+import com.toedter.calendar.JDateChooser;
 
 /**
  * EventAttendanceView - Attendance page for a single event.
@@ -59,6 +69,22 @@ public class EventAttendanceView {
     private JLabel eventMetaLabel;
     private boolean attendanceEditable;
 
+    private JTextField tfName;
+    private JTextField tfLocation;
+    private JTextField tfBudget;
+    private JTextField tfMaxP;
+    private JDateChooser startDate;
+    private JSpinner startTime;
+    private JDateChooser endDate;
+    private JSpinner endTime;
+    private JDateChooser regDate;
+    private JSpinner regTime;
+    private JTextArea taDesc;
+    private JComboBox<String> cbStatus;
+    private JComboBox<String> cbPointType;
+    private JSpinner spPointValue;
+    private JButton btnSaveEvent;
+
     private static final Color PRIMARY     = new Color(37, 99, 235);
     private static final Color BG          = new Color(241, 245, 249);
     private static final Color TEXT_DARK   = new Color(15, 23, 42);
@@ -78,7 +104,13 @@ public class EventAttendanceView {
         mainPanel.setBorder(new EmptyBorder(24, 24, 24, 24));
 
         mainPanel.add(buildHeader(), BorderLayout.NORTH);
-        mainPanel.add(buildTable(), BorderLayout.CENTER);
+        JPanel content = new JPanel();
+        content.setOpaque(false);
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.add(buildEventEditor());
+        content.add(Box.createVerticalStrut(12));
+        content.add(buildTable());
+        mainPanel.add(content, BorderLayout.CENTER);
         mainPanel.add(buildFooter(), BorderLayout.SOUTH);
     }
 
@@ -159,6 +191,72 @@ public class EventAttendanceView {
         panel.add(topInfo, BorderLayout.NORTH);
         panel.add(toolbar, BorderLayout.CENTER);
         return panel;
+    }
+
+    private JPanel buildEventEditor() {
+        JPanel card = new JPanel(new BorderLayout(0, 8));
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(226, 232, 240), 1, true),
+            new EmptyBorder(12, 16, 12, 16)
+        ));
+
+        JLabel title = new JLabel("Thông tin sự kiện");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        title.setForeground(TEXT_DARK);
+
+        btnSaveEvent = makeBtn("Lưu sự kiện", new Color(16, 185, 129), Color.WHITE, 110);
+        btnSaveEvent.setEnabled(currentUser.isLeader());
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
+        header.add(title, BorderLayout.WEST);
+        header.add(btnSaveEvent, BorderLayout.EAST);
+
+        JPanel form = new JPanel(new java.awt.GridLayout(0, 2, 8, 8));
+        form.setOpaque(false);
+        Font f = new Font("Segoe UI", Font.PLAIN, 13);
+
+        tfName = createField("", f);
+        tfLocation = createField("", f);
+        tfBudget = createField("0", f);
+        tfMaxP = createField("100", f);
+
+        startDate = UiFormUtil.createDateChooser((LocalDateTime) null);
+        startTime = UiFormUtil.createTimeSpinner((LocalDateTime) null);
+        endDate = UiFormUtil.createDateChooser((LocalDateTime) null);
+        endTime = UiFormUtil.createTimeSpinner((LocalDateTime) null);
+        regDate = UiFormUtil.createDateChooser((LocalDateTime) null);
+        regTime = UiFormUtil.createTimeSpinner((LocalDateTime) null);
+
+        taDesc = new JTextArea(3, 20);
+        taDesc.setFont(f);
+        taDesc.setLineWrap(true);
+
+        cbStatus = new JComboBox<>(new String[]{"Upcoming", "Ongoing", "Completed", "Cancelled"});
+        cbStatus.setFont(f);
+
+        cbPointType = new JComboBox<>(new String[]{"None", "DRL", "CTXH"});
+        cbPointType.setFont(f);
+
+        spPointValue = new JSpinner(new javax.swing.SpinnerNumberModel(0, 0, 200, 1));
+        spPointValue.setFont(f);
+
+        form.add(makeLabel("Tên sự kiện *:")); form.add(tfName);
+        form.add(makeLabel("Bắt đầu *:")); form.add(UiFormUtil.buildDateTimePanel(startDate, startTime));
+        form.add(makeLabel("Kết thúc *:")); form.add(UiFormUtil.buildDateTimePanel(endDate, endTime));
+        form.add(makeLabel("Địa điểm:")); form.add(tfLocation);
+        form.add(makeLabel("Hạn đăng ký:")); form.add(UiFormUtil.buildDateTimePanel(regDate, regTime));
+        form.add(makeLabel("Ngân sách (VNĐ):")); form.add(tfBudget);
+        form.add(makeLabel("Số lượng tối đa:")); form.add(tfMaxP);
+        form.add(makeLabel("Loại điểm:")); form.add(cbPointType);
+        form.add(makeLabel("Điểm áp dụng:")); form.add(spPointValue);
+        form.add(makeLabel("Trạng thái:")); form.add(cbStatus);
+        form.add(makeLabel("Mô tả:")); form.add(new JScrollPane(taDesc));
+
+        card.add(header, BorderLayout.NORTH);
+        card.add(form, BorderLayout.CENTER);
+        return card;
     }
 
     private JScrollPane buildTable() {
@@ -254,6 +352,18 @@ public class EventAttendanceView {
         return btn;
     }
 
+    private JTextField createField(String value, Font f) {
+        JTextField tf = new JTextField(value);
+        tf.setFont(f);
+        return tf;
+    }
+
+    private JLabel makeLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        return label;
+    }
+
     private static class CheckBoxRenderer extends JCheckBox implements TableCellRenderer {
         CheckBoxRenderer() {
             setHorizontalAlignment(SwingConstants.CENTER);
@@ -298,11 +408,73 @@ public class EventAttendanceView {
         eventMetaLabel.setText("Đăng ký: " + registeredCount + " sinh viên");
     }
 
+    public void setEventForm(EventDTO event) {
+        if (event == null) {
+            tfName.setText("");
+            tfLocation.setText("");
+            tfBudget.setText("0");
+            tfMaxP.setText("100");
+            cbStatus.setSelectedItem("Upcoming");
+            cbPointType.setSelectedItem("None");
+            spPointValue.setValue(0);
+            taDesc.setText("");
+            setDateTime(startDate, startTime, null);
+            setDateTime(endDate, endTime, null);
+            setDateTime(regDate, regTime, null);
+            return;
+        }
+
+        tfName.setText(event.getEventName() != null ? event.getEventName() : "");
+        tfLocation.setText(event.getLocation() != null ? event.getLocation() : "");
+        tfBudget.setText(event.getBudget() != null ? event.getBudget().toPlainString() : "0");
+        tfMaxP.setText(event.getMaxParticipants() != null ? String.valueOf(event.getMaxParticipants()) : "100");
+        cbStatus.setSelectedItem(event.getStatus() != null ? event.getStatus() : "Upcoming");
+        cbPointType.setSelectedItem(event.getPointType() != null ? event.getPointType() : "None");
+        Integer pointValue = event.getPointValue();
+        spPointValue.setValue(pointValue != null ? pointValue : Integer.valueOf(0));
+        taDesc.setText(event.getDescription() != null ? event.getDescription() : "");
+        setDateTime(startDate, startTime, event.getStartDate());
+        setDateTime(endDate, endTime, event.getEndDate());
+        setDateTime(regDate, regTime, event.getRegistrationDeadline());
+    }
+
     public void setAttendanceEditable(boolean editable) {
         this.attendanceEditable = editable && currentUser.isLeader();
         if (table != null) {
             table.repaint();
         }
+    }
+
+    public void setEventFormEditable(boolean editable) {
+        boolean enabled = editable && currentUser.isLeader();
+        tfName.setEnabled(enabled);
+        tfLocation.setEnabled(enabled);
+        tfBudget.setEnabled(enabled);
+        tfMaxP.setEnabled(enabled);
+        startDate.setEnabled(enabled);
+        startTime.setEnabled(enabled);
+        endDate.setEnabled(enabled);
+        endTime.setEnabled(enabled);
+        regDate.setEnabled(enabled);
+        regTime.setEnabled(enabled);
+        taDesc.setEnabled(enabled);
+        cbStatus.setEnabled(enabled);
+        cbPointType.setEnabled(enabled);
+        spPointValue.setEnabled(enabled);
+        btnSaveEvent.setEnabled(enabled);
+    }
+
+    private void setDateTime(JDateChooser dateChooser, JSpinner timeSpinner, LocalDateTime dateTime) {
+        if (dateTime == null) {
+            dateChooser.setDate(null);
+            LocalTime now = LocalTime.now().withSecond(0).withNano(0);
+            Date timeValue = Date.from(now.atDate(java.time.LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
+            timeSpinner.setValue(timeValue);
+            return;
+        }
+        dateChooser.setDate(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()));
+        Date timeValue = Date.from(dateTime.toLocalTime().atDate(java.time.LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
+        timeSpinner.setValue(timeValue);
     }
 
     public String getSearchKeyword() { return searchField.getText().trim(); }
@@ -314,6 +486,21 @@ public class EventAttendanceView {
     public JButton getBtnSearch() { return btnSearch; }
     public JButton getBtnRefresh() { return btnRefresh; }
     public JButton getBtnBack() { return btnBack; }
+    public JButton getBtnSaveEvent() { return btnSaveEvent; }
     public JTable getTable() { return table; }
     public JTextField getSearchField() { return searchField; }
+    public JTextField getTfName() { return tfName; }
+    public JTextField getTfLocation() { return tfLocation; }
+    public JTextField getTfBudget() { return tfBudget; }
+    public JTextField getTfMaxP() { return tfMaxP; }
+    public JDateChooser getStartDate() { return startDate; }
+    public JSpinner getStartTime() { return startTime; }
+    public JDateChooser getEndDate() { return endDate; }
+    public JSpinner getEndTime() { return endTime; }
+    public JDateChooser getRegDate() { return regDate; }
+    public JSpinner getRegTime() { return regTime; }
+    public JTextArea getTaDesc() { return taDesc; }
+    public JComboBox<String> getCbStatus() { return cbStatus; }
+    public JComboBox<String> getCbPointType() { return cbPointType; }
+    public JSpinner getSpPointValue() { return spPointValue; }
 }

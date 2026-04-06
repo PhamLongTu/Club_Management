@@ -100,8 +100,6 @@ CREATE TABLE participations (
     member_id         INT NOT NULL COMMENT 'FK -> members',
     event_id          INT NOT NULL COMMENT 'FK -> events',
     registration_date DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày đăng ký',
-    status            VARCHAR(20)  DEFAULT 'Registered' COMMENT 'Registered/Attended/Absent/Cancelled',
-    role_in_event     VARCHAR(100) COMMENT 'Vai trò cụ thể trong sự kiện',
     UNIQUE KEY uq_participation (member_id, event_id),
     CONSTRAINT fk_part_member FOREIGN KEY (member_id) REFERENCES members(member_id) ON DELETE CASCADE,
     CONSTRAINT fk_part_event  FOREIGN KEY (event_id)  REFERENCES events(event_id)  ON DELETE CASCADE
@@ -149,10 +147,6 @@ CREATE TABLE attendances (
     attendance_id  INT AUTO_INCREMENT PRIMARY KEY,
     member_id      INT NOT NULL COMMENT 'FK -> members',
     event_id       INT NOT NULL COMMENT 'FK -> events',
-    check_in_time  DATETIME COMMENT 'Giờ đến',
-    check_out_time DATETIME COMMENT 'Giờ về',
-    status         VARCHAR(15)  DEFAULT 'Present' COMMENT 'Present/Late/Absent/Excused',
-    note           VARCHAR(500) COMMENT 'Ghi chú',
     UNIQUE KEY uq_attendance (member_id, event_id),
     CONSTRAINT fk_att_member FOREIGN KEY (member_id) REFERENCES members(member_id) ON DELETE CASCADE,
     CONSTRAINT fk_att_event  FOREIGN KEY (event_id)  REFERENCES events(event_id)  ON DELETE CASCADE
@@ -282,38 +276,38 @@ INSERT INTO member_team (member_id, team_id, position) VALUES
 (4, 2, 'Trưởng ban'), (5, 3, 'Trưởng ban'), (2, 3, 'Thành viên');
 
 -- Events
-INSERT INTO events (event_name, description, start_date, end_date, registration_deadline, location, status, budget, max_participants, created_by) VALUES
+INSERT INTO events (event_name, description, start_date, end_date, registration_deadline, location, status, budget, max_participants, point_type, point_value, created_by) VALUES
 ('Ngày hội Chào Tân Sinh Viên 2024',
  'Sự kiện chào đón tân sinh viên nhập học năm 2024',
  '2024-09-15 08:00:00', '2024-09-15 17:00:00', '2024-09-14 23:59:00',
- 'Sân trường chính', 'Completed', 15000000, 500, 5),
+ 'Sân trường chính', 'Completed', 15000000, 500, 'DRL', 10, 5),
 ('Workshop: Kỹ năng lập trình Python',
  'Workshop dạy lập trình Python cơ bản đến nâng cao',
  '2024-10-20 08:00:00', '2024-10-20 12:00:00', '2024-10-19 23:59:00',
- 'Phòng máy tính A201', 'Completed', 2000000, 50, 3),
+ 'Phòng máy tính A201', 'Completed', 2000000, 50, 'CTXH', 5, 3),
 ('Gala Concert Âm nhạc Mùa Xuân',
  'Đêm nhạc kỷ niệm 5 năm thành lập CLB',
  '2025-01-25 18:00:00', '2025-01-25 22:00:00', '2025-01-24 23:59:00',
- 'Hội trường lớn', 'Upcoming', 30000000, 300, 4);
+ 'Hội trường lớn', 'Upcoming', 30000000, 300, 'DRL', 15, 4);
 
 -- Participations
-INSERT INTO participations (member_id, event_id, status, role_in_event) VALUES
-(1, 1, 'Attended', 'Tình nguyện viên'),
-(2, 1, 'Attended', 'MC'),
-(3, 1, 'Attended', 'Trưởng ban tổ chức'),
-(4, 1, 'Attended', 'Truyền thông'),
-(1, 2, 'Attended', 'Học viên'),
-(2, 2, 'Attended', 'Giảng viên hỗ trợ'),
-(5, 2, 'Attended', 'Quản trị kỹ thuật'),
-(1, 3, 'Registered', 'Tình nguyện viên'),
-(2, 3, 'Registered', 'MC');
+INSERT INTO participations (member_id, event_id) VALUES
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 1),
+(1, 2),
+(2, 2),
+(5, 2),
+(1, 3),
+(2, 3);
 
 -- Tasks
-INSERT INTO tasks (title, description, deadline, priority, status, visibility, max_assignees, assigner_id, event_id) VALUES
-('Thiết kế poster sự kiện',  'Tạo poster cho Gala Concert', '2025-01-10 23:59:00', 'High',   'Done',       'Public', 1, 3, 3),
-('Liên hệ nhà tài trợ',      'Liên hệ các doanh nghiệp',   '2025-01-05 23:59:00', 'High',   'InProgress', 'Public', 2, 5, 3),
-('Chuẩn bị hệ thống âm thanh','Kiểm tra và lắp đặt hệ thống','2025-01-20 17:00:00','Critical','Todo',      'Private', 2, 3, 3),
-('Thu thập phản hồi sự kiện','Gửi form khảo sát sau sự kiện','2024-09-20 23:59:00','Medium',  'Done',      'Public', 1, 5, 1);
+INSERT INTO tasks (title, description, deadline, priority, status, visibility, max_assignees, contribution_points, assigner_id, event_id) VALUES
+('Thiết kế poster sự kiện',  'Tạo poster cho Gala Concert', '2025-01-10 23:59:00', 'High',   'Done',       'Public', 1, 8, 3, 3),
+('Liên hệ nhà tài trợ',      'Liên hệ các doanh nghiệp',   '2025-01-05 23:59:00', 'High',   'InProgress', 'Public', 2, 12, 5, 3),
+('Chuẩn bị hệ thống âm thanh','Kiểm tra và lắp đặt hệ thống','2025-01-20 17:00:00','Critical','Todo',      'Private', 2, 15, 3, 3),
+('Thu thập phản hồi sự kiện','Gửi form khảo sát sau sự kiện','2024-09-20 23:59:00','Medium',  'Done',      'Public', 1, 5, 5, 1);
 
 -- Task Members
 INSERT INTO task_members (task_id, member_id) VALUES
@@ -323,13 +317,13 @@ INSERT INTO task_members (task_id, member_id) VALUES
 (4, 2);
 
 -- Attendances
-INSERT INTO attendances (member_id, event_id, check_in_time, check_out_time, status) VALUES
-(1, 1, '2024-09-15 07:45:00', '2024-09-15 17:15:00', 'Present'),
-(2, 1, '2024-09-15 08:05:00', '2024-09-15 17:00:00', 'Late'),
-(3, 1, '2024-09-15 07:30:00', '2024-09-15 17:30:00', 'Present'),
-(4, 1, '2024-09-15 08:00:00', '2024-09-15 17:00:00', 'Present'),
-(1, 2, '2024-10-20 07:50:00', '2024-10-20 12:00:00', 'Present'),
-(2, 2, '2024-10-20 08:00:00', '2024-10-20 12:00:00', 'Present');
+INSERT INTO attendances (member_id, event_id) VALUES
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 1),
+(1, 2),
+(2, 2);
 
 -- Announcements
 INSERT INTO announcements (title, content, is_pinned, target_audience, target_team_id, author_id) VALUES
@@ -345,9 +339,9 @@ INSERT INTO meetings (title, content, start_time, end_time, location, meet_link,
 ('Hop tong ket du an', 'Tong ket tien do va rut kinh nghiem.', '2024-12-25 19:00:00', '2024-12-25 20:30:00', 'Phong hop B2', NULL, 4);
 
 -- Projects
-INSERT INTO projects (project_name, description, objective, start_date, end_date, budget, status, visibility, max_members, manager_id) VALUES
-('Website CLB 2025', 'Xây dựng website chính thức cho CLB', 'Ra mắt website trước tháng 3/2025', '2024-11-01', '2025-02-28', 5000000, 'Active', 'Public', 5, 5),
-('Sách kỷ yếu CLB 5 năm', 'Biên soạn kỷ yếu nhân dịp 5 năm thành lập', 'Hoàn thành sách kỷ yếu 100 trang', '2024-12-01', '2025-01-20', 8000000, 'Active', 'Public', 3, 4);
+INSERT INTO projects (project_name, description, objective, start_date, end_date, budget, status, visibility, max_members, contribution_points, manager_id) VALUES
+('Website CLB 2025', 'Xây dựng website chính thức cho CLB', 'Ra mắt website trước tháng 3/2025', '2024-11-01', '2025-02-28', 5000000, 'Active', 'Public', 5, 20, 5),
+('Sách kỷ yếu CLB 5 năm', 'Biên soạn kỷ yếu nhân dịp 5 năm thành lập', 'Hoàn thành sách kỷ yếu 100 trang', '2024-12-01', '2025-01-20', 8000000, 'Active', 'Public', 3, 15, 4);
 
 -- Project Members
 INSERT INTO project_members (project_id, member_id, role_in_project) VALUES

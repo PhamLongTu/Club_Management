@@ -1,8 +1,6 @@
 package com.clubmanagement.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.hibernate.Session;
@@ -24,107 +22,12 @@ public class AttendanceService {
     private final MemberService memberService = new MemberService();
 
     /**
-     * Check-in thành viên cho một sự kiện.
-     * @param memberId ID thành viên
-     * @param eventId ID sự kiện
-     * @param time Thời gian check-in
-     * @param status Trạng thái điểm danh
-     * @param note Ghi chú
-     * @return AttendanceDTO đã lưu
-     */
-    public AttendanceDTO checkIn(Integer memberId, Integer eventId, LocalDateTime time, String status, String note) {
-        if (memberId == null || eventId == null) {
-            throw new IllegalArgumentException("Vui lòng chọn Thành viên và Sự kiện!");
-        }
-
-        try (Session session = HibernateUtil.openSession()) {
-            Member member = session.get(Member.class, memberId);
-            Event event = session.get(Event.class, eventId);
-
-            if (member == null || event == null) {
-                throw new IllegalArgumentException("Không tìm thấy dữ liệu Thành viên hoặc Sự kiện!");
-            }
-
-            LocalDateTime checkInTime = time != null ? time : LocalDateTime.now();
-            Attendance attendance = new Attendance(member, event, checkInTime, status);
-            attendance.setNote(note);
-
-            AttendanceDTO saved = toDTO(attendanceDAO.save(attendance));
-            if ("Present".equalsIgnoreCase(status)) {
-                adjustMemberPointsByEvent(memberId, event, 1);
-            }
-            return saved;
-        } catch (Exception e) {
-            throw new RuntimeException("Lỗi: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Lấy tất cả điểm danh.
-     * @return Danh sách AttendanceDTO
-     */
-    public List<AttendanceDTO> getAllAttendances() {
-        return attendanceDAO.findAll().stream().map(this::toDTO).collect(Collectors.toList());
-    }
-
-    /**
      * Lấy điểm danh theo sự kiện.
      * @param eventId ID sự kiện
      * @return Danh sách AttendanceDTO
      */
     public List<AttendanceDTO> getAttendancesByEvent(Integer eventId) {
         return attendanceDAO.findByEventId(eventId).stream().map(this::toDTO).collect(Collectors.toList());
-    }
-
-    /**
-     * Lấy điểm danh theo ID.
-     * @param attendanceId ID điểm danh
-     * @return Optional<AttendanceDTO>
-     */
-    public Optional<AttendanceDTO> getAttendanceById(Integer attendanceId) {
-        if (attendanceId == null) return Optional.empty();
-        return attendanceDAO.findById(attendanceId).map(this::toDTO);
-    }
-
-    /**
-     * Cập nhật thông tin điểm danh.
-     * @param id ID điểm danh
-     * @param checkIn Thời gian check-in
-     * @param checkOut Thời gian check-out
-     * @param status Trạng thái
-     * @param note Ghi chú
-     * @return AttendanceDTO đã cập nhật
-     */
-    public AttendanceDTO updateAttendance(Integer id, LocalDateTime checkIn, LocalDateTime checkOut, String status, String note) {
-        Attendance attendance = attendanceDAO.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông tin Điểm danh!"));
-
-        String oldStatus = attendance.getStatus();
-        boolean wasPresent = "Present".equalsIgnoreCase(oldStatus);
-        boolean isPresent = "Present".equalsIgnoreCase(status);
-
-        attendance.setCheckInTime(checkIn);
-        attendance.setCheckOutTime(checkOut);
-        attendance.setStatus(status);
-        attendance.setNote(note);
-
-        AttendanceDTO updated = toDTO(attendanceDAO.update(attendance));
-        if (wasPresent != isPresent) {
-            Event event = attendance.getEvent();
-            Integer memberId = attendance.getMember() != null ? attendance.getMember().getMemberId() : null;
-            adjustMemberPointsByEvent(memberId, event, isPresent ? 1 : -1);
-        }
-        return updated;
-    }
-
-    /**
-     * Xóa điểm danh theo ID.
-     * @param id ID điểm danh
-     */
-    public void deleteAttendance(Integer id) {
-        if (!attendanceDAO.deleteById(id)) {
-            throw new IllegalArgumentException("Không tìm thấy dữ liệu để xóa!");
-        }
     }
 
     /**
@@ -151,9 +54,7 @@ public class AttendanceService {
              .setParameter("mid", memberId)
              .uniqueResult();
 
-            String oldStatus = attendance != null ? attendance.getStatus() : null;
-            boolean wasPresent = "Present".equalsIgnoreCase(oldStatus);
-
+            boolean wasAttended = attendance != null;
             if (attended) {
                 if (attendance == null) {
                     Member member = session.get(Member.class, memberId);
@@ -164,24 +65,20 @@ public class AttendanceService {
                     attendance = new Attendance();
                     attendance.setMember(member);
                     attendance.setEvent(event);
-                    attendance.setStatus("Present");
                     session.persist(attendance);
-                } else {
-                    attendance.setStatus("Present");
-                    session.merge(attendance);
                 }
             } else {
-                if (attendance == null) {
+                if (attendance != null) {
+                    session.remove(attendance);
+                } else {
                     tx.commit();
                     return null;
                 }
-                attendance.setStatus("Absent");
-                session.merge(attendance);
             }
 
-            boolean isPresent = attended;
-            if (wasPresent != isPresent) {
-                applyEventPoints(attendance.getMember(), attendance.getEvent(), isPresent ? 1 : -1);
+            if (wasAttended != attended) {
+                Event event = session.get(Event.class, eventId);
+                adjustMemberPointsByEvent(memberId, event, attended ? 1 : -1);
             }
 
             tx.commit();
@@ -189,19 +86,6 @@ public class AttendanceService {
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw new RuntimeException("Lỗi cập nhật điểm danh: " + e.getMessage(), e);
-        }
-    }
-
-    private void applyEventPoints(Member member, Event event, int sign) {
-        if (member == null || event == null || sign == 0) return;
-        String type = event.getPointType();
-        if (type == null || "None".equalsIgnoreCase(type)) return;
-        int value = safePoints(event.getPointValue()) * sign;
-        if (value == 0) return;
-        if ("DRL".equalsIgnoreCase(type)) {
-            member.setDrlPoints(safeAdjust(member.getDrlPoints(), value));
-        } else if ("CTXH".equalsIgnoreCase(type)) {
-            member.setCtxhPoints(safeAdjust(member.getCtxhPoints(), value));
         }
     }
 
@@ -222,12 +106,6 @@ public class AttendanceService {
         return value != null ? value : 0;
     }
 
-    private Integer safeAdjust(Integer current, int delta) {
-        int base = current != null ? current : 0;
-        int updated = base + delta;
-        return Math.max(0, updated);
-    }
-
     /**
      * Map Attendance entity -> AttendanceDTO.
      * @param a Attendance entity
@@ -238,13 +116,7 @@ public class AttendanceService {
         return new AttendanceDTO(
             a.getAttendanceId(),
             a.getMember() != null ? a.getMember().getMemberId() : null,
-            a.getMember() != null ? a.getMember().getFullName() : "Không xác định",
-            a.getEvent() != null ? a.getEvent().getEventId() : null,
-            a.getEvent() != null ? a.getEvent().getEventName() : "Không xác định",
-            a.getCheckInTime(),
-            a.getCheckOutTime(),
-            a.getStatus(),
-            a.getNote()
+            a.getEvent() != null ? a.getEvent().getEventId() : null
         );
     }
 }

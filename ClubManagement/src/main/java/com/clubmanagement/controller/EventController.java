@@ -229,7 +229,7 @@ public class EventController {
                 if (isEdit) {
                     eventService.updateEvent(event.getEventId(), data.name, data.description,
                         data.startDate, data.endDate, data.registrationDeadline,
-                        data.location, data.budget, data.status,
+                        data.location, data.budget, data.status, data.maxParticipants,
                         data.pointType, data.pointValue);
                     JOptionPane.showMessageDialog(dialog, "Đã cập nhật sự kiện!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
                 } else {

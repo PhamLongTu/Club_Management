@@ -165,7 +165,7 @@ public class EventService {
                 "JOIN a.event e " +
                 "LEFT JOIN FETCH e.createdBy " +
                 "LEFT JOIN FETCH e.participations " +
-                "WHERE a.member.memberId = :mid AND a.status <> 'Absent'",
+                "WHERE a.member.memberId = :mid",
                 Event.class
             ).setParameter("mid", memberId).getResultList();
             return events.stream().map(this::toDTO).collect(Collectors.toList());
@@ -223,7 +223,7 @@ public class EventService {
     public EventDTO updateEvent(Integer eventId, String eventName, String description,
                                 LocalDateTime startDate, LocalDateTime endDate,
                                 LocalDateTime registrationDeadline, String location,
-                                BigDecimal budget, String status,
+                                BigDecimal budget, String status, Integer maxParticipants,
                                 String pointType, Integer pointValue) {
         Event event = eventDAO.findById(eventId)
             .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sự kiện ID: " + eventId));
@@ -236,6 +236,8 @@ public class EventService {
             throw new IllegalArgumentException("Hạn đăng ký phải trước ngày bắt đầu!");
         if (pointValue != null && pointValue < 0)
             throw new IllegalArgumentException("Điểm sự kiện không được âm!");
+        if (maxParticipants != null && maxParticipants <= 0)
+            throw new IllegalArgumentException("Số lượng tối đa phải lớn hơn 0!");
 
         event.setEventName(eventName.trim());
         event.setDescription(description);
@@ -245,6 +247,9 @@ public class EventService {
         event.setLocation(location);
         event.setBudget(budget);
         event.setStatus(status);
+        if (maxParticipants != null) {
+            event.setMaxParticipants(maxParticipants);
+        }
         String normalizedPointType = normalizePointType(pointType);
         event.setPointType(normalizedPointType);
         if ("None".equalsIgnoreCase(normalizedPointType)) {
@@ -361,7 +366,6 @@ public class EventService {
             com.clubmanagement.entity.Participation participation = new com.clubmanagement.entity.Participation();
             participation.setEvent(event);
             participation.setMember(member);
-            participation.setStatus("Registered");
             participation.setRegistrationDate(LocalDateTime.now());
             session.persist(participation);
             tx.commit();

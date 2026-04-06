@@ -42,17 +42,6 @@ public class Participation {
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
-    /**
-     * Trạng thái tham gia:
-     * Registered / Attended / Absent / Cancelled
-     */
-    @Column(name = "status", length = 20)
-    private String status = "Registered";
-
-    /** Vai trò trong sự kiện (ví dụ: MC, Tình nguyện viên, Ban tổ chức) */
-    @Column(name = "role_in_event", length = 100)
-    private String roleInEvent;
-
     // ============ CONSTRUCTORS ============
     /**
      * Constructor mặc định (bắt buộc cho JPA).
@@ -66,14 +55,11 @@ public class Participation {
      *
      * @param member     Thành viên đăng ký
      * @param event      Sự kiện đăng ký
-     * @param roleInEvent Vai trò trong sự kiện
      */
-    public Participation(Member member, Event event, String roleInEvent) {
+    public Participation(Member member, Event event) {
         this.member           = member;
         this.event            = event;
-        this.roleInEvent      = roleInEvent;
         this.registrationDate = LocalDateTime.now();
-        this.status           = "Registered";
     }
 
     // ============ GETTERS & SETTERS ============
@@ -97,13 +83,4 @@ public class Participation {
     /** @param v Ngày giờ đăng ký mới. */
     public void setRegistrationDate(LocalDateTime v)  { this.registrationDate = v; }
 
-    /** @return Trạng thái tham gia. */
-    public String getStatus()                  { return status; }
-    /** @param v Trạng thái mới. */
-    public void setStatus(String v)            { this.status = v; }
-
-    /** @return Vai trò trong sự kiện. */
-    public String getRoleInEvent()             { return roleInEvent; }
-    /** @param v Vai trò trong sự kiện mới. */
-    public void setRoleInEvent(String v)       { this.roleInEvent = v; }
 }
