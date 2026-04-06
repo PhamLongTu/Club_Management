@@ -63,6 +63,9 @@ public class MyInfoView {
     private static final Color BG          = new Color(241, 245, 249);
     private static final Color TEXT_DARK   = new Color(15, 23, 42);
     private static final Color TEXT_GRAY   = new Color(100, 116, 139);
+    private static final Color ACCENT      = new Color(99, 102, 241);
+    private static final Color ACCENT_SOFT = new Color(224, 231, 255);
+    private static final Color ACCENT_ROW  = new Color(238, 242, 255);
     private static final int AVATAR_SIZE   = 200;
 
     /**
@@ -111,7 +114,7 @@ public class MyInfoView {
 
         nameLabel = new JLabel(" ");
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        nameLabel.setForeground(TEXT_DARK);
+        nameLabel.setForeground(ACCENT);
 
         roleLabel = new JLabel(" ");
         roleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -134,7 +137,7 @@ public class MyInfoView {
 
         JTableHeader infoHeader = infoTable.getTableHeader();
         infoHeader.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        infoHeader.setBackground(new Color(248, 250, 252));
+        infoHeader.setBackground(ACCENT_SOFT);
         infoHeader.setForeground(new Color(71, 85, 105));
         infoHeader.setPreferredSize(new Dimension(0, 32));
 
@@ -245,7 +248,7 @@ public class MyInfoView {
 
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        titleLabel.setForeground(TEXT_DARK);
+        titleLabel.setForeground(ACCENT);
 
         JLabel countText = new JLabel("Tổng: ");
         countText.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -294,7 +297,7 @@ public class MyInfoView {
 
         JTableHeader header = table.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        header.setBackground(new Color(248, 250, 252));
+        header.setBackground(ACCENT_SOFT);
         header.setForeground(new Color(71, 85, 105));
         header.setPreferredSize(new Dimension(0, 36));
 
@@ -304,7 +307,7 @@ public class MyInfoView {
                     boolean sel, boolean foc, int row, int col) {
                 super.getTableCellRendererComponent(t, v, sel, foc, row, col);
                 if (!sel) {
-                    setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
+                    setBackground(row % 2 == 0 ? Color.WHITE : ACCENT_ROW);
                     setForeground(TEXT_DARK);
                 }
                 if (col == 1) {

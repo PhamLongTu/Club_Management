@@ -61,6 +61,9 @@ public class EventView {
     private static final Color BG          = new Color(241, 245, 249);
     private static final Color TEXT_DARK   = new Color(15, 23, 42);
     private static final Color TEXT_GRAY   = new Color(100, 116, 139);
+    private static final Color ACCENT      = new Color(34, 197, 94);
+    private static final Color ACCENT_SOFT = new Color(220, 252, 231);
+    private static final Color ACCENT_ROW  = new Color(240, 253, 244);
 
     private final MemberDTO currentUser;
 
@@ -98,13 +101,13 @@ public class EventView {
 
         JLabel title = new JLabel("Quản lý Sự kiện");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        title.setForeground(TEXT_DARK);
+        title.setForeground(ACCENT);
 
         // Toolbar
         JPanel toolbar = new JPanel();
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.X_AXIS));
         toolbar.setOpaque(true);
-        toolbar.setBackground(Color.WHITE);
+        toolbar.setBackground(ACCENT_SOFT);
         toolbar.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(226, 232, 240), 1, true),
             new EmptyBorder(12, 16, 12, 16)
@@ -254,7 +257,7 @@ public class EventView {
 
         JTableHeader header = table.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        header.setBackground(new Color(248, 250, 252));
+        header.setBackground(ACCENT_SOFT);
         header.setForeground(new Color(71, 85, 105));
         header.setPreferredSize(new Dimension(0, 42));
 
@@ -264,7 +267,7 @@ public class EventView {
                     boolean sel, boolean foc, int row, int col) {
                 super.getTableCellRendererComponent(t, value, sel, foc, row, col);
                 if (!sel) {
-                    setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
+                    setBackground(row % 2 == 0 ? Color.WHITE : ACCENT_ROW);
                     setForeground(TEXT_DARK);
                 }
                 setBorder(new EmptyBorder(0, 8, 0, 8));

@@ -12,8 +12,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -189,7 +187,7 @@ public class LoginView extends JFrame {
         // ---- Tiêu đề ----
         JLabel welcomeLabel = new JLabel("Chào mừng trở lại!");
         welcomeLabel.setFont(FONT_TITLE);
-        welcomeLabel.setForeground(TEXT_DARK);
+        welcomeLabel.setForeground(PRIMARY);
         welcomeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel subLabel = new JLabel("Đăng nhập vào hệ thống quản lý CLB");
@@ -240,15 +238,6 @@ public class LoginView extends JFrame {
         loginButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
         loginButton.setPreferredSize(new Dimension(300, 48));
 
-        // Hiệu ứng hover: màu đậm hơn khi rê chuột
-        loginButton.addMouseListener(new MouseAdapter() {
-            @Override public void mouseEntered(MouseEvent e) {
-                loginButton.setBackground(new Color(29, 78, 216));
-            }
-            @Override public void mouseExited(MouseEvent e) {
-                loginButton.setBackground(PRIMARY);
-            }
-        });
 
         // ---- Footer ----
         JLabel footerLabel = new JLabel("2025 Club Management System", SwingConstants.CENTER);

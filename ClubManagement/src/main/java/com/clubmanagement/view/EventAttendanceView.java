@@ -7,6 +7,9 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -89,6 +92,9 @@ public class EventAttendanceView {
     private static final Color BG          = new Color(241, 245, 249);
     private static final Color TEXT_DARK   = new Color(15, 23, 42);
     private static final Color TEXT_GRAY   = new Color(100, 116, 139);
+    private static final Color ACCENT      = new Color(20, 184, 166);
+    private static final Color ACCENT_SOFT = new Color(204, 251, 241);
+    private static final Color ACCENT_ROW  = new Color(240, 253, 250);
 
     private final MemberDTO currentUser;
 
@@ -120,7 +126,7 @@ public class EventAttendanceView {
 
         JLabel title = new JLabel("Điểm danh sự kiện");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        title.setForeground(TEXT_DARK);
+        title.setForeground(ACCENT);
 
         eventTitleLabel = new JLabel(" ");
         eventTitleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -140,7 +146,7 @@ public class EventAttendanceView {
         JPanel toolbar = new JPanel();
         toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.X_AXIS));
         toolbar.setOpaque(true);
-        toolbar.setBackground(Color.WHITE);
+        toolbar.setBackground(ACCENT_SOFT);
         toolbar.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(226, 232, 240), 1, true),
             new EmptyBorder(12, 16, 12, 16)
@@ -213,7 +219,7 @@ public class EventAttendanceView {
         header.add(title, BorderLayout.WEST);
         header.add(btnSaveEvent, BorderLayout.EAST);
 
-        JPanel form = new JPanel(new java.awt.GridLayout(0, 2, 8, 8));
+        JPanel form = new JPanel(new GridBagLayout());
         form.setOpaque(false);
         Font f = new Font("Segoe UI", Font.PLAIN, 13);
 
@@ -242,17 +248,46 @@ public class EventAttendanceView {
         spPointValue = new JSpinner(new javax.swing.SpinnerNumberModel(0, 0, 200, 1));
         spPointValue.setFont(f);
 
-        form.add(makeLabel("Tên sự kiện *:")); form.add(tfName);
-        form.add(makeLabel("Bắt đầu *:")); form.add(UiFormUtil.buildDateTimePanel(startDate, startTime));
-        form.add(makeLabel("Kết thúc *:")); form.add(UiFormUtil.buildDateTimePanel(endDate, endTime));
-        form.add(makeLabel("Địa điểm:")); form.add(tfLocation);
-        form.add(makeLabel("Hạn đăng ký:")); form.add(UiFormUtil.buildDateTimePanel(regDate, regTime));
-        form.add(makeLabel("Ngân sách (VNĐ):")); form.add(tfBudget);
-        form.add(makeLabel("Số lượng tối đa:")); form.add(tfMaxP);
-        form.add(makeLabel("Loại điểm:")); form.add(cbPointType);
-        form.add(makeLabel("Điểm áp dụng:")); form.add(spPointValue);
-        form.add(makeLabel("Trạng thái:")); form.add(cbStatus);
-        form.add(makeLabel("Mô tả:")); form.add(new JScrollPane(taDesc));
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.insets = new Insets(4, 4, 4, 4);
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 0;
+        gc.gridy = 0;
+
+        addFormPair(form, gc, 0, "Tên sự kiện *:", tfName);
+        addFormPair(form, gc, 1, "Trạng thái:", cbStatus);
+        gc.gridy++;
+
+        addFormPair(form, gc, 0, "Bắt đầu *:", UiFormUtil.buildDateTimePanel(startDate, startTime));
+        addFormPair(form, gc, 1, "Kết thúc *:", UiFormUtil.buildDateTimePanel(endDate, endTime));
+        gc.gridy++;
+
+        addFormPair(form, gc, 0, "Hạn đăng ký:", UiFormUtil.buildDateTimePanel(regDate, regTime));
+        addFormPair(form, gc, 1, "Địa điểm:", tfLocation);
+        gc.gridy++;
+
+        addFormPair(form, gc, 0, "Ngân sách (VNĐ):", tfBudget);
+        addFormPair(form, gc, 1, "Số lượng tối đa:", tfMaxP);
+        gc.gridy++;
+
+        addFormPair(form, gc, 0, "Loại điểm:", cbPointType);
+        addFormPair(form, gc, 1, "Điểm áp dụng:", spPointValue);
+        gc.gridy++;
+
+        JLabel descLabel = makeLabel("Mô tả:");
+        gc.gridx = 0;
+        gc.gridwidth = 1;
+        gc.weightx = 0;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        form.add(descLabel, gc);
+
+        JScrollPane descPane = new JScrollPane(taDesc);
+        descPane.setPreferredSize(new Dimension(200, 64));
+        gc.gridx = 1;
+        gc.gridwidth = 3;
+        gc.weightx = 1;
+        gc.fill = GridBagConstraints.BOTH;
+        form.add(descPane, gc);
 
         card.add(header, BorderLayout.NORTH);
         card.add(form, BorderLayout.CENTER);
@@ -319,7 +354,7 @@ public class EventAttendanceView {
 
         JTableHeader header = table.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        header.setBackground(new Color(248, 250, 252));
+        header.setBackground(ACCENT_SOFT);
         header.setForeground(new Color(71, 85, 105));
         header.setPreferredSize(new Dimension(0, 42));
 
@@ -329,7 +364,7 @@ public class EventAttendanceView {
                     boolean sel, boolean foc, int row, int col) {
                 super.getTableCellRendererComponent(t, value, sel, foc, row, col);
                 if (!sel) {
-                    setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
+                    setBackground(row % 2 == 0 ? Color.WHITE : ACCENT_ROW);
                     setForeground(TEXT_DARK);
                 }
                 setBorder(new EmptyBorder(0, 8, 0, 8));
@@ -475,6 +510,22 @@ public class EventAttendanceView {
         dateChooser.setDate(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()));
         Date timeValue = Date.from(dateTime.toLocalTime().atDate(java.time.LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
         timeSpinner.setValue(timeValue);
+    }
+
+    private void addFormPair(JPanel form, GridBagConstraints gc, int pairIndex, String labelText, Component input) {
+        int baseX = pairIndex == 0 ? 0 : 2;
+        JLabel label = makeLabel(labelText);
+        gc.gridx = baseX;
+        gc.gridwidth = 1;
+        gc.weightx = 0;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        form.add(label, gc);
+
+        gc.gridx = baseX + 1;
+        gc.gridwidth = 1;
+        gc.weightx = 1;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        form.add(input, gc);
     }
 
     public String getSearchKeyword() { return searchField.getText().trim(); }

@@ -70,6 +70,7 @@ public class MemberFormDialog extends JDialog {
 
     private static final Color PRIMARY   = new Color(37, 99, 235);
     private static final Color TEXT_DARK = new Color(15, 23, 42);
+    private static final Color ACCENT    = new Color(20, 184, 166);
 
     /**
      * Constructor cho chế độ THÊM MỚI.
@@ -135,7 +136,7 @@ public class MemberFormDialog extends JDialog {
         // ---- Tiêu đề ----
         JLabel titleLabel = new JLabel(isEdit ? "Chỉnh sửa thành viên" : "Thêm thành viên mới");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        titleLabel.setForeground(TEXT_DARK);
+        titleLabel.setForeground(ACCENT);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         mainPanel.add(titleLabel);

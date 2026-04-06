@@ -85,12 +85,13 @@ public class DashboardView extends JFrame {
 
     // ====== Colors ======
     private static final Color SIDEBAR_BG  = new Color(15, 23, 42);
-    private static final Color SIDEBAR_HOV = new Color(30, 41, 59);
     private static final Color SIDEBAR_SEL = new Color(37, 99, 235);
     private static final Color CONTENT_BG  = new Color(241, 245, 249);
-    private static final Color PRIMARY      = new Color(37, 99, 235);
+    private static final Color PRIMARY     = new Color(37, 99, 235);
     private static final Color TEXT_DARK   = new Color(15, 23, 42);
     private static final Color TEXT_GRAY   = new Color(100, 116, 139);
+    private static final Color ACCENT      = new Color(20, 184, 166);
+    private static final Color ACCENT_SOFT = new Color(204, 251, 241);
 
     private final MemberDTO currentUser;
 
@@ -278,15 +279,6 @@ public class DashboardView extends JFrame {
         btn.setPreferredSize(new Dimension(220, 46));
         btn.setBorder(new EmptyBorder(0, 20, 0, 20));
 
-        // Hover effect
-        btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override public void mouseEntered(java.awt.event.MouseEvent e) {
-                if (btn.getBackground() != SIDEBAR_SEL) btn.setBackground(SIDEBAR_HOV);
-            }
-            @Override public void mouseExited(java.awt.event.MouseEvent e) {
-                if (btn.getBackground() != SIDEBAR_SEL) btn.setBackground(SIDEBAR_BG);
-            }
-        });
         return btn;
     }
 
@@ -339,7 +331,7 @@ public class DashboardView extends JFrame {
         // ---- Header ----
         JLabel pageTitle = new JLabel("Tổng quan hệ thống");
         pageTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        pageTitle.setForeground(TEXT_DARK);
+        pageTitle.setForeground(ACCENT);
 
         JLabel subtitle = new JLabel("Xin chào, " + currentUser.getFullName() + "! Đây là tổng quan hoạt động CLB.");
         subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -371,7 +363,7 @@ public class DashboardView extends JFrame {
         // ---- Quick Actions ----
         JLabel qaLabel = new JLabel("Truy cập nhanh");
         qaLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        qaLabel.setForeground(TEXT_DARK);
+        qaLabel.setForeground(ACCENT);
 
         JPanel qaPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 8));
         qaPanel.setOpaque(false);
@@ -569,11 +561,11 @@ public class DashboardView extends JFrame {
     private JButton makeQuickBtn(String text) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        btn.setBackground(Color.WHITE);
-        btn.setForeground(PRIMARY);
+        btn.setBackground(ACCENT_SOFT);
+        btn.setForeground(ACCENT);
         btn.setBorderPainted(true);
         btn.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(PRIMARY, 1, true),
+            BorderFactory.createLineBorder(ACCENT, 1, true),
             new EmptyBorder(8, 16, 8, 16)
         ));
         btn.setFocusPainted(false);

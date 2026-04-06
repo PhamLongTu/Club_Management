@@ -53,6 +53,9 @@ public class MeetingView {
     private static final Color TEXT_DARK   = new Color(15,  23,  42);
     private static final Color TEXT_GRAY   = new Color(100, 116, 139);
     private static final Color OVERDUE_TXT = new Color(107, 114, 128);
+    private static final Color ACCENT      = new Color(14, 165, 233);
+    private static final Color ACCENT_SOFT = new Color(224, 242, 254);
+    private static final Color ACCENT_ROW  = new Color(240, 249, 255);
 
     private final MemberDTO currentUser;
 
@@ -90,7 +93,7 @@ public class MeetingView {
 
         JLabel title = new JLabel("Quan ly Cuoc hop");
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        title.setForeground(TEXT_DARK);
+        title.setForeground(ACCENT);
 
         JPanel toolbar = new JPanel(new BorderLayout());
         toolbar.setOpaque(true);
@@ -98,7 +101,7 @@ public class MeetingView {
             BorderFactory.createLineBorder(new Color(226, 232, 240), 1, true),
             new EmptyBorder(12, 16, 12, 16)
         ));
-        toolbar.setBackground(Color.WHITE);
+        toolbar.setBackground(ACCENT_SOFT);
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         rightPanel.setOpaque(false);
@@ -192,7 +195,7 @@ public class MeetingView {
 
         JTableHeader header = table.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        header.setBackground(new Color(248, 250, 252));
+        header.setBackground(ACCENT_SOFT);
         header.setForeground(new Color(71, 85, 105));
         header.setPreferredSize(new Dimension(0, 42));
 
@@ -207,7 +210,7 @@ public class MeetingView {
 
                 boolean overdue = isOverdueRow(row);
                 if (!sel) {
-                    setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
+                    setBackground(row % 2 == 0 ? Color.WHITE : ACCENT_ROW);
                     setForeground(TEXT_DARK);
                     if (overdue) {
                         setForeground(OVERDUE_TXT);
