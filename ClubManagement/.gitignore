@@ -1,0 +1,21 @@
+# Maven
+/target/
+
+# IntelliJ IDEA
+/.idea/
+*.iml
+*.iws
+*.ipr
+/out/
+
+# Logs
+/logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local/temporary files
+/db_output.txt
+/db_test_utf8.txt
