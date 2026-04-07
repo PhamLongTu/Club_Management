@@ -49,7 +49,7 @@ import com.toedter.calendar.JDateChooser;
  */
 public class MemberFormDialog extends JDialog {
 
-    // ====== Form fields ======
+    // Trường nhập liệu
     private JTextField  tfFullName, tfStudentId, tfEmail, tfPhone;
     private JTextField  tfAvatarPath;
     private JPasswordField pfPassword;
@@ -62,7 +62,7 @@ public class MemberFormDialog extends JDialog {
     private JLabel avatarPreview;
     private String avatarUrl;
 
-    // ====== State ======
+    // Trạng thái
     private boolean confirmed = false; // true nếu nhấn nút Lưu
     private boolean isEdit    = false; // true nếu đang sửa (ẩn field password)
     private boolean selfEdit  = false; // true nếu user tự chỉnh sửa profile
@@ -133,7 +133,7 @@ public class MemberFormDialog extends JDialog {
         mainPanel.setBorder(new EmptyBorder(24, 32, 24, 32));
         mainPanel.setBackground(Color.WHITE);
 
-        // ---- Tiêu đề ----
+        // Tiêu đề
         JLabel titleLabel = new JLabel(isEdit ? "Chỉnh sửa thành viên" : "Thêm thành viên mới");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
         titleLabel.setForeground(ACCENT);
@@ -142,7 +142,7 @@ public class MemberFormDialog extends JDialog {
         mainPanel.add(titleLabel);
         mainPanel.add(Box.createVerticalStrut(20));
 
-        // ---- Form fields ----
+        // Các trường thông tin
         // Họ tên
         tfFullName = addRow(mainPanel, "Họ và tên *", "Nguyễn Văn A");
 
@@ -254,7 +254,7 @@ public class MemberFormDialog extends JDialog {
             addLabeledRow(mainPanel, "Đặt lại mật khẩu (tùy chọn)", pfNewPassword);
         }
 
-        // ---- Điền sẵn dữ liệu nếu là EDIT ----
+        // Điền sẵn dữ liệu nếu là EDIT
         if (member != null) {
             tfFullName.setText(member.getFullName());
             tfEmail.setText(member.getEmail());
@@ -292,7 +292,7 @@ public class MemberFormDialog extends JDialog {
             updateTeamSelectionState();
         }
 
-        // ---- Buttons ----
+        // Các nút
         mainPanel.add(Box.createVerticalStrut(20));
         mainPanel.add(buildButtonRow());
 
@@ -441,61 +441,33 @@ public class MemberFormDialog extends JDialog {
         JOptionPane.showMessageDialog(this, message, "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
     }
 
-    // ===================================================
-    // PUBLIC GETTERS (dùng bởi MemberController)
-    // ===================================================
-    /**
-     * @return true if the dialog was confirmed
-     */
+    // Getter công khai (dùng bởi MemberController)
+    /** @return true nếu người dùng đã xác nhận */
     public boolean isConfirmed()    { return confirmed; }
-    /**
-     * @return full name input
-     */
+    /** @return họ tên */
     public String getFullName()     { return tfFullName.getText().trim(); }
-    /**
-     * @return student id input
-     */
+    /** @return mã sinh viên */
     public String getStudentId()    { return tfStudentId != null ? tfStudentId.getText().trim() : ""; }
-    /**
-     * @return email input
-     */
+    /** @return email */
     public String getEmail()        { return tfEmail.getText().trim(); }
-    /**
-     * @return phone input
-     */
+    /** @return số điện thoại */
     public String getPhone()        { return tfPhone.getText().trim(); }
-    /**
-     * @return selected gender
-     */
+    /** @return giới tính được chọn */
     public String getGender()       { return (String) cbGender.getSelectedItem(); }
-    /**
-     * @return selected status
-     */
+    /** @return trạng thái được chọn */
     public String getStatus()       { return cbStatus != null ? (String) cbStatus.getSelectedItem() : "Active"; }
-    /**
-     * @return selected role
-     */
+    /** @return vai trò được chọn */
     public Role   getSelectedRole() { return cbRole != null ? (Role) cbRole.getSelectedItem() : null; }
-    /**
-     * @return password input (add mode only)
-     */
+    /** @return mật khẩu (chỉ chế độ thêm mới) */
     public String getPassword()     { return pfPassword != null ? new String(pfPassword.getPassword()) : ""; }
-    /**
-     * @return avatar url/path
-     */
+    /** @return đường dẫn ảnh đại diện */
     public String getAvatarUrl()    { return avatarUrl; }
-    /**
-     * @return old password input (self edit)
-     */
+    /** @return mật khẩu cũ (tự chỉnh sửa) */
     public String getOldPassword()  { return pfOldPassword != null ? new String(pfOldPassword.getPassword()) : ""; }
-    /**
-     * @return new password input (self edit or reset)
-     */
+    /** @return mật khẩu mới (tự chỉnh sửa hoặc đặt lại) */
     public String getNewPassword()  { return pfNewPassword != null ? new String(pfNewPassword.getPassword()) : ""; }
 
-    /**
-     * @return selected team ids
-     */
+    /** @return danh sách id ban/nhóm đã chọn */
     public List<Integer> getSelectedTeamIds() {
         if (listTeams == null) return java.util.Collections.emptyList();
         return listTeams.getSelectedValuesList().stream()
@@ -503,15 +475,13 @@ public class MemberFormDialog extends JDialog {
             .toList();
     }
 
-    /**
-     * @return selected birth date
-     */
+    /** @return ngày sinh đã chọn */
     public LocalDate getBirthDate() {
         return toLocalDate(dcBirthDate.getDate());
     }
 
     /**
-     * Updates team selection state when role changes.
+     * Cập nhật trạng thái chọn ban/nhóm khi đổi vai trò.
      */
     private void updateTeamSelectionState() {
         if (listTeams != null) {
@@ -520,9 +490,9 @@ public class MemberFormDialog extends JDialog {
     }
 
     /**
-     * Adds the avatar picker row to the form.
+     * Thêm hàng chọn ảnh đại diện vào form.
      *
-     * @param panel target panel
+     * @param panel panel đích
      */
     private void addAvatarRow(JPanel panel) {
         avatarPreview = new JLabel();
@@ -568,7 +538,7 @@ public class MemberFormDialog extends JDialog {
     }
 
     /**
-     * Opens a file chooser to select an avatar image.
+     * Mở hộp thoại chọn ảnh đại diện.
      */
     private void chooseAvatar() {
         JFileChooser chooser = new JFileChooser();
@@ -588,7 +558,7 @@ public class MemberFormDialog extends JDialog {
     }
 
     /**
-     * Clears the selected avatar.
+     * Xóa ảnh đại diện đã chọn.
      */
     private void clearAvatar() {
         avatarUrl = null;
@@ -597,7 +567,7 @@ public class MemberFormDialog extends JDialog {
     }
 
     /**
-     * Refreshes the avatar preview image.
+     * Làm mới ảnh xem trước.
      */
     private void updateAvatarPreview() {
         if (avatarPreview == null) return;
@@ -608,11 +578,11 @@ public class MemberFormDialog extends JDialog {
     }
 
     /**
-     * Adds a date picker row.
+     * Thêm một hàng chọn ngày.
      *
-     * @param panel target panel
-     * @param labelText label text
-     * @return the date chooser
+     * @param panel panel đích
+     * @param labelText nhãn hiển thị
+     * @return bộ chọn ngày
      */
     private JDateChooser addDateRow(JPanel panel, String labelText) {
         JLabel label = new JLabel(labelText);
@@ -634,10 +604,10 @@ public class MemberFormDialog extends JDialog {
     }
 
     /**
-     * Converts a Date to LocalDate.
+     * Chuyển Date sang LocalDate.
      *
-     * @param date input date
-     * @return local date or null
+     * @param date ngày đầu vào
+     * @return LocalDate hoặc null
      */
     private LocalDate toLocalDate(Date date) {
         if (date == null) return null;
@@ -645,10 +615,10 @@ public class MemberFormDialog extends JDialog {
     }
 
     /**
-     * Converts a LocalDate to Date.
+     * Chuyển LocalDate sang Date.
      *
-     * @param localDate input local date
-     * @return date or null
+     * @param localDate ngày đầu vào
+     * @return Date hoặc null
      */
     private Date toDate(LocalDate localDate) {
         if (localDate == null) return null;

@@ -14,11 +14,6 @@ import com.clubmanagement.util.HibernateUtil;
 
 /**
  * MemberDAO - Lớp truy cập dữ liệu cho thực thể Member.
- *
- * DAO (Data Access Object) pattern: tách biệt logic truy vấn database
- * ra khỏi business logic (Service), giúp code dễ test và bảo trì.
- *
- * Tất cả các thao tác đọc/ghi database đều thực hiện tại đây.
  */
 public class MemberDAO extends AbstractDAO<Member, Integer> {
 
@@ -28,10 +23,7 @@ public class MemberDAO extends AbstractDAO<Member, Integer> {
         super(Member.class);
     }
 
-    // ===========================================================
     // CREATE
-    // ===========================================================
-
     /**
      * Lưu một thành viên mới vào database.
      *
@@ -47,7 +39,7 @@ public class MemberDAO extends AbstractDAO<Member, Integer> {
 
     // ===========================================================
     // READ
-    // ===========================================================
+
 
     /**
      * Tìm một thành viên theo ID (Primary Key).
@@ -173,9 +165,7 @@ public class MemberDAO extends AbstractDAO<Member, Integer> {
         }
     }
 
-    // ===========================================================
     // UPDATE
-    // ===========================================================
 
     /**
      * Cập nhật thông tin thành viên đã tồn tại trong database.
@@ -189,9 +179,7 @@ public class MemberDAO extends AbstractDAO<Member, Integer> {
         return updated;
     }
 
-    // ===========================================================
     // DELETE
-    // ===========================================================
 
     /**
      * Xóa thành viên khỏi database theo ID.

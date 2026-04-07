@@ -40,14 +40,14 @@ import javax.swing.border.EmptyBorder;
  */
 public class LoginView extends JFrame {
 
-    // ====== UI Components ======
+    // Thành phần giao diện
     private JTextField  emailField;
     private JPasswordField passwordField;
     private JButton     loginButton;
     private JLabel      statusLabel;    // Hiển thị thông báo lỗi/thành công
     private JCheckBox   showPasswordCb; // Toggle hiện/ẩn mật khẩu
 
-    // ====== Màu sắc design system ======
+    // Màu sắc design system
     /** Màu xanh đậm chủ đạo */
     private static final Color PRIMARY   = new Color(37, 99, 235);
     /** Màu xanh nhạt cho gradient */
@@ -63,7 +63,7 @@ public class LoginView extends JFrame {
     /** Màu xanh lá cho thành công */
     private static final Color SUCCESS   = new Color(22, 163, 74);
 
-    // ====== Fonts ======
+    // Phông chữ
     private static final Font FONT_TITLE  = new Font("Segoe UI", Font.BOLD, 28);
     private static final Font FONT_LABEL  = new Font("Segoe UI", Font.BOLD, 13);
     private static final Font FONT_INPUT  = new Font("Segoe UI", Font.PLAIN, 14);
@@ -71,7 +71,7 @@ public class LoginView extends JFrame {
     private static final Font FONT_SMALL  = new Font("Segoe UI", Font.PLAIN, 12);
 
     /**
-     * Creates the login view.
+     * Khởi tạo màn hình đăng nhập.
      */
     public LoginView() {
         initUI();
@@ -89,7 +89,7 @@ public class LoginView extends JFrame {
         setLocationRelativeTo(null);  // Căn giữa màn hình
         setResizable(false);
 
-        // ===== Main layout (2 cột) =====
+        // Bố cục chính (2 cột)
         JPanel contentPane = new JPanel(new GridLayout(1, 2));
         setContentPane(contentPane);
 
@@ -184,7 +184,7 @@ public class LoginView extends JFrame {
         formBox.setLayout(new BoxLayout(formBox, BoxLayout.Y_AXIS));
         formBox.setBorder(new EmptyBorder(10, 50, 10, 50));
 
-        // ---- Tiêu đề ----
+        // Tiêu đề
         JLabel welcomeLabel = new JLabel("Chào mừng trở lại!");
         welcomeLabel.setFont(FONT_TITLE);
         welcomeLabel.setForeground(PRIMARY);
@@ -195,17 +195,17 @@ public class LoginView extends JFrame {
         subLabel.setForeground(TEXT_GRAY);
         subLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // ---- Email ----
+        // Email
         JLabel emailLabel = makeLabel("Email");
         emailField = new JTextField();
         styleTextField(emailField, "example@email.com");
 
-        // ---- Password ----
+        // Mật khẩu
         JLabel passLabel = makeLabel("Mật khẩu");
         passwordField = new JPasswordField();
         styleTextField(passwordField, "Nhập mật khẩu...");
 
-        // Toggle show/hide password
+        // Bật/tắt hiện mật khẩu
         showPasswordCb = new JCheckBox("Hiện mật khẩu");
         showPasswordCb.setFont(FONT_SMALL);
         showPasswordCb.setForeground(TEXT_GRAY);
@@ -220,13 +220,13 @@ public class LoginView extends JFrame {
             }
         });
 
-        // ---- Status label (lỗi/thành công) ----
+        // Nhãn trạng thái (lỗi/thành công)
         statusLabel = new JLabel(" ");
         statusLabel.setFont(FONT_SMALL);
         statusLabel.setForeground(ERROR_RED);
         statusLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // ---- Nút đăng nhập ----
+        // Nút đăng nhập
         loginButton = new JButton("ĐĂNG NHẬP");
         loginButton.setFont(FONT_BUTTON);
         loginButton.setBackground(PRIMARY);
@@ -239,13 +239,13 @@ public class LoginView extends JFrame {
         loginButton.setPreferredSize(new Dimension(300, 48));
 
 
-        // ---- Footer ----
+        // Chân trang
         JLabel footerLabel = new JLabel("2025 Club Management System", SwingConstants.CENTER);
         footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
         footerLabel.setForeground(new Color(148, 163, 184));
         footerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // ---- Assembly ----
+        // Ghép các thành phần
         formBox.add(welcomeLabel);
         formBox.add(Box.createVerticalStrut(4));
         formBox.add(subLabel);
@@ -270,9 +270,7 @@ public class LoginView extends JFrame {
         return panel;
     }
 
-    // ===================================================
-    // HELPER METHODS
-    // ===================================================
+    // Hàm hỗ trợ
 
     /** Tạo label với font chuẩn và căn trái. */
     private JLabel makeLabel(String text) {
@@ -317,9 +315,7 @@ public class LoginView extends JFrame {
         }
     }
 
-    // ===================================================
-    // PUBLIC API (dùng bởi Controller)
-    // ===================================================
+    // API công khai (dùng bởi Controller)
 
     /** Lấy email người dùng nhập. */
     public String getEmail() {

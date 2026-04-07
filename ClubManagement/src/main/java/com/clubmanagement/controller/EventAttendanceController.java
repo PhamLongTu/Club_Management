@@ -40,6 +40,9 @@ public class EventAttendanceController {
     private boolean suppressTableEvents;
     private Runnable onBack;
 
+    /**
+     * Khởi tạo controller quản lý điểm danh sự kiện.
+     */
     public EventAttendanceController(EventAttendanceView view, DashboardView dashboardView, MemberDTO currentUser) {
         this.view = view;
         this.dashboardView = dashboardView;
@@ -47,10 +50,16 @@ public class EventAttendanceController {
         attachListeners();
     }
 
+    /**
+     * Gán callback khi người dùng quay lại màn hình trước.
+     */
     public void setOnBack(Runnable onBack) {
         this.onBack = onBack;
     }
 
+    /**
+     * Gắn các listener cho nút bấm và bảng dữ liệu.
+     */
     private void attachListeners() {
         view.getBtnBack().addActionListener(e -> handleBack());
         view.getBtnRefresh().addActionListener(e -> reload());
@@ -67,6 +76,9 @@ public class EventAttendanceController {
         });
     }
 
+    /**
+     * Mở màn hình điểm danh cho sự kiện được chọn.
+     */
     public void openForEvent(Integer eventId) {
         if (!currentUser.isLeader()) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền truy cập điểm danh!");
@@ -77,11 +89,17 @@ public class EventAttendanceController {
         reload();
     }
 
+    /**
+     * Tải lại dữ liệu điểm danh hiện tại.
+     */
     private void reload() {
         if (currentEventId == null) return;
         loadEventAttendance(currentEventId);
     }
 
+    /**
+     * Xử lý hành động quay lại.
+     */
     private void handleBack() {
         if (onBack != null) {
             onBack.run();
@@ -90,6 +108,9 @@ public class EventAttendanceController {
         }
     }
 
+    /**
+     * Tải dữ liệu điểm danh theo eventId ở background thread.
+     */
     private void loadEventAttendance(Integer eventId) {
         view.setStatusMessage("Đang tải dữ liệu...");
         SwingWorker<EventAttendanceData, Void> worker = new SwingWorker<>() {
@@ -158,6 +179,9 @@ public class EventAttendanceController {
         worker.execute();
     }
 
+    /**
+     * Lọc danh sách theo từ khóa tìm kiếm.
+     */
     private void applyFilter() {
         String keyword = view.getSearchKeyword();
         String kw = keyword != null ? keyword.trim().toLowerCase() : "";
@@ -178,6 +202,9 @@ public class EventAttendanceController {
         suppressTableEvents = false;
     }
 
+    /**
+     * Cập nhật trạng thái điểm danh khi người dùng tick/untick.
+     */
     private void handleToggleAttendance(int rowIndex) {
         DefaultTableModel model = (DefaultTableModel) view.getTable().getModel();
         Object attendedObj = model.getValueAt(rowIndex, EventAttendanceView.COL_ATTENDED);
@@ -209,6 +236,9 @@ public class EventAttendanceController {
         }
     }
 
+    /**
+     * Lưu thông tin sự kiện sau khi chỉnh sửa form.
+     */
     private void handleSaveEvent() {
         if (!currentUser.isLeader()) {
             JOptionPane.showMessageDialog(null, "Bạn không có quyền chỉnh sửa sự kiện!",
@@ -240,6 +270,9 @@ public class EventAttendanceController {
         }
     }
 
+    /**
+     * Đọc dữ liệu từ form và kiểm tra hợp lệ.
+     */
     private EventFormData extractEventFormData() {
         EventFormData data = new EventFormData();
         data.name = view.getTfName().getText().trim();
@@ -271,6 +304,9 @@ public class EventAttendanceController {
         return data;
     }
 
+    /**
+     * Parse số nguyên từ chuỗi, nếu lỗi thì dùng giá trị mặc định.
+     */
     private int parseIntOrDefault(String text, int fallback) {
         if (text == null) return fallback;
         String t = text.trim();
@@ -282,6 +318,9 @@ public class EventAttendanceController {
         }
     }
 
+    /**
+     * Đồng bộ thay đổi điểm danh vào danh sách cache.
+     */
     private void updateCachedRow(Integer memberId, Integer attendanceId, boolean attended) {
         for (EventAttendanceRowDTO row : cachedRows) {
             if (row.getMemberId() != null && row.getMemberId().equals(memberId)) {

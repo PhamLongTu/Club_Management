@@ -38,11 +38,11 @@ public class TaskDTO {
      * Constructor đầy đủ.
      */
     public TaskDTO(Integer taskId, String title, String description, LocalDateTime deadline,
-                   String priority, String status, LocalDateTime createdDate,
-                   String visibility, Integer maxAssignees, Integer contributionPoints,
-                   String assigneeName, String assignerName, String eventName,
-                   Integer assigneeId, Integer assignerId, Integer eventId,
-                   java.util.List<Integer> assigneeIds, java.util.List<String> assigneeNames) {
+                String priority, String status, LocalDateTime createdDate,
+                String visibility, Integer maxAssignees, Integer contributionPoints,
+                String assigneeName, String assignerName, String eventName,
+                Integer assigneeId, Integer assignerId, Integer eventId,
+                java.util.List<Integer> assigneeIds, java.util.List<String> assigneeNames) {
         this.taskId = taskId;
         this.title = title;
         this.description = description;

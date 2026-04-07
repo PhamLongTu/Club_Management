@@ -28,7 +28,7 @@ import com.clubmanagement.dto.DocumentDTO;
 import com.clubmanagement.dto.MemberDTO;
 
 /**
- * View for listing and managing documents.
+ * Màn hình danh sách và quản lý tài liệu.
  */
 public class DocumentView {
 
@@ -57,9 +57,9 @@ public class DocumentView {
     private final MemberDTO currentUser;
 
     /**
-     * Creates the view for the current user.
+     * Khởi tạo giao diện cho người dùng hiện tại.
      *
-     * @param currentUser the logged-in member
+     * @param currentUser thành viên đang đăng nhập
      */
     public DocumentView(MemberDTO currentUser) {
         this.currentUser = currentUser;
@@ -67,7 +67,7 @@ public class DocumentView {
     }
 
     /**
-     * Builds the main layout.
+     * Xây dựng bố cục chính.
      */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
@@ -80,9 +80,9 @@ public class DocumentView {
     }
 
     /**
-     * Builds the header section with toolbar actions.
+     * Xây dựng phần tiêu đề và các nút thao tác.
      *
-     * @return the header panel
+     * @return panel tiêu đề
      */
     private JPanel buildHeader() {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
@@ -135,9 +135,9 @@ public class DocumentView {
     }
 
     /**
-     * Builds the table container for documents.
+     * Xây dựng vùng bảng tài liệu.
      *
-     * @return the scroll pane containing the table
+     * @return scroll pane chứa bảng
      */
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
@@ -182,9 +182,9 @@ public class DocumentView {
     }
 
     /**
-     * Builds the status footer.
+     * Xây dựng thanh trạng thái.
      *
-     * @return the footer panel
+     * @return panel chân trang
      */
     private JPanel buildFooter() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -197,9 +197,9 @@ public class DocumentView {
     }
 
     /**
-     * Applies consistent styling to the table.
+     * Áp dụng style đồng nhất cho bảng.
      *
-     * @param table the table to style
+     * @param table bảng cần style
      */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -239,12 +239,12 @@ public class DocumentView {
     }
 
     /**
-     * Creates a toolbar button.
+     * Tạo nút trên thanh công cụ.
      *
-     * @param text button label
-     * @param bg background color
-     * @param fg foreground color
-     * @return the configured button
+     * @param text nhãn nút
+     * @param bg màu nền
+     * @param fg màu chữ
+     * @return nút đã cấu hình
      */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
@@ -259,9 +259,9 @@ public class DocumentView {
     }
 
     /**
-     * Loads document rows into the table.
+     * Nạp danh sách tài liệu vào bảng.
      *
-     * @param data document data list
+     * @param data danh sách tài liệu
      */
     public void loadData(List<DocumentDTO> data) {
         tableModel.setRowCount(0);
@@ -295,9 +295,9 @@ public class DocumentView {
     }
 
     /**
-     * Gets the selected document id.
+     * Lấy id tài liệu được chọn.
      *
-     * @return selected id or null
+     * @return id được chọn hoặc null
      */
     public Integer getSelectedId() {
         int row = documentTable.getSelectedRow();
@@ -306,46 +306,34 @@ public class DocumentView {
     }
 
     /**
-     * Updates the status bar message.
+     * Cập nhật thông báo trên status bar.
      *
-     * @param msg message to display
+     * @param msg nội dung hiển thị
      */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
 
     /**
-     * Returns the root panel for this view.
+     * Trả về panel gốc của view.
      *
-     * @return main panel
+     * @return panel chính
      */
     public JPanel getPanel() { return mainPanel; }
 
-    /**
-     * @return add button
-     */
+    /** @return nút thêm */
     public JButton getBtnAdd()         { return btnAdd; }
 
-    /**
-     * @return edit button
-     */
+    /** @return nút sửa */
     public JButton getBtnEdit()        { return btnEdit; }
 
-    /**
-     * @return delete button
-     */
+    /** @return nút xóa */
     public JButton getBtnDelete()      { return btnDelete; }
 
-    /**
-     * @return refresh button
-     */
+    /** @return nút làm mới */
     public JButton getBtnRefresh()     { return btnRefresh; }
 
-    /**
-     * @return open button
-     */
+    /** @return nút mở file */
     public JButton getBtnOpen()        { return btnOpen; }
 
-    /**
-     * @return document table
-     */
+    /** @return bảng tài liệu */
     public JTable  getTable()          { return documentTable; }
 }

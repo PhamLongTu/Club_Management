@@ -36,13 +36,13 @@ public class Attendance {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    // ============ CONSTRUCTORS ============
+    //CONSTRUCTORS
     /**
      * Constructor mặc định (bắt buộc cho JPA).
      */
     public Attendance() {}
 
-    // ============ GETTERS & SETTERS ============
+    //GETTERS & SETTERS
     /** @return ID điểm danh. */
     public Integer getAttendanceId()       { return attendanceId; }
     /** @param v ID điểm danh mới. */

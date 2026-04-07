@@ -49,7 +49,7 @@ public class ProjectDTO {
         this.contributionPoints = contributionPoints;
     }
 
-    // ============ GETTERS & SETTERS ============
+    //GETTERS & SETTERS
     /** @return ID dự án. */
     public Integer getProjectId()          { return projectId; }
     /** @param v ID dự án mới. */

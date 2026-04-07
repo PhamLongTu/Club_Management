@@ -40,7 +40,7 @@ import com.clubmanagement.util.ImageUtil;
  */
 public class DashboardView extends JFrame {
 
-    // ====== Sub-panels (content area) ======
+    // Các panel con (vùng nội dung)
     private MemberView        memberView;
     private EventView         eventView;
     private EventAttendanceView eventAttendanceView;
@@ -51,7 +51,7 @@ public class DashboardView extends JFrame {
     private DocumentView      documentView;
     private MyInfoView        myInfoView;
 
-    // ====== Components ======
+    // Thành phần giao diện
     private JLabel   userNameLabel;
     private JLabel   userRoleLabel;
     private JLabel   sidebarNameLabel;
@@ -61,13 +61,13 @@ public class DashboardView extends JFrame {
     private JPanel   contentArea;    // Vùng thay đổi nội dung
     private CardLayout cardLayout;   // Quản lý chuyển màn hình
 
-    // Stat cards
+    // Thẻ thống kê
     private JLabel memberCountLabel;
     private JLabel eventCountLabel;
     private JLabel projectCountLabel;
     private JPanel homePanel;        // Dashboard home
 
-    // Sidebar buttons
+    // Nút sidebar
     private JButton btnHome;
     private JButton btnMembers;
     private JButton btnEvents;
@@ -78,12 +78,12 @@ public class DashboardView extends JFrame {
     private JButton btnMyInfo;
     private JButton btnDocuments;
 
-    // Quick action buttons (Dashboard home)
+    // Nút thao tác nhanh (màn hình tổng quan)
     private JButton btnQuickAddMember;
     private JButton btnQuickAddEvent;
     private JButton btnQuickAddProject;
 
-    // ====== Colors ======
+    // Màu sắc
     private static final Color SIDEBAR_BG  = new Color(15, 23, 42);
     private static final Color SIDEBAR_SEL = new Color(37, 99, 235);
     private static final Color CONTENT_BG  = new Color(241, 245, 249);
@@ -96,9 +96,9 @@ public class DashboardView extends JFrame {
     private final MemberDTO currentUser;
 
     /**
-     * Creates the dashboard for the current user.
+     * Khởi tạo dashboard cho người dùng hiện tại.
      *
-     * @param currentUser the logged-in member
+     * @param currentUser thành viên đang đăng nhập
      */
     public DashboardView(MemberDTO currentUser) {
         this.currentUser = currentUser;
@@ -328,7 +328,7 @@ public class DashboardView extends JFrame {
         panel.setBackground(CONTENT_BG);
         panel.setBorder(new EmptyBorder(24, 24, 24, 24));
 
-        // ---- Header ----
+        // Tiêu đề
         JLabel pageTitle = new JLabel("Tổng quan hệ thống");
         pageTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
         pageTitle.setForeground(ACCENT);
@@ -344,7 +344,7 @@ public class DashboardView extends JFrame {
         headerPanel.add(Box.createVerticalStrut(4));
         headerPanel.add(subtitle);
 
-        // ---- Stat Cards ----
+        // Thẻ thống kê
         JPanel statsPanel = new JPanel(new GridLayout(1, 3, 16, 0));
         statsPanel.setOpaque(false);
         statsPanel.setBorder(new EmptyBorder(24, 0, 24, 0));
@@ -360,7 +360,7 @@ public class DashboardView extends JFrame {
         statsPanel.add(buildStatCard("Dự án", projectCountLabel,
             "Dự án đang triển khai", new Color(245, 158, 11)));
 
-        // ---- Quick Actions ----
+        // Thao tác nhanh
         JLabel qaLabel = new JLabel("Truy cập nhanh");
         qaLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         qaLabel.setForeground(ACCENT);
@@ -438,38 +438,36 @@ public class DashboardView extends JFrame {
         return card;
     }
 
-    // ===================================================
-    // PUBLIC API (dùng bởi DashboardController)
-    // ===================================================
+    // API công khai (dùng bởi DashboardController)
 
-    /** Shows the home panel. */
+    /** Hiển thị màn hình tổng quan. */
     public void showHome()          { selectMenu(btnHome);          cardLayout.show(contentArea, "HOME"); }
 
-    /** Shows the announcements panel. */
+    /** Hiển thị màn hình thông báo. */
     public void showAnnouncements() { selectMenu(btnAnnouncements); cardLayout.show(contentArea, "ANNOUNCEMENTS"); }
 
-    /** Shows the tasks panel. */
+    /** Hiển thị màn hình nhiệm vụ. */
     public void showTasks()         { selectMenu(btnTasks);         cardLayout.show(contentArea, "TASKS"); }
 
-    /** Shows the meetings panel. */
+    /** Hiển thị màn hình cuộc họp. */
     public void showMeetings()      { selectMenu(btnMeetings);      cardLayout.show(contentArea, "MEETINGS"); }
 
-    /** Shows the profile panel. */
+    /** Hiển thị màn hình thông tin cá nhân. */
     public void showMyInfo()        { selectMenu(btnMyInfo);        cardLayout.show(contentArea, "MY_INFO"); }
 
-    /** Shows the members panel. */
+    /** Hiển thị màn hình thành viên. */
     public void showMembers()       { selectMenu(btnMembers);       cardLayout.show(contentArea, "MEMBERS"); }
 
-    /** Shows the events panel. */
+    /** Hiển thị màn hình sự kiện. */
     public void showEvents()        { selectMenu(btnEvents);        cardLayout.show(contentArea, "EVENTS"); }
 
-    /** Shows the event attendance panel. */
+    /** Hiển thị màn hình điểm danh sự kiện. */
     public void showEventAttendance() { cardLayout.show(contentArea, "EVENT_ATTENDANCE"); }
 
-    /** Shows the projects panel. */
+    /** Hiển thị màn hình dự án. */
     public void showProjects()      { selectMenu(btnProjects);      cardLayout.show(contentArea, "PROJECTS"); }
 
-    /** Shows the documents panel. */
+    /** Hiển thị màn hình tài liệu. */
     public void showDocuments()     { selectMenu(btnDocuments);     cardLayout.show(contentArea, "DOCUMENTS"); }
 
     /**
@@ -485,7 +483,7 @@ public class DashboardView extends JFrame {
         }
     }
 
-    /** Cập nhật số liệu thống kê lên Dashboard. */
+    /** Cập nhật số liệu thống kê lên dashboard. */
     public void updateStats(long members, long events, long projects) {
         memberCountLabel.setText(String.valueOf(members));
         eventCountLabel.setText(String.valueOf(events));
@@ -493,57 +491,57 @@ public class DashboardView extends JFrame {
     }
 
     // Getters cho Controller đăng ký sự kiện
-    /** @return home sidebar button */
+    /** @return nút tổng quan */
     public JButton getBtnHome()           { return btnHome; }
-    /** @return announcements sidebar button */
+    /** @return nút thông báo */
     public JButton getBtnAnnouncements()  { return btnAnnouncements; }
-    /** @return tasks sidebar button */
+    /** @return nút nhiệm vụ */
     public JButton getBtnTasks()          { return btnTasks; }
-    /** @return meetings sidebar button */
+    /** @return nút cuộc họp */
     public JButton getBtnMeetings()       { return btnMeetings; }
-    /** @return profile sidebar button */
+    /** @return nút thông tin của tôi */
     public JButton getBtnMyInfo()         { return btnMyInfo; }
-    /** @return members sidebar button */
+    /** @return nút thành viên */
     public JButton getBtnMembers()        { return btnMembers; }
-    /** @return events sidebar button */
+    /** @return nút sự kiện */
     public JButton getBtnEvents()         { return btnEvents; }
-    /** @return projects sidebar button */
+    /** @return nút dự án */
     public JButton getBtnProjects()       { return btnProjects; }
-    /** @return documents sidebar button */
+    /** @return nút tài liệu */
     public JButton getBtnDocuments()      { return btnDocuments; }
-    /** @return logout button */
+    /** @return nút đăng xuất */
     public JButton getBtnLogout()         { return btnLogout; }
 
     // Quick action button getters
-    /** @return quick add member button */
+    /** @return nút thêm thành viên nhanh */
     public JButton getBtnQuickAddMember()  { return btnQuickAddMember; }
-    /** @return quick add event button */
+    /** @return nút tạo sự kiện nhanh */
     public JButton getBtnQuickAddEvent()   { return btnQuickAddEvent; }
-    /** @return quick add project button */
+    /** @return nút tạo dự án nhanh */
     public JButton getBtnQuickAddProject() { return btnQuickAddProject; }
 
-    /** @return member view */
+    /** @return view thành viên */
     public MemberView        getMemberView()       { return memberView; }
-    /** @return event view */
+    /** @return view sự kiện */
     public EventView         getEventView()        { return eventView; }
     public EventAttendanceView getEventAttendanceView() { return eventAttendanceView; }
-    /** @return project view */
+    /** @return view dự án */
     public ProjectView       getProjectView()      { return projectView; }
-    /** @return announcement view */
+    /** @return view thông báo */
     public AnnouncementView  getAnnouncementView() { return announcementView; }
-    /** @return meeting view */
+    /** @return view cuộc họp */
     public MeetingView       getMeetingView()      { return meetingView; }
-    /** @return task view */
+    /** @return view nhiệm vụ */
     public TaskView          getTaskView()         { return taskView; }
-    /** @return document view */
+    /** @return view tài liệu */
     public DocumentView      getDocumentView()     { return documentView; }
-    /** @return my info view */
+    /** @return view thông tin cá nhân */
     public MyInfoView        getMyInfoView()       { return myInfoView; }
 
     /**
-     * Updates displayed user info in the header and sidebar.
+     * Cập nhật thông tin người dùng trên header và sidebar.
      *
-     * @param user the latest member info
+     * @param user thông tin mới nhất của thành viên
      */
     public void updateCurrentUserInfo(MemberDTO user) {
         if (user == null) return;

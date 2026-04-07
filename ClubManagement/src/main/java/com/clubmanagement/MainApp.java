@@ -14,17 +14,6 @@ import com.clubmanagement.util.HibernateUtil;
 import com.formdev.flatlaf.FlatLightLaf;
 
 /**
- * ╔══════════════════════════════════════════════════════════════╗
- * ║         CLUB MANAGEMENT SYSTEM - MAIN APPLICATION          ║
- * ║         Hệ thống Quản lý Câu lạc bộ Trường học             ║
- * ║                                                              ║
- * ║  Tech Stack:                                                 ║
- * ║    - Java 17 + Java Swing (MVC Pattern)                      ║
- * ║    - Hibernate 6 / JPA                                       ║
- * ║    - MySQL 8                                                  ║
- * ║    - FlatLaf (Modern Look & Feel)                            ║
- * ║    - BCrypt (Password hashing)                               ║
- * ╚══════════════════════════════════════════════════════════════╝
  *
  * MainApp - Điểm vào của ứng dụng (Entry Point).
  *
@@ -46,11 +35,7 @@ public class MainApp {
      */
     public static void main(String[] args) {
 
-        // ─────────────────────────────────────────────────────
         // BƯỚC 1: Cài đặt Look & Feel
-        // FlatLaf cung cấp giao diện flat, hiện đại cho Swing
-        // Phải gọi TRƯỚC khi tạo bất kỳ component Swing nào
-        // ─────────────────────────────────────────────────────
         try {
             FlatLightLaf.setup();
             // Tùy chỉnh thêm: Font, màu accent, bo góc...
@@ -72,22 +57,14 @@ public class MainApp {
             }
         }
 
-        // ─────────────────────────────────────────────────────
         // BƯỚC 2: Đăng ký Shutdown Hook
-        // Đảm bảo Hibernate SessionFactory được đóng sạch
-        // kể cả khi ứng dụng bị tắt đột ngột (Ctrl+C)
-        // ─────────────────────────────────────────────────────
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Ứng dụng đang tắt, đóng Hibernate...");
             HibernateUtil.shutdown();
             logger.info("Hibernate đã đóng. Tạm biệt!");
         }, "ShutdownHook-Hibernate"));
 
-        // ─────────────────────────────────────────────────────
         // BƯỚC 3: Khởi tạo Hibernate (kết nối database)
-        // Gọi getSessionFactory() sẽ trigger static block trong HibernateUtil
-        // Nên làm sớm để phát hiện lỗi kết nối DB ngay từ đầu
-        // ─────────────────────────────────────────────────────
         try {
             logger.info("Đang kết nối tới MySQL database...");
             HibernateUtil.getSessionFactory(); // Khởi tạo kết nối
@@ -114,13 +91,7 @@ public class MainApp {
             System.exit(1); // Thoát ứng dụng
         }
 
-        // ─────────────────────────────────────────────────────
         // BƯỚC 4 & 5: Tạo và hiển thị LoginView
-        //
-        // Mọi thao tác tạo/cập nhật UI Swing phải chạy trên
-        // Event Dispatch Thread (EDT) - đây là quy tắc bắt buộc của Swing.
-        // SwingUtilities.invokeLater() đảm bảo điều này.
-        // ─────────────────────────────────────────────────────
         SwingUtilities.invokeLater(() -> {
             logger.info("Đang khởi chạy giao diện ứng dụng...");
 

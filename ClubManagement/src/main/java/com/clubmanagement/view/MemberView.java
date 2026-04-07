@@ -40,12 +40,12 @@ import com.clubmanagement.dto.MemberDTO;
  */
 public class MemberView {
 
-    // ====== Table columns ======
+    // Cột trong bảng
     private static final String[] COLUMNS = {
         "ID", "Họ và tên", "Mã SV", "Giới tính", "Ngày vào", "Trạng thái", "Vai trò", "Ban/Nhóm"
     };
 
-    // ====== Components ======
+    // Thành phần giao diện
     private JPanel      mainPanel;
     private JTextField  searchField;
     private JComboBox<String> statusFilter;
@@ -55,7 +55,7 @@ public class MemberView {
     private JLabel      countLabel;
     private JLabel      statusBar;
 
-    // ====== Colors ======
+    // Màu sắc
     private static final Color PRIMARY     = new Color(37, 99, 235);
     private static final Color SUCCESS_CLR = new Color(16, 185, 129);
     private static final Color DANGER_CLR  = new Color(239, 68, 68);
@@ -70,9 +70,9 @@ public class MemberView {
     private final MemberDTO currentUser;
 
     /**
-     * Creates the view for the current user.
+     * Khởi tạo giao diện cho người dùng hiện tại.
      *
-     * @param currentUser the logged-in member
+     * @param currentUser thành viên đang đăng nhập
      */
     public MemberView(MemberDTO currentUser) {
         this.currentUser = currentUser;
@@ -97,9 +97,9 @@ public class MemberView {
     // ─────────────────────────────────────────────────────
 
     /**
-     * Builds the header area containing the title and toolbar.
+     * Xây dựng phần tiêu đề và thanh công cụ.
      *
-     * @return the header panel
+     * @return panel tiêu đề
      */
     private JPanel buildHeaderArea() {
         JPanel panel = new JPanel(new BorderLayout(16, 8));
@@ -116,9 +116,9 @@ public class MemberView {
     }
 
     /**
-     * Builds the toolbar with search/filter and actions.
+     * Xây dựng thanh công cụ gồm tìm kiếm/bộ lọc và thao tác.
      *
-     * @return the toolbar panel
+     * @return panel thanh công cụ
      */
     private JPanel buildToolbar() {
         JPanel toolbar = new JPanel();
@@ -130,7 +130,7 @@ public class MemberView {
         ));
         toolbar.setBackground(ACCENT_SOFT);
 
-        // ---- Bên trái: tìm kiếm ----
+        // Bên trái: tìm kiếm
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
         searchPanel.setOpaque(false);
 
@@ -156,7 +156,7 @@ public class MemberView {
         searchPanel.add(new JLabel("Trạng thái: "));
         searchPanel.add(statusFilter);
 
-        // ---- Bên phải: CRUD buttons ----
+        // Bên phải: các nút CRUD
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btnPanel.setOpaque(false);
 
@@ -195,9 +195,9 @@ public class MemberView {
     // ─────────────────────────────────────────────────────
 
     /**
-     * Builds the table area for member data.
+     * Xây dựng vùng bảng dữ liệu thành viên.
      *
-     * @return the scroll pane containing the table
+     * @return scroll pane chứa bảng
      */
     private JScrollPane buildTableArea() {
         // Model không cho sửa trực tiếp trên table
@@ -268,9 +268,9 @@ public class MemberView {
     }
 
     /**
-     * Builds the status bar.
+     * Xây dựng thanh trạng thái.
      *
-     * @return the status bar panel
+     * @return panel trạng thái
      */
     private JPanel buildStatusBar() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -283,7 +283,7 @@ public class MemberView {
     }
 
     // ─────────────────────────────────────────────────────
-    // HELPERS
+    // Hàm hỗ trợ
     // ─────────────────────────────────────────────────────
 
     /** Style chung cho JTable. */
@@ -333,9 +333,7 @@ public class MemberView {
         return btn;
     }
 
-    // ===================================================
-    // PUBLIC API (dùng bởi MemberController)
-    // ===================================================
+    // API công khai (dùng bởi MemberController)
 
     /** Xóa và nạp lại dữ liệu vào bảng. */
     public void loadData(List<MemberDTO> members) {

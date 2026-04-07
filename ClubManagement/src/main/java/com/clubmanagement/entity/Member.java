@@ -26,13 +26,13 @@ import jakarta.persistence.Table;
 @Table(name = "members")
 public class Member {
 
-    // ============ PRIMARY KEY ============
+    //  PRIMARY KEY 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Integer memberId;
 
-    // ============ ATTRIBUTES ============
+    //  ATTRIBUTES 
     /** Họ và tên đầy đủ */
     @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
@@ -85,7 +85,7 @@ public class Member {
     @Column(name = "contribution_points")
     private Integer contributionPoints = 0;
 
-    // ============ RELATIONSHIPS ============
+    //  RELATIONSHIPS 
     /** Quan hệ N-1 với Role: Mỗi thành viên có 1 vai trò */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
@@ -112,7 +112,7 @@ public class Member {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     private List<Announcement> announcements;
 
-    // ============ CONSTRUCTORS ============
+    //  CONSTRUCTORS 
     /**
      * Constructor mặc định (bắt buộc cho JPA).
      */
@@ -142,7 +142,7 @@ public class Member {
         this.status       = "Active";
     }
 
-    // ============ GETTERS & SETTERS ============
+    //  GETTERS & SETTERS 
     /** @return ID thành viên. */
     public Integer getMemberId()          { return memberId; }
     /** @param v ID thành viên mới. */

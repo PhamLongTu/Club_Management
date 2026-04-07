@@ -65,7 +65,7 @@ public class Document {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    // ============ CONSTRUCTORS ============
+    //CONSTRUCTORS
     /**
      * Constructor mặc định (bắt buộc cho JPA).
      */
@@ -94,7 +94,7 @@ public class Document {
         this.uploadDate  = LocalDateTime.now();
     }
 
-    // ============ GETTERS & SETTERS ============
+    //GETTERS & SETTERS
     /** @return ID tài liệu. */
     public Integer getDocumentId()         { return documentId; }
     /** @param v ID tài liệu mới. */

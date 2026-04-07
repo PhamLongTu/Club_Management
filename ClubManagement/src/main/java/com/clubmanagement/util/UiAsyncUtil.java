@@ -21,9 +21,9 @@ public final class UiAsyncUtil {
      * @param onSuccess Xử lý khi thành công
      */
     public static <T> void runWithStatus(String loadingMessage,
-                                         Consumer<String> statusSetter,
-                                         Supplier<T> work,
-                                         Consumer<T> onSuccess) {
+                                        Consumer<String> statusSetter,
+                                        Supplier<T> work,
+                                        Consumer<T> onSuccess) {
         runWithStatus(loadingMessage, statusSetter, work, onSuccess, null);
     }
 
@@ -36,10 +36,10 @@ public final class UiAsyncUtil {
      * @param onError Xử lý lỗi (nullable)
      */
     public static <T> void runWithStatus(String loadingMessage,
-                                         Consumer<String> statusSetter,
-                                         Supplier<T> work,
-                                         Consumer<T> onSuccess,
-                                         Consumer<Exception> onError) {
+                                        Consumer<String> statusSetter,
+                                        Supplier<T> work,
+                                        Consumer<T> onSuccess,
+                                        Consumer<Exception> onError) {
         if (statusSetter != null && loadingMessage != null) {
             statusSetter.accept(loadingMessage);
         }

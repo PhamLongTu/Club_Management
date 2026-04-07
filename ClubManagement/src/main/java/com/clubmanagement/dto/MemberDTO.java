@@ -4,10 +4,6 @@ import java.time.LocalDate;
 
 /**
  * DTO: MemberDTO (Data Transfer Object cho Thành viên)
- *
- * DTO được dùng để truyền dữ liệu giữa các tầng (Service -> Controller -> View)
- * mà KHÔNG expose trực tiếp Entity (tránh lazy loading, tuần hoàn JSON...).
- * Chỉ chứa những trường cần thiết cho UI.
  */
 public class MemberDTO {
 
@@ -28,7 +24,6 @@ public class MemberDTO {
     private Integer ctxhPoints;
     private Integer contributionPoints;
 
-    // ============ CONSTRUCTORS ============
     /** Constructor mặc định. */
     public MemberDTO() {}
 
@@ -36,11 +31,11 @@ public class MemberDTO {
      * Constructor đầy đủ - khởi tạo từ entity hoặc query result.
      */
     public MemberDTO(Integer memberId, String fullName, String studentId,
-                     String email, String phone, String gender,
-                     LocalDate birthDate, LocalDate joinDate,
-                     String status, String avatarUrl,
-                     String roleName, Integer permissionLevel,
-                     String teamNames) {
+                    String email, String phone, String gender,
+                    LocalDate birthDate, LocalDate joinDate,
+                    String status, String avatarUrl,
+                    String roleName, Integer permissionLevel,
+                    String teamNames) {
         this.memberId        = memberId;
         this.fullName        = fullName;
         this.studentId       = studentId;
@@ -56,7 +51,7 @@ public class MemberDTO {
         this.teamNames       = teamNames;
     }
 
-    // ============ GETTERS & SETTERS ============
+    //GETTERS & SETTERS
     /** @return ID thành viên. */
     public Integer getMemberId()              { return memberId; }
     /** @param v ID thành viên mới. */

@@ -22,9 +22,9 @@ public class MeetingDTO {
 
     /** Constructor day du. */
     public MeetingDTO(Integer meetingId, String title, String content,
-                      LocalDateTime startTime, LocalDateTime endTime,
-                      String location, String meetLink,
-                      Integer hostId, String hostName) {
+                    LocalDateTime startTime, LocalDateTime endTime,
+                    String location, String meetLink,
+                    Integer hostId, String hostName) {
         this.meetingId = meetingId;
         this.title = title;
         this.content = content;

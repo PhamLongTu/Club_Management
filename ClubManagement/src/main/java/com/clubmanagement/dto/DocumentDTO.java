@@ -31,10 +31,10 @@ public class DocumentDTO {
      * Constructor đầy đủ.
      */
     public DocumentDTO(Integer documentId, String title, String filePath, String fileType, 
-                       LocalDateTime uploadDate, String description, Boolean isPublic, 
-                       Integer uploaderId, String uploaderName, 
-                       Integer eventId, String eventName, 
-                       Integer projectId, String projectName) {
+                    LocalDateTime uploadDate, String description, Boolean isPublic, 
+                    Integer uploaderId, String uploaderName, 
+                    Integer eventId, String eventName, 
+                    Integer projectId, String projectName) {
         this.documentId = documentId;
         this.title = title;
         this.filePath = filePath;

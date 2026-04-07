@@ -27,7 +27,7 @@ import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.TeamDTO;
 
 /**
- * View for listing and managing teams.
+ * Màn hình danh sách và quản lý ban/nhóm.
  */
 public class TeamView {
 
@@ -57,9 +57,9 @@ public class TeamView {
     private final MemberDTO currentUser;
 
     /**
-     * Creates the view for the current user.
+     * Khởi tạo giao diện cho người dùng hiện tại.
      *
-     * @param currentUser the logged-in member
+     * @param currentUser thành viên đang đăng nhập
      */
     public TeamView(MemberDTO currentUser) {
         this.currentUser = currentUser;
@@ -67,7 +67,7 @@ public class TeamView {
     }
 
     /**
-     * Builds the main layout.
+     * Xây dựng bố cục chính.
      */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
@@ -80,9 +80,9 @@ public class TeamView {
     }
 
     /**
-     * Builds the header section with toolbar actions.
+     * Xây dựng phần tiêu đề và các nút thao tác.
      *
-     * @return the header panel
+     * @return panel tiêu đề
      */
     private JPanel buildHeader() {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
@@ -137,9 +137,9 @@ public class TeamView {
     }
 
     /**
-     * Builds the table container for teams.
+     * Xây dựng vùng bảng ban/nhóm.
      *
-     * @return the scroll pane containing the table
+     * @return scroll pane chứa bảng
      */
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
@@ -166,9 +166,9 @@ public class TeamView {
     }
 
     /**
-     * Builds the status footer.
+     * Xây dựng thanh trạng thái.
      *
-     * @return the footer panel
+     * @return panel chân trang
      */
     private JPanel buildFooter() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -181,9 +181,9 @@ public class TeamView {
     }
 
     /**
-     * Applies consistent styling to the table.
+     * Áp dụng style đồng nhất cho bảng.
      *
-     * @param table the table to style
+     * @param table bảng cần style
      */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -222,12 +222,12 @@ public class TeamView {
     }
 
     /**
-     * Creates a toolbar button.
+     * Tạo nút trên thanh công cụ.
      *
-     * @param text button label
-     * @param bg background color
-     * @param fg foreground color
-     * @return the configured button
+     * @param text nhãn nút
+     * @param bg màu nền
+     * @param fg màu chữ
+     * @return nút đã cấu hình
      */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
@@ -242,9 +242,9 @@ public class TeamView {
     }
 
     /**
-     * Loads team rows into the table.
+     * Nạp danh sách ban/nhóm vào bảng.
      *
-     * @param data team data list
+     * @param data danh sách ban/nhóm
      */
     public void loadData(List<TeamDTO> data) {
         tableModel.setRowCount(0);
@@ -264,9 +264,9 @@ public class TeamView {
     }
 
     /**
-     * Gets the selected team id.
+     * Lấy id ban/nhóm được chọn.
      *
-     * @return selected id or null
+     * @return id được chọn hoặc null
      */
     public Integer getSelectedId() {
         int row = teamTable.getSelectedRow();
@@ -275,9 +275,9 @@ public class TeamView {
     }
 
     /**
-     * Gets the selected team name.
+     * Lấy tên ban/nhóm được chọn.
      *
-     * @return selected name or null
+     * @return tên được chọn hoặc null
      */
     public String getSelectedName() {
         int row = teamTable.getSelectedRow();
@@ -286,46 +286,34 @@ public class TeamView {
     }
 
     /**
-     * Updates the status bar message.
+     * Cập nhật thông báo trên status bar.
      *
-     * @param msg message to display
+     * @param msg nội dung hiển thị
      */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
 
     /**
-     * Returns the root panel for this view.
+     * Trả về panel gốc của view.
      *
-     * @return main panel
+     * @return panel chính
      */
     public JPanel getPanel() { return mainPanel; }
 
-    /**
-     * @return add button
-     */
+    /** @return nút thêm */
     public JButton getBtnAdd()         { return btnAdd; }
 
-    /**
-     * @return edit button
-     */
+    /** @return nút sửa */
     public JButton getBtnEdit()        { return btnEdit; }
 
-    /**
-     * @return delete button
-     */
+    /** @return nút xóa */
     public JButton getBtnDelete()      { return btnDelete; }
 
-    /**
-     * @return refresh button
-     */
+    /** @return nút làm mới */
     public JButton getBtnRefresh()     { return btnRefresh; }
 
-    /**
-     * @return view members button
-     */
+    /** @return nút xem thành viên */
     public JButton getBtnViewMembers() { return btnViewMembers; }
 
-    /**
-     * @return team table
-     */
+    /** @return bảng ban/nhóm */
     public JTable  getTable()          { return teamTable; }
 }

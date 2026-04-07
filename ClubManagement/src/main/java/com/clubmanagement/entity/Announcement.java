@@ -57,7 +57,7 @@ public class Announcement {
     @JoinColumn(name = "target_team_id")
     private Team targetTeam;
 
-    // ============ CONSTRUCTORS ============
+    // CONSTRUCTORS 
     /**
      * Constructor mặc định (bắt buộc cho JPA).
      */
@@ -86,7 +86,7 @@ public class Announcement {
         this.createdDate    = LocalDateTime.now();
     }
 
-    // ============ GETTERS & SETTERS ============
+    //GETTERS & SETTERS
     /** @return ID thông báo. */
     public Integer getAnnouncementId()       { return announcementId; }
     /** @param v ID thông báo mới. */

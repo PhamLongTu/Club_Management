@@ -68,7 +68,7 @@ public class Team {
         this.createdDate = LocalDate.now();
     }
 
-    // ============ GETTERS & SETTERS ============
+    //  GETTERS & SETTERS 
     /** @return ID nhóm/ban. */
     public Integer getTeamId()         { return teamId; }
     /** @param v ID nhóm/ban mới. */

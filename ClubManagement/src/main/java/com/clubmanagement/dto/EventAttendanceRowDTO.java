@@ -15,7 +15,7 @@ public class EventAttendanceRowDTO {
     public EventAttendanceRowDTO() {}
 
     public EventAttendanceRowDTO(Integer memberId, Integer attendanceId, String studentId,
-                                 String fullName, String email, boolean attended) {
+                                String fullName, String email, boolean attended) {
         this.memberId = memberId;
         this.attendanceId = attendanceId;
         this.studentId = studentId;

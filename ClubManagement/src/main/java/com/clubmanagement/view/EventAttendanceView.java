@@ -44,7 +44,7 @@ import com.clubmanagement.util.UiFormUtil;
 import com.toedter.calendar.JDateChooser;
 
 /**
- * EventAttendanceView - Attendance page for a single event.
+ * EventAttendanceView - Màn hình điểm danh cho một sự kiện.
  */
 public class EventAttendanceView {
 
@@ -419,9 +419,7 @@ public class EventAttendanceView {
         }
     }
 
-    // ===================================================
-    // PUBLIC API
-    // ===================================================
+    // API công khai
 
     public void loadData(List<EventAttendanceRowDTO> rows) {
         tableModel.setRowCount(0);

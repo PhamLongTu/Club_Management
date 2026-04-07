@@ -42,7 +42,7 @@ public class Participation {
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
-    // ============ CONSTRUCTORS ============
+    //  CONSTRUCTORS 
     /**
      * Constructor mặc định (bắt buộc cho JPA).
      */
@@ -62,7 +62,7 @@ public class Participation {
         this.registrationDate = LocalDateTime.now();
     }
 
-    // ============ GETTERS & SETTERS ============
+    //  GETTERS & SETTERS 
     /** @return ID đăng ký. */
     public Integer getParticipationId()        { return participationId; }
     /** @param v ID đăng ký mới. */

@@ -28,7 +28,7 @@ import com.clubmanagement.dto.MeetingDTO;
 import com.clubmanagement.dto.MemberDTO;
 
 /**
- * View for listing and managing meetings.
+ * Man hinh danh sach va quan ly cuoc hop.
  */
 public class MeetingView {
 
@@ -60,9 +60,9 @@ public class MeetingView {
     private final MemberDTO currentUser;
 
     /**
-     * Creates the view for the current user.
+     * Khoi tao giao dien cho nguoi dung hien tai.
      *
-     * @param currentUser the logged-in member
+     * @param currentUser thanh vien dang dang nhap
      */
     public MeetingView(MemberDTO currentUser) {
         this.currentUser = currentUser;
@@ -70,7 +70,7 @@ public class MeetingView {
     }
 
     /**
-     * Builds the main layout.
+     * Xay dung bo cuc chinh.
      */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
@@ -83,9 +83,9 @@ public class MeetingView {
     }
 
     /**
-     * Builds the header section with toolbar actions.
+     * Xay dung phan tieu de va cac nut thao tac.
      *
-     * @return the header panel
+     * @return panel tieu de
      */
     private JPanel buildHeader() {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
@@ -136,9 +136,9 @@ public class MeetingView {
     }
 
     /**
-     * Builds the table container for meetings.
+     * Xay dung vung bang cuoc hop.
      *
-     * @return the scroll pane containing the table
+     * @return scroll pane chua bang
      */
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
@@ -165,9 +165,9 @@ public class MeetingView {
     }
 
     /**
-     * Builds the status footer.
+     * Xay dung thanh trang thai.
      *
-     * @return the footer panel
+     * @return panel chan trang
      */
     private JPanel buildFooter() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -180,9 +180,9 @@ public class MeetingView {
     }
 
     /**
-     * Applies consistent styling to the table.
+     * Ap dung style dong nhat cho bang.
      *
-     * @param table the table to style
+     * @param table bang can style
      */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -238,7 +238,7 @@ public class MeetingView {
     }
 
     /**
-     * Creates a toolbar button.
+     * Tao nut tren thanh cong cu.
      */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
@@ -253,9 +253,9 @@ public class MeetingView {
     }
 
     /**
-     * Loads meeting rows into the table.
+     * Nap danh sach cuoc hop vao bang.
      *
-     * @param data meeting data list
+     * @param data danh sach cuoc hop
      */
     public void loadData(List<MeetingDTO> data) {
         tableModel.setRowCount(0);
@@ -278,9 +278,9 @@ public class MeetingView {
     }
 
     /**
-     * Gets the selected meeting id.
+     * Lay id cuoc hop duoc chon.
      *
-     * @return selected id or null
+     * @return id duoc chon hoac null
      */
     public Integer getSelectedId() {
         int row = meetingTable.getSelectedRow();
@@ -289,21 +289,21 @@ public class MeetingView {
     }
 
     /**
-     * Updates the status bar message.
+     * Cap nhat thong bao tren status bar.
      */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
 
-    /** @return main panel */
+    /** @return panel chinh */
     public JPanel getPanel() { return mainPanel; }
 
-    /** @return add button */
+    /** @return nut them */
     public JButton getBtnAdd()         { return btnAdd; }
-    /** @return edit button */
+    /** @return nut sua */
     public JButton getBtnEdit()        { return btnEdit; }
-    /** @return delete button */
+    /** @return nut xoa */
     public JButton getBtnDelete()      { return btnDelete; }
-    /** @return refresh button */
+    /** @return nut lam moi */
     public JButton getBtnRefresh()     { return btnRefresh; }
-    /** @return meeting table */
+    /** @return bang cuoc hop */
     public JTable  getTable()          { return meetingTable; }
 }

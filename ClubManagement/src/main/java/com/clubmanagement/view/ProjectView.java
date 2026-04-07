@@ -63,9 +63,9 @@ public class ProjectView {
     private final MemberDTO currentUser;
 
     /**
-     * Creates the view for the current user.
+     * Khởi tạo giao diện cho người dùng hiện tại.
      *
-     * @param currentUser the logged-in member
+     * @param currentUser thành viên đang đăng nhập
      */
     public ProjectView(MemberDTO currentUser) {
         this.currentUser = currentUser;
@@ -73,7 +73,7 @@ public class ProjectView {
     }
 
     /**
-     * Builds the main layout.
+     * Xây dựng bố cục chính.
      */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
@@ -86,9 +86,9 @@ public class ProjectView {
     }
 
     /**
-     * Builds the header section with filters and actions.
+     * Xây dựng phần tiêu đề kèm bộ lọc và thao tác.
      *
-     * @return the header panel
+     * @return panel tiêu đề
      */
     private JPanel buildHeader() {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
@@ -178,9 +178,9 @@ public class ProjectView {
     }
 
     /**
-     * Builds the table container for projects.
+     * Xây dựng vùng bảng dự án.
      *
-     * @return the scroll pane containing the table
+     * @return scroll pane chứa bảng
      */
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
@@ -231,9 +231,9 @@ public class ProjectView {
     }
 
     /**
-     * Builds the status footer.
+     * Xây dựng thanh trạng thái.
      *
-     * @return the footer panel
+     * @return panel chân trang
      */
     private JPanel buildFooter() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -246,9 +246,9 @@ public class ProjectView {
     }
 
     /**
-     * Applies consistent styling to the table.
+     * Áp dụng style đồng nhất cho bảng.
      *
-     * @param table the table to style
+     * @param table bảng cần style
      */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -281,12 +281,12 @@ public class ProjectView {
     }
 
     /**
-     * Creates a toolbar button.
+     * Tạo nút trên thanh công cụ.
      *
-     * @param text button label
-     * @param bg background color
-     * @param fg foreground color
-     * @return the configured button
+     * @param text nhãn nút
+     * @param bg màu nền
+     * @param fg màu chữ
+     * @return nút đã cấu hình
      */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
@@ -300,14 +300,12 @@ public class ProjectView {
         return btn;
     }
 
-    // ===================================================
-    // PUBLIC API
-    // ===================================================
+    // API công khai
 
     /**
-     * Loads project rows into the table.
+     * Nạp danh sách dự án vào bảng.
      *
-     * @param projects project data list
+     * @param projects danh sách dự án
      */
     public void loadData(List<ProjectDTO> projects) {
         tableModel.setRowCount(0);
@@ -328,10 +326,10 @@ public class ProjectView {
     }
 
     /**
-     * Formats a currency amount for display.
+     * Định dạng số tiền để hiển thị.
      *
-     * @param amount amount to format
-     * @return formatted string
+     * @param amount số tiền cần định dạng
+     * @return chuỗi đã định dạng
      */
     private String formatCurrency(java.math.BigDecimal amount) {
         if (amount == null) return "0 ₫";
@@ -339,9 +337,9 @@ public class ProjectView {
     }
 
     /**
-     * Gets the selected project id.
+     * Lấy id dự án được chọn.
      *
-     * @return selected id or null
+     * @return id được chọn hoặc null
      */
     public Integer getSelectedProjectId() {
         int row = projectTable.getSelectedRow();
@@ -349,41 +347,39 @@ public class ProjectView {
         return (Integer) tableModel.getValueAt(row, 0);
     }
 
-    /**
-     * @return search keyword from the input
-     */
+    /** @return từ khóa tìm kiếm */
     public String getSearchKeyword() { return searchField.getText().trim(); }
 
     /**
-     * Updates the status bar message.
+     * Cập nhật thông báo trên status bar.
      *
-     * @param msg message to display
+     * @param msg nội dung hiển thị
      */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
 
     /**
-     * Returns the root panel for this view.
+     * Trả về panel gốc của view.
      *
-     * @return main panel
+     * @return panel chính
      */
     public JPanel getPanel() { return mainPanel; }
 
-    /** @return add button */
+    /** @return nút thêm */
     public JButton getBtnAdd()     { return btnAdd; }
-    /** @return edit button */
+    /** @return nút sửa */
     public JButton getBtnEdit()    { return btnEdit; }
-    /** @return delete button */
+    /** @return nút xóa */
     public JButton getBtnDelete()  { return btnDelete; }
-    /** @return refresh button */
+    /** @return nút làm mới */
     public JButton getBtnRefresh() { return btnRefresh; }
-    /** @return search button */
+    /** @return nút tìm kiếm */
     public JButton getBtnSearch()  { return btnSearch; }
-    /** @return project table */
+    /** @return bảng dự án */
     public JTable  getTable()      { return projectTable; }
-    /** @return search text field */
+    /** @return ô tìm kiếm */
     public JTextField    getSearchField()    { return searchField; }
-    /** @return status filter combo box */
+    /** @return combobox lọc trạng thái */
     public JComboBox<String> getStatusFilterBox() { return statusFilter; }
-    /** @return assignment filter combo box */
+    /** @return combobox lọc phân công */
     public JComboBox<String> getAssignmentFilterBox() { return assignmentFilter; }
 }

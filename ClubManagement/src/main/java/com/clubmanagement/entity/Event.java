@@ -92,7 +92,7 @@ public class Event {
     @OneToMany(mappedBy = "event", fetch = FetchType.LAZY)
     private List<Task> tasks;
 
-    // ============ CONSTRUCTORS ============
+    //CONSTRUCTORS =
     /**
      * Constructor mặc định (bắt buộc cho JPA).
      */

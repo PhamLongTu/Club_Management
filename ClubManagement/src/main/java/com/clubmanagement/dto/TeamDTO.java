@@ -22,7 +22,7 @@ public class TeamDTO {
      * Constructor đầy đủ.
      */
     public TeamDTO(Integer teamId, String teamName, String description, 
-                   LocalDate createdDate, Integer leaderId, String leaderName) {
+                LocalDate createdDate, Integer leaderId, String leaderName) {
         this.teamId = teamId;
         this.teamName = teamName;
         this.description = description;

@@ -28,7 +28,7 @@ import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.util.ImageUtil;
 
 /**
- * View for displaying the current member profile and related items.
+ * Màn hình hiển thị hồ sơ cá nhân và các mục liên quan.
  */
 public class MyInfoView {
 
@@ -69,9 +69,9 @@ public class MyInfoView {
     private static final int AVATAR_SIZE   = 200;
 
     /**
-     * Creates the view and loads initial profile info.
+     * Khởi tạo giao diện và nạp thông tin hồ sơ ban đầu.
      *
-     * @param currentUser the logged-in member
+     * @param currentUser thành viên đang đăng nhập
      */
     public MyInfoView(MemberDTO currentUser) {
         buildUI();
@@ -79,7 +79,7 @@ public class MyInfoView {
     }
 
     /**
-     * Builds the main layout.
+     * Xây dựng bố cục chính.
      */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
@@ -91,9 +91,9 @@ public class MyInfoView {
     }
 
     /**
-     * Builds the header section with profile info and actions.
+     * Xây dựng phần tiêu đề kèm thông tin hồ sơ và thao tác.
      *
-     * @return the header panel
+     * @return panel tiêu đề
      */
     private JPanel buildHeader() {
         JPanel header = new JPanel(new BorderLayout(16, 0));
@@ -189,9 +189,9 @@ public class MyInfoView {
     }
 
     /**
-     * Builds the content grid with tasks, events, and projects.
+     * Xây dựng lưới nội dung gồm nhiệm vụ, sự kiện và dự án.
      *
-     * @return the content panel
+     * @return panel nội dung
      */
     private JPanel buildContent() {
         JPanel grid = new JPanel(new GridLayout(1, 3, 16, 0));
@@ -233,13 +233,13 @@ public class MyInfoView {
     }
 
     /**
-     * Builds a section panel with filter and table.
+     * Xây dựng một khối gồm bộ lọc và bảng dữ liệu.
      *
-     * @param title section title
-     * @param filter filter control
-     * @param countLabel label for total count
-     * @param table data table
-     * @return the section panel
+     * @param title tiêu đề khối
+     * @param filter bộ lọc
+     * @param countLabel nhãn tổng số
+     * @param table bảng dữ liệu
+     * @return panel của khối
      */
     private JPanel buildSection(String title, JComboBox<String> filter,
                                 JLabel countLabel, JTable table) {
@@ -283,9 +283,9 @@ public class MyInfoView {
     }
 
     /**
-     * Applies consistent styling to the table.
+     * Áp dụng style đồng nhất cho bảng.
      *
-     * @param table the table to style
+     * @param table bảng cần style
      */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -323,10 +323,10 @@ public class MyInfoView {
     }
 
     /**
-     * Hides the id column by setting its width to zero.
+     * Ẩn cột id bằng cách đưa chiều rộng về 0.
      *
-     * @param table the table to update
-     * @param index column index to hide
+     * @param table bảng cần cập nhật
+     * @param index vị trí cột cần ẩn
      */
     private void hideIdColumn(JTable table, int index) {
         table.getColumnModel().getColumn(index).setMinWidth(0);
@@ -335,9 +335,9 @@ public class MyInfoView {
     }
 
     /**
-     * Updates the profile info section.
+     * Cập nhật thông tin hồ sơ.
      *
-     * @param member member data
+     * @param member dữ liệu thành viên
      */
     public void setProfileInfo(MemberDTO member) {
         if (member == null) return;
@@ -361,19 +361,19 @@ public class MyInfoView {
     }
 
     /**
-     * Adds a labeled row to the info table.
+     * Thêm một dòng nhãn vào bảng thông tin.
      *
-     * @param label label text
-     * @param value value text
+     * @param label nhãn hiển thị
+     * @param value giá trị
      */
     private void addInfoRow(String label, String value) {
         infoModel.addRow(new Object[]{label, value != null ? value : ""});
     }
 
     /**
-     * Sets task rows in the tasks table.
+     * Gán dữ liệu cho bảng nhiệm vụ.
      *
-     * @param rows task rows
+     * @param rows danh sách dòng nhiệm vụ
      */
     public void setTaskRows(List<Object[]> rows) {
         taskModel.setRowCount(0);
@@ -382,9 +382,9 @@ public class MyInfoView {
     }
 
     /**
-     * Sets event rows in the events table.
+     * Gán dữ liệu cho bảng sự kiện.
      *
-     * @param rows event rows
+     * @param rows danh sách dòng sự kiện
      */
     public void setEventRows(List<Object[]> rows) {
         eventModel.setRowCount(0);
@@ -393,9 +393,9 @@ public class MyInfoView {
     }
 
     /**
-     * Sets project rows in the projects table.
+     * Gán dữ liệu cho bảng dự án.
      *
-     * @param rows project rows
+     * @param rows danh sách dòng dự án
      */
     public void setProjectRows(List<Object[]> rows) {
         projectModel.setRowCount(0);
@@ -404,38 +404,38 @@ public class MyInfoView {
     }
 
     /**
-     * Gets the selected task id.
+     * Lấy id nhiệm vụ được chọn.
      *
-     * @return selected id or null
+     * @return id được chọn hoặc null
      */
     public Integer getSelectedTaskId() {
         return getSelectedId(taskTable, taskModel);
     }
 
     /**
-     * Gets the selected event id.
+     * Lấy id sự kiện được chọn.
      *
-     * @return selected id or null
+     * @return id được chọn hoặc null
      */
     public Integer getSelectedEventId() {
         return getSelectedId(eventTable, eventModel);
     }
 
     /**
-     * Gets the selected project id.
+     * Lấy id dự án được chọn.
      *
-     * @return selected id or null
+     * @return id được chọn hoặc null
      */
     public Integer getSelectedProjectId() {
         return getSelectedId(projectTable, projectModel);
     }
 
     /**
-     * Reads the selected id from a table/model pair.
+     * Lấy id đang chọn từ bảng và model.
      *
-     * @param table table to read
-     * @param model table model
-     * @return selected id or null
+     * @param table bảng cần đọc
+     * @param model model của bảng
+     * @return id được chọn hoặc null
      */
     private Integer getSelectedId(JTable table, DefaultTableModel model) {
         int row = table.getSelectedRow();
@@ -443,22 +443,22 @@ public class MyInfoView {
         return (Integer) model.getValueAt(row, 0);
     }
 
-    /** @return main panel */
+    /** @return panel chính */
     public JPanel getPanel() { return mainPanel; }
-    /** @return edit profile button */
+    /** @return nút chỉnh sửa hồ sơ */
     public JButton getBtnEditProfile() { return btnEditProfile; }
-    /** @return refresh button */
+    /** @return nút làm mới */
     public JButton getBtnRefresh() { return btnRefresh; }
-    /** @return task filter combo box */
+    /** @return combobox lọc nhiệm vụ */
     public JComboBox<String> getTaskFilter() { return taskFilter; }
-    /** @return event filter combo box */
+    /** @return combobox lọc sự kiện */
     public JComboBox<String> getEventFilter() { return eventFilter; }
-    /** @return project filter combo box */
+    /** @return combobox lọc dự án */
     public JComboBox<String> getProjectFilter() { return projectFilter; }
-    /** @return task table */
+    /** @return bảng nhiệm vụ */
     public JTable getTaskTable() { return taskTable; }
-    /** @return event table */
+    /** @return bảng sự kiện */
     public JTable getEventTable() { return eventTable; }
-    /** @return project table */
+    /** @return bảng dự án */
     public JTable getProjectTable() { return projectTable; }
 }

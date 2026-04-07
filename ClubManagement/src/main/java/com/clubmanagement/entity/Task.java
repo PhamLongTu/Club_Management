@@ -89,7 +89,7 @@ public class Task {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    // ============ CONSTRUCTORS ============
+    //  CONSTRUCTORS 
     /**
      * Constructor mặc định (bắt buộc cho JPA).
      */
@@ -117,7 +117,7 @@ public class Task {
         this.createdDate = LocalDateTime.now();
     }
 
-    // ============ GETTERS & SETTERS ============
+    //  GETTERS & SETTERS 
     /** @return ID nhiệm vụ. */
     public Integer getTaskId()             { return taskId; }
     /** @param v ID nhiệm vụ mới. */

@@ -231,9 +231,6 @@ public class TeamController {
             return;
         }
 
-        // TODO: Mở popup chứa danh sách thành viên trong Ban (Bảng member_team theo hibernate)
-        // Hiện tại Member_Team chưa thiết lập đầy đủ trong MemberService/DAO,
-        // Nhưng tạm hiển thị thông báo.
         JOptionPane.showMessageDialog(null, "Tính năng quản lý thành viên chuyên sâu của Ban " + teamName + " đang được phát triển!", "Tính năng mở rộng", JOptionPane.INFORMATION_MESSAGE);
     }
 }

@@ -29,7 +29,7 @@ import com.clubmanagement.dto.MemberDTO;
 import com.clubmanagement.dto.TaskDTO;
 
 /**
- * View for listing and managing tasks.
+ * Màn hình danh sách và quản lý nhiệm vụ.
  */
 public class TaskView {
 
@@ -60,9 +60,9 @@ public class TaskView {
     private final MemberDTO currentUser;
 
     /**
-     * Creates the view for the current user.
+     * Khởi tạo giao diện cho người dùng hiện tại.
      *
-     * @param currentUser the logged-in member
+     * @param currentUser thành viên đang đăng nhập
      */
     public TaskView(MemberDTO currentUser) {
         this.currentUser = currentUser;
@@ -70,7 +70,7 @@ public class TaskView {
     }
 
     /**
-     * Builds the main layout.
+     * Xây dựng bố cục chính.
      */
     private void buildUI() {
         mainPanel = new JPanel(new BorderLayout(0, 16));
@@ -83,9 +83,9 @@ public class TaskView {
     }
 
     /**
-     * Builds the header section with filters and actions.
+     * Xây dựng phần tiêu đề kèm bộ lọc và thao tác.
      *
-     * @return the header panel
+     * @return panel tiêu đề
      */
     private JPanel buildHeader() {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
@@ -151,9 +151,9 @@ public class TaskView {
     }
 
     /**
-     * Builds the table container for tasks.
+     * Xây dựng vùng bảng nhiệm vụ.
      *
-     * @return the scroll pane containing the table
+     * @return scroll pane chứa bảng
      */
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
@@ -167,7 +167,7 @@ public class TaskView {
         taskTable.getColumnModel().getColumn(0).setMaxWidth(0);
         taskTable.getColumnModel().getColumn(0).setWidth(0);
 
-        // Status Renderer
+        // Renderer trạng thái
         taskTable.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -200,9 +200,9 @@ public class TaskView {
     }
 
     /**
-     * Builds the status footer.
+     * Xây dựng thanh trạng thái.
      *
-     * @return the footer panel
+     * @return panel chân trang
      */
     private JPanel buildFooter() {
         JPanel bar = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -215,9 +215,9 @@ public class TaskView {
     }
 
     /**
-     * Applies consistent styling to the table.
+     * Áp dụng style đồng nhất cho bảng.
      *
-     * @param table the table to style
+     * @param table bảng cần style
      */
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -249,7 +249,7 @@ public class TaskView {
                         setForeground(PRIMARY);
                     }
                     case 5 -> {
-                        // Priority rendering text style
+                        // Style hiển thị mức ưu tiên
                         setFont(new Font("Segoe UI", Font.BOLD, 12));
                         if ("High".equals(v) || "Critical".equals(v)) setForeground(DANGER_CLR);
                         else if ("Medium".equals(v)) setForeground(WARNING_CLR);
@@ -264,12 +264,12 @@ public class TaskView {
     }
 
     /**
-     * Creates a toolbar button.
+     * Tạo nút trên thanh công cụ.
      *
-     * @param text button label
-     * @param bg background color
-     * @param fg foreground color
-     * @return the configured button
+     * @param text nhãn nút
+     * @param bg màu nền
+     * @param fg màu chữ
+     * @return nút đã cấu hình
      */
     private JButton makeBtn(String text, Color bg, Color fg) {
         JButton btn = new JButton(text);
@@ -284,9 +284,9 @@ public class TaskView {
     }
 
     /**
-     * Loads task rows into the table.
+     * Nạp danh sách nhiệm vụ vào bảng.
      *
-     * @param data task data list
+     * @param data danh sách nhiệm vụ
      */
     public void loadData(List<TaskDTO> data) {
         tableModel.setRowCount(0);
@@ -309,9 +309,9 @@ public class TaskView {
     }
 
     /**
-     * Gets the selected task id.
+     * Lấy id nhiệm vụ được chọn.
      *
-     * @return selected id or null
+     * @return id được chọn hoặc null
      */
     public Integer getSelectedId() {
         int row = taskTable.getSelectedRow();
@@ -320,29 +320,29 @@ public class TaskView {
     }
 
     /**
-     * Updates the status bar message.
+     * Cập nhật thông báo trên status bar.
      *
-     * @param msg message to display
+     * @param msg nội dung hiển thị
      */
     public void setStatusMessage(String msg) { statusBar.setText(msg); }
 
     /**
-     * Returns the root panel for this view.
+     * Trả về panel gốc của view.
      *
-     * @return main panel
+     * @return panel chính
      */
     public JPanel getPanel() { return mainPanel; }
 
-    /** @return add button */
+    /** @return nút thêm */
     public JButton getBtnAdd()         { return btnAdd; }
-    /** @return edit button */
+    /** @return nút sửa */
     public JButton getBtnEdit()        { return btnEdit; }
-    /** @return delete button */
+    /** @return nút xóa */
     public JButton getBtnDelete()      { return btnDelete; }
-    /** @return refresh button */
+    /** @return nút làm mới */
     public JButton getBtnRefresh()     { return btnRefresh; }
-    /** @return task table */
+    /** @return bảng nhiệm vụ */
     public JTable  getTable()          { return taskTable; }
-    /** @return filter combo box */
+    /** @return combobox bộ lọc */
     public JComboBox<String> getFilterBox() { return filterBox; }
 }

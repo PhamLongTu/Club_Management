@@ -20,13 +20,13 @@ import jakarta.persistence.Table;
 @Table(name = "roles")
 public class Role {
 
-    // ============ PRIMARY KEY ============
+    //  PRIMARY KEY 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
     private Integer roleId;
 
-    // ============ ATTRIBUTES ============
+    //  ATTRIBUTES 
     /** Tên vai trò (UNIQUE, NOT NULL) */
     @Column(name = "role_name", nullable = false, unique = true, length = 50)
     private String roleName;
@@ -44,12 +44,12 @@ public class Role {
     @Column(name = "permission_level")
     private Integer permissionLevel = 1;
 
-    // ============ RELATIONSHIPS ============
+    //  RELATIONSHIPS 
     /** Một vai trò có thể có nhiều thành viên (1-N) */
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private List<Member> members;
 
-    // ============ CONSTRUCTORS ============
+    //  CONSTRUCTORS 
     /**
      * Constructor mặc định (bắt buộc cho JPA).
      */
@@ -68,7 +68,7 @@ public class Role {
         this.permissionLevel = permissionLevel;
     }
 
-    // ============ GETTERS & SETTERS ============
+    //  GETTERS & SETTERS 
     /** @return ID vai trò. */
     public Integer getRoleId()       { return roleId; }
     /** @param v ID vai trò mới. */

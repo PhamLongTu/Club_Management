@@ -106,7 +106,7 @@ public class Project {
      * @param manager     Quản lý dự án
      */
     public Project(String projectName, String description, String objective,
-                   LocalDate startDate, LocalDate endDate, BigDecimal budget, Member manager) {
+                LocalDate startDate, LocalDate endDate, BigDecimal budget, Member manager) {
         this.projectName = projectName;
         this.description = description;
         this.objective   = objective;
@@ -117,7 +117,7 @@ public class Project {
         this.status      = "Planning";
     }
 
-    // ============ GETTERS & SETTERS ============
+    //  GETTERS & SETTERS 
     /** @return ID dự án. */
     public Integer getProjectId()          { return projectId; }
     /** @param v ID dự án mới. */

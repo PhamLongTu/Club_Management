@@ -58,7 +58,7 @@ public class Meeting {
     @JoinColumn(name = "host_id", nullable = false)
     private Member host;
 
-    // ============ CONSTRUCTORS ============
+    // CONSTRUCTORS
     /** Constructor mac dinh (bat buoc cho JPA). */
     public Meeting() {
         this.createdDate = LocalDateTime.now();
@@ -79,7 +79,7 @@ public class Meeting {
         this.createdDate = LocalDateTime.now();
     }
 
-    // ============ GETTERS & SETTERS ============
+    //  GETTERS & SETTERS 
     public Integer getMeetingId() { return meetingId; }
     public void setMeetingId(Integer meetingId) { this.meetingId = meetingId; }
 
