@@ -10,12 +10,10 @@
 ## 📋 Mục lục
 
 1. [Tổng quan hệ thống](#1-tổng-quan-hệ-thống)
-2. [ERD & Thiết kế CSDL](#2-erd--thiết-kế-csdl)
-3. [Cài đặt & Chạy ứng dụng](#3-cài-đặt--chạy-ứng-dụng)
-4. [Cấu trúc dự án](#4-cấu-trúc-dự-án)
-5. [Tài khoản mẫu](#5-tài-khoản-mẫu)
-6. [Hướng dẫn sử dụng](#6-hướng-dẫn-sử-dụng)
-7. [Phân tích 3NF](#7-phân-tích-3nf)
+2. [Cài đặt & Chạy ứng dụng](#3-cài-đặt--chạy-ứng-dụng)
+3. [Cấu trúc dự án](#4-cấu-trúc-dự-án)
+4. [Tài khoản mẫu](#5-tài-khoản-mẫu)
+5. [Hướng dẫn sử dụng](#6-hướng-dẫn-sử-dụng)
 
 ---
 
@@ -61,89 +59,8 @@ Các CLB trường học quản lý thủ công bằng Excel gặp nhiều vấn
 
 ---
 
-## 2. ERD & Thiết kế CSDL
 
-### 2.1 Sơ đồ ERD (Text Format)
-
-```
-┌──────────┐       ┌──────────┐       ┌──────────────┐
-│  roles   │       │ members  │       │    teams     │
-├──────────┤       ├──────────┤       ├──────────────┤
-│PK role_id│       │PK mem_id │       │PK team_id    │
-│ role_name│ 1   N │ full_name│ N   N │  team_name   │
-│ perm_lvl │───────│ role_id  │───────│  leader_id──►│─► members
-└──────────┘       │ email    │       └──────────────┘
-                   │ status   │
-                   └────┬─────┘
-                        │
-              ┌─────────┼──────────┐
-              │         │          │
-        N     │    N    │    N     │
-┌─────────────▼─┐ ┌─────▼──────┐ ┌▼───────────┐
-│  participations│ │   tasks    │ │ attendances│
-├───────────────┤ ├────────────┤ ├────────────┤
-│PK part_id     │ │PK task_id  │ │PK att_id   │
-│FK member_id   │ │FK assignee │ │FK member_id│
-│FK event_id ──►│ │FK assigner │ │FK event_id │
-│ status        │ │FK event_id │ │ check_in   │
-└───────────────┘ │ priority   │ │ status     │
-                  │ status     │ └────────────┘
-                  └────────────┘
-
-┌──────────────┐     ┌──────────────────┐     ┌──────────────┐
-│    events    │     │   announcements  │     │   meetings   │
-├──────────────┤     ├──────────────────┤     ├──────────────┤
-│PK event_id   │     │PK ann_id         │     │PK meeting_id │
-│ event_name   │     │  title           │     │ title        │
-│ start_date   │     │  content         │     │ start_time   │
-│ end_date     │     │  is_pinned       │     │ end_time     │
-│ status       │     │FK author_id ────►│─► members         │
-│ budget       │     │  target_audience │     │FK host_id ───►│─► members
-│FK created_by │     └──────────────────┘     └──────────────┘
-└──────────────┘
-
-┌──────────────┐
-│   projects   │
-├──────────────┤
-│PK project_id │
-│ project_name │
-│ start_date   │
-│ status       │
-│ budget       │
-│FK manager_id │
-└──────┬───────┘
-    │ N-N (project_members)
-    │◄─────► members
-
-┌──────────────┐
-│  documents   │
-├──────────────┤
-│PK doc_id     │
-│  title       │
-│  file_path   │
-│  file_type   │
-│FK uploader   │
-│FK event_id   │
-│FK project_id │
-└──────────────┘
-```
-
-### 2.2 Quan hệ chính
-
-| Quan hệ                     | Loại     | Bảng trung gian |
-| --------------------------- | -------- | --------------- |
-| Member ↔ Role               | N-1      | -               |
-| Member ↔ Team               | N-N      | member_team     |
-| Member ↔ Event              | N-N      | participations  |
-| Member ↔ Project            | N-N      | project_members |
-| Meeting → Member (chủ trì)  | N-1      | -               |
-| Task → Member (giao)        | N-1      | -               |
-| Task → Member (nhận)        | N-1      | -               |
-| Attendance → Member + Event | N-1 (×2) | -               |
-
----
-
-## 3. Cài đặt & Chạy ứng dụng
+## 2. Cài đặt & Chạy ứng dụng
 
 ### Yêu cầu
 
@@ -195,7 +112,7 @@ java -jar target/ClubManagement-1.0-SNAPSHOT.jar
 
 ---
 
-## 4. Cấu trúc dự án
+## 3. Cấu trúc dự án
 
 ```text
 ClubManagement/
@@ -244,7 +161,7 @@ ClubManagement/
 
 ---
 
-## 5. Tài khoản mẫu
+## 4. Tài khoản mẫu
 
 | Email             | Mật khẩu | Vai trò |
 | ----------------- | -------- | ------- |
@@ -269,7 +186,7 @@ ClubManagement/
 
 ---
 
-## 6. Hướng dẫn sử dụng
+## 5. Hướng dẫn sử dụng
 
 ### Đăng nhập
 
@@ -297,44 +214,3 @@ ClubManagement/
 
 ---
 
-## 7. Phân tích 3NF
-
-### 3NF là gì?
-
-Database đạt 3NF khi:
-
-1. **1NF**: Mỗi ô chứa một giá trị nguyên tử (không lặp nhóm)
-2. **2NF**: Mọi thuộc tính non-key phụ thuộc đầy đủ vào Primary Key
-3. **3NF**: Không có phụ thuộc bắc cầu (A→B→C thì A→C phải loại bỏ bằng cách tách bảng)
-
-### Phân tích thiết kế đạt 3NF
-
-**Bảng `members`**:
-
-- PK: `member_id`
-- `role_name` KHÔNG lưu trực tiếp trong `members` → tách ra bảng `roles`
-- Điều này loại bỏ phụ thuộc bắc cầu: `member_id → role_id → role_name`
-- ✅ Đạt 3NF
-
-**Bảng `participations`** (N-N Member × Event):
-
-- PK: `participation_id` (hoặc composite `member_id + event_id`)
-- Không có thuộc tính nào phụ thuộc vào chỉ `member_id` hoặc chỉ `event_id`
-- `registration_date`, `status`, `role_in_event` → phụ thuộc vào cả hai
-- ✅ Đạt 3NF
-
-**Bảng `tasks`**:
-
-- PK: `task_id`
-- `assignee_name` KHÔNG lưu → FK `assignee_id → members`
-- ✅ Đạt 3NF
-
-**Tất cả N-N được chuyển thành bảng trung gian**:
-
-- `member_team`, `project_members`
-- Tránh việc lưu mảng trong một ô → vi phạm 1NF
-- ✅ Đạt chuẩn
-
----
-
-_© 2025 Club Management System - Final Project Windows Programming_
